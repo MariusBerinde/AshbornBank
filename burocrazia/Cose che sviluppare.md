@@ -1,0 +1,9 @@
+- l'utente ha 2 conti per mostrare il passaggio
+- gestione carta 
+- pagare f24
+- sezione chiamata "documenti tasse" in cui a seconda del modello di tasse scelto e dell'anno restituisce doc bancari
+- creazione estratti conto in cui si sceglie il tipo
+- semplificare richiesta di disconoscimento
+- aggiungere cambio valute 
+- gestione della password
+- l'utente può avere diversi conti 
