@@ -7,3 +7,5 @@
 - aggiungere cambio valute 
 - gestione della password
 - l'utente può avere diversi conti 
+- non si possono fare screenshot quando l'applicazione è in primo piano. non si può aprire l'app in schermo diviso o popup
+- pagamento mav/rav con qrcode, il qrcode contiene informazioni per fare il pagamento
