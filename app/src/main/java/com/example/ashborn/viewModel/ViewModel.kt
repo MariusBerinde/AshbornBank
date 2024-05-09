@@ -33,4 +33,5 @@ class AshbornViewModel(): ViewModel() {
         this.wrongAttempts++
     }
 
+
 }

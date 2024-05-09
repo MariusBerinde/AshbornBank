@@ -1,6 +1,7 @@
 package com.example.ashborn.view
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -17,6 +18,7 @@ import com.example.ashborn.viewModel.AshbornViewModel
 fun Conti(navController: NavHostController, viewModel: AshbornViewModel) {
     val tabList: ArrayList<String> = arrayListOf("conti", "carte", "operazioni", "parla con noi", "altro")
     Scaffold (
+        modifier = Modifier.fillMaxSize(),
         bottomBar = {
             NavigationBar () {
                 for (i in tabList) {

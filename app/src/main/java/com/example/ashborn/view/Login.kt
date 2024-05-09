@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.ashborn.AppNavigazione
 import com.example.ashborn.ui.theme.AshbornTheme
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
@@ -44,7 +45,9 @@ fun Welcome(navController: NavHostController, viewModel: AshbornViewModel) {
         Button(modifier = Modifier
             .align(Alignment.CenterHorizontally)
             .padding(SmallPadding),
-               onClick = {navController.navigate("Login")}
+            //TODO:aggiungere controllo per verifica primo login
+               onClick = {navController.navigate("login")}
+
         ) {
            Text("Entra")
         }

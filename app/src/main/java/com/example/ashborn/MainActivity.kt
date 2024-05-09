@@ -13,8 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.example.ashborn.ui.theme.AshbornTheme
+import com.example.ashborn.view.AskPIN
 import com.example.ashborn.view.Welcome
 import com.example.ashborn.viewModel.AshbornViewModel
 
@@ -25,10 +27,11 @@ class MainActivity : ComponentActivity() {
             AshbornTheme {
                 val viewModel: AshbornViewModel by viewModels()
                 val navController = rememberNavController()
-                NavHost(navController = navController, startDestination = "login") {
+           /*     NavHost(navController = navController, startDestination = "login") {
                     composable("login") { Welcome(navController, viewModel) }
 
-                }
+                }*/
+                AppNavigazione(viewModel = viewModel, name ="" , modifier =Modifier )
             }
         }
     }
@@ -49,3 +52,29 @@ fun GreetingPreview() {
         Greeting("Android")
     }
 }
+
+@Composable
+fun AppNavigazione(viewModel: AshbornViewModel,name:String,modifier: Modifier){
+    val navController = rememberNavController()
+    val startDest="init";
+    NavHost(navController=navController, startDestination = startDest){
+        navigation(startDestination = "welcome",route="init"){
+            composable("welcome"){
+                Welcome(navController = navController, viewModel = viewModel)
+            }
+            composable("login"){
+                AskPIN(navController = navController, viewModel = viewModel)
+            }
+            /*
+            composable("primoLogin"){
+                PrimoLogin(navController = navController, viewModel = viewModel)
+            }*/
+        }
+        /*navigation(startDestination = "generico",route="problemi"){
+           composable("generico"){
+               Supporto()
+           }
+        }*/
+    }
+}
+
