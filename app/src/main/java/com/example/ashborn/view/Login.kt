@@ -16,11 +16,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -46,10 +50,10 @@ fun Welcome(navController: NavHostController, viewModel: AshbornViewModel) {
             .align(Alignment.CenterHorizontally)
             .padding(SmallPadding),
             //TODO:aggiungere controllo per verifica primo login
-               onClick = {navController.navigate("login")}
+               onClick = {navController.navigate("errore")}
 
         ) {
-           Text("Entra")
+           Text("Errore")
         }
     }
 }
@@ -103,6 +107,37 @@ fun AskPIN(navController: NavHostController, viewModel: AshbornViewModel) {
                     Text(text = "<xI")
                 }
             }
+        }
+    }
+}
+@Composable
+fun Registrazione(navController: NavHostController, viewModel: AshbornViewModel) {
+    val context = LocalContext.current
+    Column (
+        modifier = Modifier.padding(MediumPadding).padding(8.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+
+        Text(text = "Ashborn Bank", fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic) //TODO: da sistemare
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = "Nome")
+        TextField(value = "", onValueChange ={viewModel.setUserNameX(it)} )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(text = "Cognome")
+        TextField(value = "", onValueChange ={viewModel.set_Cognome(it)} )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = "Data di nascita")
+        TextField(value = "", onValueChange ={viewModel.set_DataNascita(it)} )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = "Codice cliente")
+        TextField(value = "", onValueChange ={} )
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(onClick = { /*TODO*/
+
+        }) {
+            Text(text = "Conferma")
         }
     }
 }

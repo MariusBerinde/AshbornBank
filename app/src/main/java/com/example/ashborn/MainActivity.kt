@@ -1,5 +1,7 @@
 package com.example.ashborn
 
+import ErroreGenerico
+import Registrazione
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -64,6 +66,9 @@ fun AppNavigazione(viewModel: AshbornViewModel,name:String,modifier: Modifier){
             }
             composable("login"){
                 AskPIN(navController = navController, viewModel = viewModel)
+            }
+            composable("errore"){
+                Registrazione(navController = navController, viewModel = viewModel )
             }
             /*
             composable("primoLogin"){
