@@ -37,19 +37,13 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun AshbornPreview() {
     AshbornTheme {
-        Greeting("Android")
+        val viewModel: AshbornViewModel = AshbornViewModel()
+        val navController = rememberNavController()
+        AppNavigazione(viewModel = viewModel, name = "", modifier = Modifier)
     }
 }
 
