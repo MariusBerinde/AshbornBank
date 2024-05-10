@@ -50,10 +50,16 @@ fun Welcome(navController: NavHostController, viewModel: AshbornViewModel) {
             .align(Alignment.CenterHorizontally)
             .padding(SmallPadding),
             //TODO:aggiungere controllo per verifica primo login
-               onClick = {navController.navigate("errore")}
+               onClick = {
+                   if (!viewModel.fistLogin) {
+                       navController.navigate("login")
+                   } else {
+                       navController.navigate("primo-login")
+                   }
+               }
 
         ) {
-           Text("Errore")
+           Text("Entra")
         }
     }
 }
@@ -76,45 +82,55 @@ fun AskPIN(navController: NavHostController, viewModel: AshbornViewModel) {
             )
         }
         Spacer(modifier = Modifier.height(SmallVerticalSpacing))
-        Row (modifier = Modifier.align(Alignment.CenterHorizontally)) {
-            Button(modifier = Modifier
-                .padding(SmallPadding),
-                onClick = { if(viewModel.checkPin()) {navController.navigate("Login"){navController.popBackStack()}} else {} }
-            ) {
+        //Row (modifier = Modifier.align(Alignment.CenterHorizontally)) {
+            
 
-                for (i in (1 .. 9)) {
-                    Button(onClick = {if(viewModel.pin.length <= 8) {viewModel.setPinX(viewModel.pin + i.toString())}}) {
-                        Text(text = i.toString())
+        for (i in (0 .. 2)) {
+            Row() {
+                for (j in (0 .. 2)) {
+                    Button(onClick = {if(viewModel.pin.length <= 8) {viewModel.setPinX(viewModel.pin + (3*i+j).toString())}}) {
+                        Text(text = (3*i+j+1).toString())
                     }
-                }
-                Button(
-                    onClick = {
-                        if(viewModel.checkPin()) {
-                            navController.navigate("home") {navController.popBackStack()}
-                        } else {
-                            viewModel.setPinX("")
-                            viewModel.incrementWrongAttempts()
-                            //TODO("add timer if more than 3 consecutive wrong attempts and show error")
-                        }
-                    }
-                ) {
-                    Text(text = "OK")
-                }
-                Button(onClick = {if(viewModel.pin.length <= 8) {viewModel.setPinX(viewModel.pin + "0")}}) {
-                    Text(text = "0")
-                }
-                Button(onClick = {if(viewModel.pin.isNotEmpty()) {viewModel.setPinX(viewModel.pin.dropLast(1))} }) {
-                    Text(text = "<xI")
                 }
             }
+
+
+            if (i % 3 == 0) {
+                Spacer(modifier = Modifier.padding(SmallPadding))
+            }
         }
+        Row (){
+            Button(
+                onClick = {
+                    if(!viewModel.checkPin()) {
+                        viewModel.set_StartDest("principale")
+                        navController.navigate("utente") {popUpTo("principale")}
+                    } else {
+                        viewModel.incrementWrongAttempts()
+                    }
+                }
+            ) {
+                Text(text = "OK")
+            }
+            Button(onClick = {if(viewModel.pin.length <= 8) {viewModel.setPinX(viewModel.pin + "0")}}) {
+                Text(text = "0")
+            }
+            Button(onClick = {if(viewModel.pin.isNotEmpty()) {viewModel.setPinX(viewModel.pin.dropLast(1))} }) {
+                Text(text = "<xI")
+            }
+        }
+
+            
+        //}
     }
 }
 @Composable
 fun Registrazione(navController: NavHostController, viewModel: AshbornViewModel) {
     val context = LocalContext.current
     Column (
-        modifier = Modifier.padding(MediumPadding).padding(8.dp),
+        modifier = Modifier
+            .padding(MediumPadding)
+            .padding(8.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {

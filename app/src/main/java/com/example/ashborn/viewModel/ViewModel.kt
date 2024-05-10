@@ -9,6 +9,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
 class AshbornViewModel(): ViewModel() {
+    var fistLogin: Boolean = false
+    var startDest: String = "init"
+        private set
     var wrongAttempts by mutableIntStateOf(0)
         private set // Optional: restrict external modification
 
@@ -48,7 +51,12 @@ class AshbornViewModel(): ViewModel() {
       this.codCliente=codCliente
     }
 */
+    fun set_StartDest(startDest: String){
+        if (startDest == "init" || startDest == "principale") {
+            this.startDest= startDest
+        }
 
+    }
     fun checkPin(): Boolean {
         return false
     }
@@ -56,6 +64,4 @@ class AshbornViewModel(): ViewModel() {
     fun incrementWrongAttempts() {
         this.wrongAttempts++
     }
-
-
 }
