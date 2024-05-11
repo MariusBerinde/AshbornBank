@@ -18,6 +18,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -127,31 +131,58 @@ fun AskPIN(navController: NavHostController, viewModel: AshbornViewModel) {
 @Composable
 fun Registrazione(navController: NavHostController, viewModel: AshbornViewModel) {
     val context = LocalContext.current
+    var nome_attuale by remember { mutableStateOf("") }
+    var cognome_attuale by remember { mutableStateOf("") }
+    var dataN by remember { mutableStateOf("") }
+    var cod_attuale by remember { mutableStateOf("") }
+
     Column (
         modifier = Modifier
             .padding(MediumPadding)
-            .padding(8.dp),
+            .padding(SmallPadding),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
 
         Text(text = "Ashborn Bank", fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic) //TODO: da sistemare
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(SmallPadding))
         Text(text = "Nome")
-        TextField(value = "", onValueChange ={viewModel.setUserNameX(it)} )
-        Spacer(modifier = Modifier.height(8.dp))
+       TextField(
+           value = nome_attuale,
+           onValueChange = { nome_attuale = it },
+           label = { Text("Inserisci nome") }
+       )
+
+        Spacer(modifier = Modifier.height(SmallPadding))
 
         Text(text = "Cognome")
-        TextField(value = "", onValueChange ={viewModel.set_Cognome(it)} )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(text = "Data di nascita")
-        TextField(value = "", onValueChange ={viewModel.set_DataNascita(it)} )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(text = "Codice cliente")
-        TextField(value = "", onValueChange ={} )
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = { /*TODO*/
+        TextField(
+            value = cognome_attuale,
+            onValueChange = { cognome_attuale = it },
+            label = { Text("Inserisci cognome") }
+        )
 
+        Spacer(modifier = Modifier.height(SmallPadding))
+        Text(text = "Data di nascita")
+        TextField(
+            value = dataN,
+            onValueChange = { dataN = it },
+            label = { Text("Inserisci data di nascita") }
+        )
+
+        Spacer(modifier = Modifier.height(SmallPadding))
+        Text(text = "Codice cliente")
+        TextField(
+            value = cod_attuale,
+            onValueChange = { cod_attuale = it },
+            label = { Text("Inserisci codice cliente") }
+        )
+        Spacer(modifier = Modifier.height(SmallPadding))
+        Button(onClick = { /*TODO*/
+            viewModel.setUserNameX(nome_attuale)
+            viewModel.set_DataNascita(dataN)
+            viewModel.set_Cognome(cognome_attuale)
+            viewModel.set_CodCliente(cod_attuale)
         }) {
             Text(text = "Conferma")
         }

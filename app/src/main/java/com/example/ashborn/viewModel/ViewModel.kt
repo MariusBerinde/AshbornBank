@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
 class AshbornViewModel(): ViewModel() {
+    val tag = AshbornViewModel::class.java.simpleName
     var fistLogin: Boolean = false
     var startDest: String = "init"
         private set
@@ -18,8 +19,8 @@ class AshbornViewModel(): ViewModel() {
     var pin by mutableStateOf((""))
         private set // Optional: restrict external modification
 
-    //var codCliente by mutableStateOf("")
-     //   private set
+    var codCliente by mutableStateOf("")
+        private set
 
     var userName by mutableStateOf("")
         private set // Optional: restrict external modification
@@ -35,22 +36,25 @@ class AshbornViewModel(): ViewModel() {
     }
 
     fun setUserNameX(userName: String) {
+        Log.i(tag,"valore username $userName")
         this.userName = userName
     }
 
     fun set_Cognome(cognome:String){
         this.cognome=cognome
-        Log.i(this.javaClass.name,cognome)
+        Log.i(tag,"valore cognome $cognome")
     }
 
     fun set_DataNascita(dataNascita:String){
+        Log.i(tag,"valore data di Nascita $dataNascita")
         this.dataNascita= dataNascita
     }
 
-/*    fun setCodCliente(codCliente:String ){
-      this.codCliente=codCliente
+    fun set_CodCliente(codCliente:String ){
+        Log.i(tag,"valore codice cliente $codCliente")
+        this.codCliente=codCliente
     }
-*/
+
     fun set_StartDest(startDest: String){
         if (startDest == "init" || startDest == "principale") {
             this.startDest= startDest
