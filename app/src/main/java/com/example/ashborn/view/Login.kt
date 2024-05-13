@@ -191,7 +191,7 @@ fun Registrazione(navController: NavHostController, viewModel: AshbornViewModel)
 
 @Preview(showBackground = true)
 @Composable
-fun Preview() {
+ fun Preview() {
     val viewModel = AshbornViewModel()
     val navController = rememberNavController()
     AshbornTheme {
