@@ -9,6 +9,12 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
 class AshbornViewModel(): ViewModel() {
+    val IBAN: String = "IT1234567890123456789012345"
+    var saldo: Double = 0.0
+        private set
+    var codConto: String = "0987654321"
+        private set
+
     val tag = AshbornViewModel::class.java.simpleName
     var fistLogin: Boolean = false
     var startDest: String = "init"

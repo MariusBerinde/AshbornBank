@@ -49,7 +49,7 @@ fun Pagine(navController: NavHostController, viewModel: AshbornViewModel) {
             .padding(innerPadding)
         ) {
             when (selectedItem) {
-                0 -> Conti()
+                0 -> Conti(viewModel)
                 1 -> Carte()
                 2 -> Operazioni()
                 3 -> ParlaConNoi()
@@ -59,11 +59,13 @@ fun Pagine(navController: NavHostController, viewModel: AshbornViewModel) {
 
     }
 }
+/*
 
 @Composable
 fun Conti() {
     Text(text = "1")
 }
+*/
 
 @Composable
 fun Carte() {
