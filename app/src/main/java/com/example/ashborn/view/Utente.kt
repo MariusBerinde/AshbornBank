@@ -7,5 +7,6 @@ import com.example.ashborn.viewModel.AshbornViewModel
 
 @Composable
 fun Utente(viewModel: AshbornViewModel, navController: NavHostController) {
+
     Text(text = "Benvenuto " + viewModel.userName)
 }

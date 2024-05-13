@@ -108,7 +108,7 @@ fun AskPIN(navController: NavHostController, viewModel: AshbornViewModel) {
                 onClick = {
                     if(!viewModel.checkPin()) {
                         viewModel.set_StartDest("principale")
-                        navController.navigate("utente") {popUpTo("principale")}
+                        navController.navigate("conti") {popUpTo("principale")}
                     } else {
                         viewModel.incrementWrongAttempts()
                     }

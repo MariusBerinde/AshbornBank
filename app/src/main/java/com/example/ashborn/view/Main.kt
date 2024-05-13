@@ -1,17 +1,13 @@
 package com.example.ashborn.view
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -28,10 +24,11 @@ import androidx.navigation.NavHostController
 import com.example.ashborn.viewModel.AshbornViewModel
 
 @Composable
-fun Conti(navController: NavHostController, viewModel: AshbornViewModel) {
+fun Pagine(navController: NavHostController, viewModel: AshbornViewModel) {
     val tabList: ArrayList<String> = arrayListOf("conti", "carte", "operazioni", "parla con noi", "altro")
     var selectedItem by remember { mutableIntStateOf(0) }
     val icons: ArrayList<ImageVector> = arrayListOf(Icons.Filled.Home,Icons.Filled.Home,Icons.Filled.Home,Icons.Filled.Home, Icons.Filled.MoreVert)
+    val tabs =
     Scaffold (
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
@@ -44,14 +41,6 @@ fun Conti(navController: NavHostController, viewModel: AshbornViewModel) {
                         label = { Text(item) }
                     )
                 }
-
-                for (i in tabList) {
-                    Button(onClick = {navController.navigate(i)}) {
-                        //TODO("add icon to button")
-                        Text(text = i)
-                    }
-                }
-                
             }
         }
     ) { innerPadding ->
@@ -59,16 +48,40 @@ fun Conti(navController: NavHostController, viewModel: AshbornViewModel) {
             .verticalScroll(rememberScrollState())
             .padding(innerPadding)
         ) {
-            Row {
-                Box(modifier = Modifier) {
-
-                }
-            }
-            Row {
-
+            when (selectedItem) {
+                0 -> Conti()
+                1 -> Carte()
+                2 -> Operazioni()
+                3 -> ParlaConNoi()
+                4 -> Altro()
             }
         }
 
     }
 }
 
+@Composable
+fun Conti() {
+    Text(text = "1")
+}
+
+@Composable
+fun Carte() {
+
+    Text(text = "2")
+}
+@Composable
+fun Operazioni() {
+
+    Text(text = "3")
+}
+@Composable
+fun ParlaConNoi() {
+
+    Text(text = "4")
+}
+@Composable
+fun Altro() {
+
+    Text(text = "5")
+}

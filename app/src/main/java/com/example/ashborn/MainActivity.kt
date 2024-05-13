@@ -4,6 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -13,6 +16,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.example.ashborn.ui.theme.AshbornTheme
 import com.example.ashborn.view.AskPIN
+import com.example.ashborn.view.Pagine
 import com.example.ashborn.view.Registrazione
 import com.example.ashborn.view.Utente
 import com.example.ashborn.view.Welcome
@@ -29,7 +33,10 @@ class MainActivity : ComponentActivity() {
                     composable("login") { Welcome(navController, viewModel) }
 
                 }*/
-                AppNavigazione(viewModel = viewModel, name ="" , modifier =Modifier )
+                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+                    AppNavigazione(viewModel = viewModel, name ="" , modifier =Modifier )
+                }
+
             }
         }
     }
@@ -53,6 +60,7 @@ fun AppNavigazione(viewModel: AshbornViewModel, name:String, modifier: Modifier)
         navigation(startDestination = "welcome",route="init"){
             composable("welcome"){
                 Welcome(navController = navController, viewModel = viewModel)
+                //Conti(navController = navController, viewModel = viewModel )
             }
             composable("login"){
                 AskPIN(navController = navController, viewModel = viewModel)
@@ -69,6 +77,11 @@ fun AppNavigazione(viewModel: AshbornViewModel, name:String, modifier: Modifier)
             composable("utente"){
                 Utente(navController = navController, viewModel = viewModel )
             }
+
+            composable("conti"){
+                Pagine(navController = navController, viewModel = viewModel )
+            }
+
 
         }
     }
