@@ -1,5 +1,6 @@
 package com.example.ashborn.view
 
+import ErroreGenerico
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -50,9 +51,9 @@ fun Pagine(navController: NavHostController, viewModel: AshbornViewModel) {
         ) {
             when (selectedItem) {
                 0 -> Conti(viewModel)
-                1 -> Carte()
+                1 -> Carte(navController = navController, viewModel = viewModel)
                 2 -> Operazioni()
-                3 -> ParlaConNoi()
+                3 -> ErroreGenerico(navController = navController, viewModel =viewModel )
                 4 -> Altro()
             }
         }
@@ -67,11 +68,7 @@ fun Conti() {
 }
 */
 
-@Composable
-fun Carte() {
 
-    Text(text = "2")
-}
 @Composable
 fun Operazioni() {
 

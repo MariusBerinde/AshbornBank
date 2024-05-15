@@ -16,7 +16,6 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.example.ashborn.ui.theme.AshbornTheme
 import com.example.ashborn.view.AskPIN
-import com.example.ashborn.view.DettagliCarta
 import com.example.ashborn.view.Pagine
 import com.example.ashborn.view.Registrazione
 import com.example.ashborn.view.Utente
@@ -49,6 +48,7 @@ fun AshbornPreview() {
     AshbornTheme {
         val viewModel: AshbornViewModel = AshbornViewModel()
         val navController = rememberNavController()
+
         AppNavigazione(viewModel = viewModel, name = "", modifier = Modifier)
     }
 }
@@ -62,7 +62,6 @@ fun AppNavigazione(viewModel: AshbornViewModel, name:String, modifier: Modifier)
             composable("welcome"){
                 Welcome(navController = navController, viewModel = viewModel)
                 //Conti(navController = navController, viewModel = viewModel )
-                //DettagliCarta(navController = navController, viewModel = viewModel)
             }
             composable("login"){
                 AskPIN(navController = navController, viewModel = viewModel)
