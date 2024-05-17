@@ -28,13 +28,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             AshbornTheme {
                 val viewModel: AshbornViewModel by viewModels()
-                val navController = rememberNavController()
-           /*     NavHost(navController = navController, startDestination = "login") {
-                    composable("login") { Welcome(navController, viewModel) }
-
-                }*/
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    AppNavigazione(viewModel = viewModel, name ="" , modifier =Modifier )
+                    AppNavigazione(viewModel = viewModel, name ="" , modifier = Modifier )
                 }
 
             }
@@ -47,8 +42,6 @@ class MainActivity : ComponentActivity() {
 fun AshbornPreview() {
     AshbornTheme {
         val viewModel: AshbornViewModel = AshbornViewModel()
-        val navController = rememberNavController()
-
         AppNavigazione(viewModel = viewModel, name = "", modifier = Modifier)
     }
 }

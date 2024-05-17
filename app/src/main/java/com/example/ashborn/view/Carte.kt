@@ -2,6 +2,7 @@ package com.example.ashborn.view
 
 import android.util.Log
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,34 +42,11 @@ import androidx.navigation.compose.rememberNavController
 import com.example.ashborn.ui.theme.AshbornTheme
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.viewModel.AshbornViewModel
+import androidx.compose.material3.Surface
+
 @Composable
 fun RigaMagnetica(modifier: Modifier = Modifier){
-   /* Card(
-        modifier = Modifier
-            //.size(200.dp, 50.dp)
-            .background(Color.White).fillMaxWidth()
-    ) {*/
-
-       // Canvas(modifier = Modifier.size(363.dp,70.dp)) {
-
-    Canvas(modifier = Modifier.height(70.dp).fillMaxWidth()) {
-            val stripeWidth = size.width
-            val stripeHeight = size.height
-            val stripeStartX = 0f
-            val stripeEndX = size.width
-
-           drawPath(
-               path = Path().apply {
-                   moveTo(stripeStartX, stripeHeight / 2)
-                   moveTo(stripeStartX, stripeHeight / 2)
-                   lineTo(stripeEndX,stripeHeight /2) // * /2
-                   lineTo(stripeEndX,stripeHeight /2)
-               },
-               color = Color.Black,
-               style = Stroke(width = 30.dp.toPx(), cap = StrokeCap.Square)
-           )
-        //}
-    }
+    Surface(modifier = Modifier.height(60.dp).fillMaxWidth().background(Color.Black), color=Color.Black, content = { Text("") })
 }
 @Composable
 fun FronteCarta() {
@@ -80,7 +58,7 @@ fun FronteCarta() {
     var isFront by remember { mutableStateOf(true) }
   Card {
       Column(
-          modifier =  Modifier.padding(16.dp),
+          modifier =  Modifier.padding(0.dp,16.dp),
         //  verticalArrangement = Arrangement.Center,
           horizontalAlignment = Alignment.CenterHorizontally
       ) {
