@@ -1,5 +1,7 @@
 package com.example.ashborn.view
 
+import android.icu.util.Currency
+import android.icu.util.CurrencyAmount
 import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -43,6 +45,10 @@ import com.example.ashborn.ui.theme.AshbornTheme
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.viewModel.AshbornViewModel
 import androidx.compose.material3.Surface
+import com.example.ashborn.data.Operation
+import com.example.ashborn.data.TransactionType
+import com.example.ashborn.ui.theme.SmallPadding
+import java.time.LocalDateTime
 
 @Composable
 fun RigaMagnetica(modifier: Modifier = Modifier){
@@ -104,7 +110,40 @@ fun Carte(navController: NavHostController, viewModel: AshbornViewModel) {
     ) {
         FronteCarta()
         Spacer(modifier = Modifier.height(16.dp))
-       // DisegnaOperazioni()
+        Row {
+            Column (modifier = Modifier.padding(SmallPadding)){
+                val voci: ArrayList<Operation> = arrayListOf(
+                    Operation(
+                        1,
+                        "1",
+                        LocalDateTime.now(),
+                        LocalDateTime.now(),
+                        "Pagamento Bolletta",
+                        CurrencyAmount(167.00, Currency.getInstance("EUR")),
+                        TransactionType.WITHDRAWAL
+                    ),
+                    Operation(
+                        1,
+                        "1",
+                        LocalDateTime.now(),
+                        LocalDateTime.now(),
+                        "Pagamento Bolletta",
+                        CurrencyAmount(92.00, Currency.getInstance("EUR")),
+                        TransactionType.WITHDRAWAL
+                    ),
+                    Operation(
+                        1,
+                        "1",
+                        LocalDateTime.now(),
+                        LocalDateTime.now(),
+                        "Pagamento Bolletta",
+                        CurrencyAmount(147.00, Currency.getInstance("EUR")),
+                        TransactionType.WITHDRAWAL
+                    ),
+                )
+                ListaOperazioniFatte(navController,voci = voci)
+            }
+        }
     }
 }
 

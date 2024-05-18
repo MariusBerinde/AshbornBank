@@ -1,5 +1,7 @@
 package com.example.ashborn.viewModel
 
+import android.icu.util.Currency
+import android.icu.util.CurrencyAmount
 import android.nfc.Tag
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -7,6 +9,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.example.ashborn.data.Operation
+import com.example.ashborn.data.TransactionType
+import java.time.LocalDateTime
 
 class AshbornViewModel(): ViewModel() {
     val IBAN: String = "IT1234567890123456789012345"
@@ -36,6 +41,35 @@ class AshbornViewModel(): ViewModel() {
 
     var dataNascita by  mutableStateOf("")
         private set
+    var arrayOperazioni:ArrayList<Operation> = arrayListOf(
+        Operation(
+            1,
+            "1",
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            "Pagamento Bolletta",
+            CurrencyAmount(167.00, Currency.getInstance("EUR")),
+            TransactionType.WITHDRAWAL
+        ),
+        Operation(
+            1,
+            "1",
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            "Pagamento Bolletta",
+            CurrencyAmount(92.00, Currency.getInstance("EUR")),
+            TransactionType.WITHDRAWAL
+        ),
+        Operation(
+            1,
+            "1",
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            "Pagamento Bolletta",
+            CurrencyAmount(147.00, Currency.getInstance("EUR")),
+            TransactionType.WITHDRAWAL
+        ),
+    )
 
     fun setPinX(pin: String) {
         this.pin = pin

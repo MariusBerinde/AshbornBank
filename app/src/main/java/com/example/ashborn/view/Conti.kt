@@ -1,9 +1,9 @@
 package com.example.ashborn.view
 
-import android.graphics.drawable.Icon
 import android.icu.util.Currency
 import android.icu.util.CurrencyAmount
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,25 +27,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.ashborn.data.Operation
 import com.example.ashborn.data.TransactionType
 import com.example.ashborn.ui.theme.AshbornTheme
-import com.example.ashborn.ui.theme.LargePadding
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.viewModel.AshbornViewModel
-import org.w3c.dom.Text
 import java.time.LocalDateTime
 import androidx.compose.material3.Card as Card
 
 @Composable
-fun Conti(viewModel: AshbornViewModel) {
-    Text(text = "1")
+fun Conti(navController: NavHostController, viewModel: AshbornViewModel) {
     Column (modifier = Modifier){
         Row (modifier = Modifier){
             Box(modifier = Modifier.padding(MediumPadding)) {
@@ -110,7 +107,7 @@ fun Conti(viewModel: AshbornViewModel) {
                         TransactionType.WITHDRAWAL
                     ),
                 )
-                ListaOperazioniFatte(voci = voci)
+                ListaOperazioniFatte(navController,voci = voci)
             }
         }
 
@@ -119,12 +116,14 @@ fun Conti(viewModel: AshbornViewModel) {
 }
 
 @Composable
-fun ListaOperazioniFatte(voci: ArrayList<Operation>) {
-    Column(modifier = Modifier
-        .padding(SmallPadding)
-        .border(1.dp, Color.Black, shape = RoundedCornerShape(9.dp))
-        .fillMaxWidth()
-        .height(450.dp)) {
+fun ListaOperazioniFatte(navController: NavHostController,voci: ArrayList<Operation>,) {
+    Column(modifier = Modifier.run {
+        padding(SmallPadding)
+            .border(1.dp, Color.Black, shape = RoundedCornerShape(9.dp))
+            .fillMaxWidth()
+            .height(450.dp)
+    }
+    ) {
         Row (modifier = Modifier.padding(SmallPadding)){
             Button(onClick = { /*TODO*/ }) {
                 Text(text = "Data")
@@ -149,6 +148,10 @@ fun ListaOperazioniFatte(voci: ArrayList<Operation>) {
             ){
                 Row(modifier = Modifier
                     .fillMaxSize()
+                    .clickable {
+                        navController.navigate(
+                            "dettagli-operazione")
+                    }
                 ) {
                     val modifier = Modifier.padding(16.dp,18.dp, 2.dp, 4.dp)
                     Text(
@@ -186,9 +189,8 @@ fun ContiPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Conti(viewModel = viewModel)
+            Conti(navController,viewModel = viewModel)
         }
     }
 }
-
 
