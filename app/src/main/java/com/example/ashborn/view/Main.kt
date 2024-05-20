@@ -1,8 +1,7 @@
 package com.example.ashborn.view
 
 import ErroreGenerico
-import android.icu.util.Currency
-import android.icu.util.CurrencyAmount
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -24,7 +23,6 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,7 +32,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -49,13 +46,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.ashborn.data.Operation
-import com.example.ashborn.data.TransactionType
 import com.example.ashborn.ui.theme.AshbornTheme
-import com.example.ashborn.ui.theme.SmallPadding
-import com.example.ashborn.ui.theme.SmallVerticalSpacing
 import com.example.ashborn.viewModel.AshbornViewModel
-import java.time.LocalDateTime
 
 @Composable
 fun Pagine(navController: NavHostController, viewModel: AshbornViewModel) {
@@ -113,15 +105,10 @@ fun Altro() {
 }
 
 @Composable
-fun DettagliOperazione(navController: NavHostController, viewModel: AshbornViewModel){ //TODO: inserisci parametro operazion o vedere come passargli i dettagli
-    var op=Operation( 1,
-        "1",
-        LocalDateTime.now(),
-        LocalDateTime.now(),
-        "Pagamento Bolletta",
-        CurrencyAmount(92.00, Currency.getInstance("EUR")),
-        TransactionType.WITHDRAWAL)
-
+fun DettagliOperazione(index_operation: Long,navController: NavHostController, viewModel: AshbornViewModel){ //TODO: inserisci parametro operazion o vedere come passargli i dettagli
+    var op=viewModel.arrayOperazioni.find { e->e.id==index_operation}
+    Log.i("Dettagli operazione","Oggetto $index_operation")
+Log.i("Dettagli operazione","Oggetto $op")
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -136,7 +123,7 @@ fun DettagliOperazione(navController: NavHostController, viewModel: AshbornViewM
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = {}) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
+                Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.Magenta)
             }
             Spacer(modifier = Modifier.width(8.dp))
             Text(text = "Dettagli Operazione", color = Color.White, fontSize = 20.sp)
@@ -168,10 +155,10 @@ fun DettagliOperazione(navController: NavHostController, viewModel: AshbornViewM
                             .padding(8.dp)
                             .background(Color.LightGray) // Optional: background color
                     ) {
-                        Text(text = "Tipo di Operazione: ${op.operationType}", fontSize = 20.sp)
+                        Text(text = "Tipo di Operazione: ${op!!.operationType}", fontSize = 20.sp)
                     }
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "Ammontare: ${op.amount}", fontSize = 24.sp)
+                    Text(text = "Ammontare: ${op!!.amount}", fontSize = 24.sp)
                 }
             }
 
@@ -184,8 +171,8 @@ fun DettagliOperazione(navController: NavHostController, viewModel: AshbornViewM
                     .padding(16.dp)
             ) {
                 Column {
-                    Text(text = "Data Operazione: ${op.dateO}", fontSize = 18.sp, modifier = Modifier.padding(bottom = 8.dp))
-                    Text(text = "Descrizione: ${op.description}", fontSize = 18.sp, modifier = Modifier.padding(bottom = 16.dp))
+                    Text(text = "Data Operazione: ${op!!.dateO}", fontSize = 18.sp, modifier = Modifier.padding(bottom = 8.dp))
+                    Text(text = "Descrizione: ${op!!.description}", fontSize = 18.sp, modifier = Modifier.padding(bottom = 16.dp))
 
                     Row(
                         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -219,7 +206,7 @@ fun DettagliPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            DettagliOperazione(navController,viewModel = viewModel)
+            DettagliOperazione(0,navController,viewModel = viewModel)
         }
     }
 }

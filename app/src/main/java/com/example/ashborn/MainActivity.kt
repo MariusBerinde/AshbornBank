@@ -10,10 +10,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.ashborn.ui.theme.AshbornTheme
 import com.example.ashborn.view.AskPIN
 import com.example.ashborn.view.DettagliOperazione
@@ -63,8 +65,15 @@ fun AppNavigazione(viewModel: AshbornViewModel, name:String, modifier: Modifier)
             composable("primo-login"){
                 Registrazione(navController = navController, viewModel = viewModel )
             }
-            composable("dettagli-operazione"){
-               DettagliOperazione(navController = navController, viewModel = viewModel )
+            composable("dettagli-operazione/{index_op}",
+                arguments = listOf(
+
+                    navArgument("index_op"){ type = NavType.LongType}
+                )
+                ){
+               argomenti-> DettagliOperazione(
+               index_operation = argomenti.arguments!!.getLong("index_op"),
+                navController = navController, viewModel = viewModel )
             }
             /*
             composable("primoLogin"){

@@ -112,35 +112,7 @@ fun Carte(navController: NavHostController, viewModel: AshbornViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
         Row {
             Column (modifier = Modifier.padding(SmallPadding)){
-                val voci: ArrayList<Operation> = arrayListOf(
-                    Operation(
-                        1,
-                        "1",
-                        LocalDateTime.now(),
-                        LocalDateTime.now(),
-                        "Pagamento Bolletta",
-                        CurrencyAmount(167.00, Currency.getInstance("EUR")),
-                        TransactionType.WITHDRAWAL
-                    ),
-                    Operation(
-                        1,
-                        "1",
-                        LocalDateTime.now(),
-                        LocalDateTime.now(),
-                        "Pagamento Bolletta",
-                        CurrencyAmount(92.00, Currency.getInstance("EUR")),
-                        TransactionType.WITHDRAWAL
-                    ),
-                    Operation(
-                        1,
-                        "1",
-                        LocalDateTime.now(),
-                        LocalDateTime.now(),
-                        "Pagamento Bolletta",
-                        CurrencyAmount(147.00, Currency.getInstance("EUR")),
-                        TransactionType.WITHDRAWAL
-                    ),
-                )
+                val voci: ArrayList<Operation> = viewModel.arrayOperazioni
                 ListaOperazioniFatte(navController,voci = voci)
             }
         }

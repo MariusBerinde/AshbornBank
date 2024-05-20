@@ -2,6 +2,7 @@ package com.example.ashborn.view
 
 import android.icu.util.Currency
 import android.icu.util.CurrencyAmount
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -79,34 +80,7 @@ fun Conti(navController: NavHostController, viewModel: AshbornViewModel) {
         Spacer(modifier = Modifier.padding(SmallPadding))
         Row {
             Column (modifier = Modifier.padding(SmallPadding)){
-                val voci: ArrayList<Operation> = arrayListOf(
-                    Operation(
-                        1,
-                        "1",
-                        LocalDateTime.now(),
-                        LocalDateTime.now(),
-                        "Pagamento Bolletta",
-                        CurrencyAmount(167.00, Currency.getInstance("EUR")),
-                        TransactionType.WITHDRAWAL
-                    ),
-                    Operation(
-                        1,
-                        "1",
-                        LocalDateTime.now(),
-                        LocalDateTime.now(),
-                        "Pagamento Bolletta",
-                        CurrencyAmount(92.00, Currency.getInstance("EUR")),
-                        TransactionType.WITHDRAWAL
-                    ),Operation(
-                        1,
-                        "1",
-                        LocalDateTime.now(),
-                        LocalDateTime.now(),
-                        "Pagamento Bolletta",
-                        CurrencyAmount(147.00, Currency.getInstance("EUR")),
-                        TransactionType.WITHDRAWAL
-                    ),
-                )
+                val voci: ArrayList<Operation> = viewModel.arrayOperazioni
                 ListaOperazioniFatte(navController,voci = voci)
             }
         }
@@ -149,9 +123,9 @@ fun ListaOperazioniFatte(navController: NavHostController,voci: ArrayList<Operat
                 Row(modifier = Modifier
                     .fillMaxSize()
                     .clickable {
-                        navController.navigate(
-                            "dettagli-operazione")
-                    }
+                        Log.i("Liste_fatte","${i.id}")
+                        navController.navigate("dettagli-operazione/"+i.id)
+                                }
                 ) {
                     val modifier = Modifier.padding(16.dp,18.dp, 2.dp, 4.dp)
                     Text(

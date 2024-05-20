@@ -43,7 +43,7 @@ class AshbornViewModel(): ViewModel() {
         private set
     var arrayOperazioni:ArrayList<Operation> = arrayListOf(
         Operation(
-            1,
+            0,
             "1",
             LocalDateTime.now(),
             LocalDateTime.now(),
@@ -61,7 +61,7 @@ class AshbornViewModel(): ViewModel() {
             TransactionType.WITHDRAWAL
         ),
         Operation(
-            1,
+            3,
             "1",
             LocalDateTime.now(),
             LocalDateTime.now(),
