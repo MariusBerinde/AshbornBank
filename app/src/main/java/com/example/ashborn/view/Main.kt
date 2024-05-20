@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -122,11 +123,17 @@ Log.i("Dettagli operazione","Oggetto $op")
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = {}) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.Magenta)
+            IconButton(onClick = {
+                navController.popBackStack()
+            }) {
+                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
             }
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text = "Dettagli Operazione", color = Color.White, fontSize = 20.sp)
+        }
+        Row(
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
+
+            Text(text = "Dettagli Operazione", fontSize = 30.sp, fontWeight = FontWeight.Bold)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -171,7 +178,7 @@ Log.i("Dettagli operazione","Oggetto $op")
                     .padding(16.dp)
             ) {
                 Column {
-                    Text(text = "Data Operazione: ${op!!.dateO}", fontSize = 18.sp, modifier = Modifier.padding(bottom = 8.dp))
+                    Text(text = "Data Operazione: ${op!!.dateO.toLocalDate().toString()}", fontSize = 18.sp, modifier = Modifier.padding(bottom = 8.dp))
                     Text(text = "Descrizione: ${op!!.description}", fontSize = 18.sp, modifier = Modifier.padding(bottom = 16.dp))
 
                     Row(

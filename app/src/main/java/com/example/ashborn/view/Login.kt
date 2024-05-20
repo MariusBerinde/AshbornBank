@@ -9,6 +9,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -85,26 +89,34 @@ fun AskPIN(navController: NavHostController, viewModel: AshbornViewModel) {
                 onValueChange = {viewModel.setPinX(it)}
             )
         }
-        Spacer(modifier = Modifier.height(SmallVerticalSpacing))
+        Spacer(modifier = Modifier.height(MediumPadding))
         //Row (modifier = Modifier.align(Alignment.CenterHorizontally)) {
             
 
         for (i in (0 .. 2)) {
-            Row() {
+            Row(
+               // modifier = Modifier.padding(SmallPadding)
+            ) {
                 for (j in (0 .. 2)) {
-                    Button(onClick = {if(viewModel.pin.length <= 8) {viewModel.setPinX(viewModel.pin + (3*i+j).toString())}}) {
+
+                    Spacer(modifier = Modifier.width(SmallVerticalSpacing))
+               //     Spacer(modifier = Modifier.height(MediumPadding))
+                    Button(
+                        modifier = Modifier.size(70.dp,40.dp),
+                        onClick = {if(viewModel.pin.length <= 8) {viewModel.setPinX(viewModel.pin + (3*i+j).toString())}}) {
                         Text(text = (3*i+j+1).toString())
                     }
                 }
             }
 
 
-            if (i % 3 == 0) {
-                Spacer(modifier = Modifier.padding(SmallPadding))
-            }
+            Spacer(modifier = Modifier.padding(SmallPadding))
+
         }
         Row (){
+            Spacer(modifier = Modifier.width(SmallVerticalSpacing))
             Button(
+                modifier = Modifier.size(70.dp,40.dp),
                 onClick = {
                     if(!viewModel.checkPin()) {
                         viewModel.set_StartDest("principale")
@@ -116,11 +128,20 @@ fun AskPIN(navController: NavHostController, viewModel: AshbornViewModel) {
             ) {
                 Text(text = "OK")
             }
-            Button(onClick = {if(viewModel.pin.length <= 8) {viewModel.setPinX(viewModel.pin + "0")}}) {
+
+            Spacer(modifier = Modifier.width(SmallVerticalSpacing))
+            Button(
+                modifier = Modifier.size(70.dp,40.dp),
+                onClick = {if(viewModel.pin.length <= 8) {viewModel.setPinX(viewModel.pin + "0")}}) {
                 Text(text = "0")
             }
-            Button(onClick = {if(viewModel.pin.isNotEmpty()) {viewModel.setPinX(viewModel.pin.dropLast(1))} }) {
-                Text(text = "<xI")
+
+            Spacer(modifier = Modifier.width(SmallVerticalSpacing))
+           Button(
+               modifier = Modifier.size(70.dp,40.dp),
+               onClick = {if(viewModel.pin.isNotEmpty()) {viewModel.setPinX(viewModel.pin.dropLast(1))} }) {
+                //Text(text = "<xI")
+               Icon( Icons.Filled.Clear, contentDescription = "icona cancellazione")
             }
         }
 
@@ -200,7 +221,7 @@ fun Registrazione(navController: NavHostController, viewModel: AshbornViewModel)
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Welcome(navController = navController, viewModel = viewModel)
+            AskPIN(navController = navController, viewModel = viewModel)
         }
     }
 }

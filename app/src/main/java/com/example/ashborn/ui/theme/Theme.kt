@@ -36,7 +36,6 @@ private val LightColorScheme = lightColorScheme(
     onSurface = Color(0xFF1C1B1F),
     */
 )
-
 @Composable
 fun AshbornTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
