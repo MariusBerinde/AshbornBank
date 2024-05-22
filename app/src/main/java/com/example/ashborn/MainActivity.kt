@@ -17,10 +17,15 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.ashborn.ui.theme.AshbornTheme
+import com.example.ashborn.view.Archivio
 import com.example.ashborn.view.AskPIN
+import com.example.ashborn.view.Avvisi
 import com.example.ashborn.view.DettagliOperazione
+import com.example.ashborn.view.Impostazioni
+import com.example.ashborn.view.Logout
 import com.example.ashborn.view.Pagine
 import com.example.ashborn.view.Registrazione
+import com.example.ashborn.view.Sicurezza
 import com.example.ashborn.view.Utente
 import com.example.ashborn.view.Welcome
 import com.example.ashborn.viewModel.AshbornViewModel
@@ -75,6 +80,21 @@ fun AppNavigazione(viewModel: AshbornViewModel, name:String, modifier: Modifier)
                index_operation = argomenti.arguments!!.getLong("index_op"),
                 navController = navController, viewModel = viewModel )
             }
+            composable("avvisi") {
+                Avvisi(navController = navController, viewModel =viewModel )
+            }
+            composable("archivio") {
+                Archivio(navController = navController, viewModel =viewModel )
+            }
+            composable("sicurezza") {
+                Sicurezza(navController = navController, viewModel =viewModel )
+            }
+            composable("impostazioni") {
+                Impostazioni(navController = navController, viewModel =viewModel )
+            }
+            composable("logout") {
+                Logout(navController = navController, viewModel =viewModel )
+            }
             /*
             composable("primoLogin"){
                 PrimoLogin(navController = navController, viewModel = viewModel)
@@ -91,6 +111,7 @@ fun AppNavigazione(viewModel: AshbornViewModel, name:String, modifier: Modifier)
 
 
         }
+
     }
 }
 
