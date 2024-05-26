@@ -46,12 +46,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.ashborn.R
 import com.example.ashborn.data.Operation
 import com.example.ashborn.data.TransactionType
 import com.example.ashborn.data.Voice
@@ -64,8 +66,13 @@ import com.example.ashborn.viewModel.AshbornViewModel
 fun Pagine(navController: NavHostController, viewModel: AshbornViewModel) {
     val tabList: ArrayList<String> = arrayListOf("conti", "carte", "operazioni", "parla con noi", "altro")
     var selectedItem by remember { mutableIntStateOf(0) }
-    val icons: ArrayList<ImageVector> = arrayListOf(Icons.Filled.Home,Icons.Filled.Home,Icons.Filled.Home,Icons.Filled.Home, Icons.Filled.MoreVert)
-    val tabs =
+    val icons: ArrayList<ImageVector>  = arrayListOf<ImageVector>(
+        ImageVector.vectorResource(R.drawable.bank),
+        ImageVector.vectorResource(R.drawable.credit_card_outline),
+        ImageVector.vectorResource(R.drawable.currency_eur),
+        ImageVector.vectorResource(R.drawable.chat_outline),
+        ImageVector.vectorResource(R.drawable.dots_horizontal)
+    )
     Scaffold (
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
@@ -74,7 +81,7 @@ fun Pagine(navController: NavHostController, viewModel: AshbornViewModel) {
                     NavigationBarItem(
                         selected = selectedItem == index,
                         onClick = { selectedItem = index },
-                        icon = { Icon(icons[index], contentDescription= item ) },
+                        icon = { Icon(icons[index], contentDescription = item) },
                         label = { Text(item) }
                     )
                 }
