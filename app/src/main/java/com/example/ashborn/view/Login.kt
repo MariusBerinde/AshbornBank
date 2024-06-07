@@ -33,15 +33,15 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.ashborn.AppNavigazione
 import com.example.ashborn.ui.theme.AshbornTheme
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.ui.theme.SmallVerticalSpacing
 import com.example.ashborn.viewModel.AshbornViewModel
+import androidx.compose.ui.res.stringResource
+import com.example.ashborn.R
 
 @Composable
 fun Welcome(navController: NavHostController, viewModel: AshbornViewModel) {
@@ -51,7 +51,7 @@ fun Welcome(navController: NavHostController, viewModel: AshbornViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text(text = "Ashborn Bank \n Benvenuto " + viewModel.userName, 
+        Text(text = stringResource(id = R.string.app_name)+"\n"+stringResource(id = R.string.welcome)+"\n"+viewModel.userName,
              modifier = Modifier.align(Alignment.CenterHorizontally))
         Spacer(modifier = Modifier.height(SmallVerticalSpacing))
         Button(modifier = Modifier
@@ -67,7 +67,7 @@ fun Welcome(navController: NavHostController, viewModel: AshbornViewModel) {
                }
 
         ) {
-           Text("Entra")
+           Text(stringResource(id = R.string.entra))
         }
     }
 }
@@ -81,7 +81,7 @@ fun AskPIN(navController: NavHostController, viewModel: AshbornViewModel) {
         verticalArrangement = Arrangement.Center,
     ) {
         Row (modifier = Modifier.align(Alignment.CenterHorizontally)) {
-            Text(text = "Inserisci il PIN")
+            Text(stringResource(id = R.string.pin))
         }
         Row (modifier = Modifier.align(Alignment.CenterHorizontally)) {
             OutlinedTextField(

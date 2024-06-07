@@ -1,9 +1,6 @@
 package com.example.ashborn.view
 
-import android.icu.util.Currency
-import android.icu.util.CurrencyAmount
 import android.util.Log
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,9 +28,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -44,12 +38,11 @@ import androidx.navigation.compose.rememberNavController
 import com.example.ashborn.ui.theme.AshbornTheme
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.viewModel.AshbornViewModel
-import androidx.compose.material3.Surface
 import com.example.ashborn.data.Operation
-import com.example.ashborn.data.TransactionType
 import com.example.ashborn.ui.theme.SmallPadding
-import java.time.LocalDateTime
 
+import androidx.compose.ui.res.stringResource
+import com.example.ashborn.R
 @Composable
 fun RigaMagnetica(modifier: Modifier = Modifier){
     Surface(modifier = Modifier.height(60.dp).fillMaxWidth().background(Color.Black), color=Color.Black, content = { Text("") })
@@ -75,9 +68,9 @@ fun FronteCarta() {
                   Text(text = "CVC: $cvc")
 
 
-              Text(text = "Codice utente: $cod_utente")
+              Text(text = stringResource(id = R.string.codice_utente)+ cod_utente)
           }else{
-              Text(text = "Ashborn bank", textAlign = TextAlign.Center, fontWeight = FontWeight.Bold)
+              Text(text = stringResource(id = R.string.app_name), textAlign = TextAlign.Center, fontWeight = FontWeight.Bold)
               Spacer(modifier = Modifier.width(32.dp))
               Icon(Icons.Filled.Star, contentDescription ="Simbolo sim", modifier = Modifier.size(48.dp))
               Text(text = "$nr_carta")
@@ -92,7 +85,7 @@ fun FronteCarta() {
 
           Button(onClick = {
               isFront= !isFront
-          Log.i("Fronte cata","premo pulsante $isFront")
+          Log.i("Fronte carta","premo pulsante $isFront")
           }) {
               Text(text = "Back")
           }
@@ -120,8 +113,9 @@ fun Carte(navController: NavHostController, viewModel: AshbornViewModel) {
 }
 
 
-@Preview(showBackground = true) @Composable
-fun preview() {
+@Preview(showBackground = true)
+@Composable
+fun previewC() {
     val viewModel = AshbornViewModel()
     val navController = rememberNavController()
     AshbornTheme {

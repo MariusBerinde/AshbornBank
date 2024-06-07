@@ -1,3 +1,33 @@
 <resources>
-    <string name="app_name">Ashborn</string>
+    <string name="altro">altro</string>
+    <string name="app_name">Ashborn bank</string>
+    <string name="archivio">archivio</string>
+    <string name="avvisi">avvisi</string>
+    <string name="bonifico">bonifico</string>
+    <string name="carte">carte</string>
+    <string name="conti">conti</string>
+    <string name="conto">conto</string>
+    <string name="data">Data</string>
+    <string name="dataO">Data Operazione</string>
+    <string name="descrizione">descrizione</string>
+    <string name="dettagli">Dettagli</string>
+    <string name="disconosci">disconosci</string>
+    <string name="importo">importo</string>
+    <string name="impostazioni">impostazioni</string>
+    <string name="logout">Logout</string>
+    <string name="operazioni">operazioni</string>
+    <string name="parla">parla con noi</string>
+    <string name="profilo">Il mio profilo</string>
+    <string name="revoca">revoca</string>
+    <string name="saldo">saldo</string>
+    <string name="sicurezza">sicurezza</string>
+    <string name="tipoO">tipoO</string>
+    <string name="codice_utente">codice utente</string>
+    <string name="welcome">Benvenuto</string>
+    <string name="entra">Entra</string>
+    <string name="pin">Inserisci pin</string>
+    <string name="assist">Se hai bisogno di assistenza chiama il nostro numero verde:</string>
+    <string name="assist1">oppure dall\'estero al numero</string>
+    <string name="assist2">I tuoi gestori sono disponibili:\n - Dal Lunedì al Venerdì</string>
+    <string name="assist3"> - Sabato e Domenica </string>
 </resources>

@@ -33,7 +33,7 @@ class AshbornViewModel(): ViewModel() {
     var codCliente by mutableStateOf("")
         private set
 
-    var userName by mutableStateOf("")
+    var userName by mutableStateOf("Mariolone Bubbarello")
         private set // Optional: restrict external modification
 
     var cognome by mutableStateOf("")

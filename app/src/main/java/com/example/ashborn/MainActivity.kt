@@ -20,9 +20,11 @@ import com.example.ashborn.ui.theme.AshbornTheme
 import com.example.ashborn.view.Archivio
 import com.example.ashborn.view.AskPIN
 import com.example.ashborn.view.Avvisi
+import com.example.ashborn.view.Bonifico
 import com.example.ashborn.view.DettagliOperazione
 import com.example.ashborn.view.Impostazioni
 import com.example.ashborn.view.Logout
+import com.example.ashborn.view.Mav
 import com.example.ashborn.view.Pagine
 import com.example.ashborn.view.Registrazione
 import com.example.ashborn.view.Sicurezza
@@ -75,9 +77,9 @@ fun AppNavigazione(viewModel: AshbornViewModel, name:String, modifier: Modifier)
 
                     navArgument("index_op"){ type = NavType.LongType}
                 )
-                ){
-               argomenti-> DettagliOperazione(
-               index_operation = argomenti.arguments!!.getLong("index_op"),
+            ){
+                    argomenti-> DettagliOperazione(
+                index_operation = argomenti.arguments!!.getLong("index_op"),
                 navController = navController, viewModel = viewModel )
             }
             composable("avvisi") {
@@ -95,6 +97,12 @@ fun AppNavigazione(viewModel: AshbornViewModel, name:String, modifier: Modifier)
             composable("logout") {
                 Logout(navController = navController, viewModel =viewModel )
             }
+            composable("bonifico") {
+                Bonifico(navController = navController, viewModel =viewModel )
+            }
+            composable("mav") {
+                Mav(navController = navController, viewModel =viewModel )
+            }
             /*
             composable("primoLogin"){
                 PrimoLogin(navController = navController, viewModel = viewModel)
@@ -108,10 +116,7 @@ fun AppNavigazione(viewModel: AshbornViewModel, name:String, modifier: Modifier)
             composable("conti"){
                 Pagine(navController = navController, viewModel = viewModel )
             }
-
-
         }
-
     }
 }
 

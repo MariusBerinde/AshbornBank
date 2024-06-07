@@ -4,7 +4,6 @@ import ErroreGenerico
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,21 +13,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -54,13 +46,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.ashborn.R
-import com.example.ashborn.data.Operation
-import com.example.ashborn.data.TransactionType
-import com.example.ashborn.data.Voice
 import com.example.ashborn.ui.theme.AshbornTheme
-import com.example.ashborn.ui.theme.MediumPadding
-import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.viewModel.AshbornViewModel
+import androidx.compose.ui.res.stringResource
+
 
 @Composable
 fun Pagine(navController: NavHostController, viewModel: AshbornViewModel) {
@@ -95,7 +84,7 @@ fun Pagine(navController: NavHostController, viewModel: AshbornViewModel) {
             when (selectedItem) {
                 0 -> Conti(navController = navController, viewModel = viewModel)
                 1 -> Carte(navController = navController, viewModel = viewModel)
-                2 -> Operazioni()
+                2 -> Operazioni(navController = navController, viewModel = viewModel)
                 3 -> ErroreGenerico(navController = navController, viewModel =viewModel )
                 4 -> Altro(navController, viewModel)
             }
@@ -107,10 +96,12 @@ fun Pagine(navController: NavHostController, viewModel: AshbornViewModel) {
 
 
 @Composable
-fun Operazioni() {
-
-    Text(text = "3")
+fun Operazioni(navController : NavHostController ,viewModel : AshbornViewModel) {
+    OperazioniDisponibili(navController = navController, viewModel = viewModel)
 }
+
+
+
 @Composable
 fun ParlaConNoi() {
 

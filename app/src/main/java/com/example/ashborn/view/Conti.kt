@@ -1,7 +1,5 @@
 package com.example.ashborn.view
 
-import android.icu.util.Currency
-import android.icu.util.CurrencyAmount
 import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -39,8 +37,9 @@ import com.example.ashborn.ui.theme.AshbornTheme
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.viewModel.AshbornViewModel
-import java.time.LocalDateTime
 import androidx.compose.material3.Card as Card
+import androidx.compose.ui.res.stringResource
+import com.example.ashborn.R
 
 @Composable
 fun Conti(navController: NavHostController, viewModel: AshbornViewModel) {
@@ -49,11 +48,11 @@ fun Conti(navController: NavHostController, viewModel: AshbornViewModel) {
             Box(modifier = Modifier.padding(MediumPadding)) {
                 Card (modifier = Modifier.padding(MediumPadding)) {
                     Row (modifier = Modifier.padding(MediumPadding)){
-                        Text(text = "Conto: " + viewModel.codConto, modifier = Modifier)
+                        Text(text = stringResource(id = R.string.conto)+": " + viewModel.codConto, modifier = Modifier)
                     }
                     Row (modifier = Modifier.padding(MediumPadding)) {
                         Column (modifier = Modifier.align(Alignment.CenterVertically)){
-                            Text(text = "Saldo: " + viewModel.saldo, fontSize = 20.sp)
+                            Text(text = stringResource(id = R.string.saldo)+": " + viewModel.saldo, fontSize = 20.sp)
                         }
                         Spacer(modifier = Modifier.padding(start= 160.dp))
                         Column {
@@ -88,7 +87,7 @@ fun Conti(navController: NavHostController, viewModel: AshbornViewModel) {
     }
 
 }
-
+private data class  TC(val a:Int,val boolean: Boolean){}
 @Composable
 fun ListaOperazioniFatte(navController: NavHostController,voci: ArrayList<Operation>,) {
     Column(modifier = Modifier.run {
@@ -100,18 +99,27 @@ fun ListaOperazioniFatte(navController: NavHostController,voci: ArrayList<Operat
     ) {
         Row (modifier = Modifier.padding(SmallPadding)){
             Button(onClick = { /*TODO*/ }) {
-                Text(text = "Data")
+                Text(text = stringResource(id = R.string.data))
+
                 Icon(Icons.Filled.KeyboardArrowUp, contentDescription = "ordine ascendente")
 
             }
             Button(onClick = { /*TODO*/ }) {
-                Text(text = "Descrizione")
+                Text(text = stringResource(id = R.string.descrizione))
+
             }
             Button(onClick = { /*TODO*/ }) {
-                Text(text = "Importo")
+
+                Text(text = stringResource(id = R.string.importo))
                 Icon(Icons.Filled.KeyboardArrowUp, contentDescription = "ordine ascendente")
             }
         }
+        val t:ArrayList<TC> = arrayListOf(
+            TC(1,true),
+
+            TC(2,true),
+        )
+
         for (i in voci) {
             Card (
                 modifier = Modifier
@@ -123,9 +131,9 @@ fun ListaOperazioniFatte(navController: NavHostController,voci: ArrayList<Operat
                 Row(modifier = Modifier
                     .fillMaxSize()
                     .clickable {
-                        Log.i("Liste_fatte","${i.id}")
-                        navController.navigate("dettagli-operazione/"+i.id)
-                                }
+                        Log.i("Liste_fatte", "${i.id}")
+                        navController.navigate("dettagli-operazione/" + i.id)
+                    }
                 ) {
                     val modifier = Modifier.padding(16.dp,18.dp, 2.dp, 4.dp)
                     Text(
@@ -133,6 +141,7 @@ fun ListaOperazioniFatte(navController: NavHostController,voci: ArrayList<Operat
                         fontSize = 13.sp,
                         modifier = modifier
                     )
+
                     //Spacer(modifier = Modifier.padding(SmallPadding))
                     Text(
                         text = i.description,
