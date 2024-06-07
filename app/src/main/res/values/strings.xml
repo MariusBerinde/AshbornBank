@@ -12,7 +12,7 @@
     <string name="descrizione">descrizione</string>
     <string name="dettagli">Dettagli</string>
     <string name="disconosci">disconosci</string>
-    <string name="importo">importo</string>
+    <string name="importo">Importo</string>
     <string name="impostazioni">impostazioni</string>
     <string name="logout">Logout</string>
     <string name="operazioni">operazioni</string>
@@ -30,4 +30,11 @@
     <string name="assist1">oppure dall\'estero al numero</string>
     <string name="assist2">I tuoi gestori sono disponibili:\n - Dal Lunedì al Venerdì</string>
     <string name="assist3"> - Sabato e Domenica </string>
+    <string name="continua">Continua</string>
+    <string name="ordinante">Ordinante</string>
+    <string name="beneficiario">Beneficiario</string>
+    <string name="iban">IBAN</string>
+    <string name="causale">Causale</string>
+    <string name="dataAccredito">Data di accredito</string>
+    <string name="scegliData">Scegli data</string>
 </resources>

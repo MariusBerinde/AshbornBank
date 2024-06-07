@@ -27,10 +27,12 @@ import com.example.ashborn.view.Logout
 import com.example.ashborn.view.Mav
 import com.example.ashborn.view.Pagine
 import com.example.ashborn.view.Registrazione
+import com.example.ashborn.view.RiepilogoBonifico
 import com.example.ashborn.view.Sicurezza
 import com.example.ashborn.view.Utente
 import com.example.ashborn.view.Welcome
 import com.example.ashborn.viewModel.AshbornViewModel
+import com.example.ashborn.viewModel.OperationViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,8 +40,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             AshbornTheme {
                 val viewModel: AshbornViewModel by viewModels()
+                val operationViewModel: OperationViewModel by viewModels()
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    AppNavigazione(viewModel = viewModel, name ="" , modifier = Modifier )
+                    AppNavigazione(viewModel = viewModel,operationViewModel = operationViewModel, name ="" , modifier = Modifier )
                 }
 
             }
@@ -52,12 +55,13 @@ class MainActivity : ComponentActivity() {
 fun AshbornPreview() {
     AshbornTheme {
         val viewModel: AshbornViewModel = AshbornViewModel()
-        AppNavigazione(viewModel = viewModel, name = "", modifier = Modifier)
+        val operationViewModel: OperationViewModel = OperationViewModel()
+        AppNavigazione(viewModel = viewModel, name = "", operationViewModel = operationViewModel, modifier = Modifier)
     }
 }
 
 @Composable
-fun AppNavigazione(viewModel: AshbornViewModel, name:String, modifier: Modifier){
+fun AppNavigazione(viewModel: AshbornViewModel, operationViewModel: OperationViewModel , name:String, modifier: Modifier){
     val navController = rememberNavController()
     val startDest = viewModel.startDest;
     NavHost(navController=navController, startDestination = startDest){
@@ -83,25 +87,29 @@ fun AppNavigazione(viewModel: AshbornViewModel, name:String, modifier: Modifier)
                 navController = navController, viewModel = viewModel )
             }
             composable("avvisi") {
-                Avvisi(navController = navController, viewModel =viewModel )
+                Avvisi(navController = navController, viewModel = viewModel )
             }
             composable("archivio") {
-                Archivio(navController = navController, viewModel =viewModel )
+                Archivio(navController = navController, viewModel = viewModel )
             }
             composable("sicurezza") {
-                Sicurezza(navController = navController, viewModel =viewModel )
+                Sicurezza(navController = navController, viewModel = viewModel )
             }
             composable("impostazioni") {
                 Impostazioni(navController = navController, viewModel =viewModel )
             }
             composable("logout") {
-                Logout(navController = navController, viewModel =viewModel )
+                Logout(navController = navController, viewModel = viewModel )
             }
             composable("bonifico") {
-                Bonifico(navController = navController, viewModel =viewModel )
+                Bonifico(navController = navController, viewModel = viewModel )
             }
             composable("mav") {
-                Mav(navController = navController, viewModel =viewModel )
+                Mav(navController = navController, viewModel = viewModel )
+            }
+
+            composable("riepilogo") {
+                RiepilogoBonifico(navController = navController, viewModel = operationViewModel )
             }
             /*
             composable("primoLogin"){
