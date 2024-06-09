@@ -152,11 +152,11 @@ fun Mav(navController: NavHostController, viewModel: AshbornViewModel){
 }
 
 fun gestisciErrori() {
-    TODO("Not yet implemented")
+  //  TODO("Not yet implemented")
 }
 
 @Composable
-fun Bonifico(navController: NavHostController, viewModel: AshbornViewModel){
+fun Bonifico(navController: NavHostController, viewModel: AshbornViewModel,viewModelOp: OperationViewModel){
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -250,7 +250,15 @@ fun Bonifico(navController: NavHostController, viewModel: AshbornViewModel){
             }
             Row () {
                 Button(
-                    onClick = { if(bonificoValido(beneficiario, iban, importo, causale, dataAccredito)) {navController.navigate("riepilogo") } else { gestisciErrori() } },
+                    onClick = { if(bonificoValido(beneficiario, iban, importo, causale, dataAccredito)) {
+                        viewModelOp.setBeneficiarioX(beneficiario)
+                        viewModelOp.setIbanX(iban)
+                        viewModelOp.setImportoX(importo)
+                       viewModelOp.setCausaleX(causale)
+                        viewModelOp.setDataAccreditoX(dataAccredito)
+                        navController.navigate("riepilogo") } else { gestisciErrori()
+                        }
+                              },
                     modifier = modifier
                 ) {
                     Text(text = stringResource(id = R.string.continua))
@@ -317,6 +325,8 @@ fun importoValido(importo: String): String {
 @Composable
 fun previewO() {
     val viewModel = AshbornViewModel()
+    val viewModelOp = OperationViewModel()
+
     val navController = rememberNavController()
     AshbornTheme {
 
@@ -325,7 +335,7 @@ fun previewO() {
             color = MaterialTheme.colorScheme.background
         ) {
             //OperazioniDisponibili (navController = navController, viewModel =viewModel )
-            Bonifico(navController = navController, viewModel = viewModel)
+            Bonifico(navController = navController, viewModel = viewModel,viewModelOp = viewModelOp)
         }
     }
 }

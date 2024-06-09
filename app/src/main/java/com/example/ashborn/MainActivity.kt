@@ -102,7 +102,7 @@ fun AppNavigazione(viewModel: AshbornViewModel, operationViewModel: OperationVie
                 Logout(navController = navController, viewModel = viewModel )
             }
             composable("bonifico") {
-                Bonifico(navController = navController, viewModel = viewModel )
+                Bonifico(navController = navController, viewModel = viewModel, viewModelOp = operationViewModel  )
             }
             composable("mav") {
                 Mav(navController = navController, viewModel = viewModel )
@@ -111,10 +111,7 @@ fun AppNavigazione(viewModel: AshbornViewModel, operationViewModel: OperationVie
             composable("riepilogo") {
                 RiepilogoBonifico(navController = navController, viewModel = operationViewModel )
             }
-            /*
-            composable("primoLogin"){
-                PrimoLogin(navController = navController, viewModel = viewModel)
-            }*/
+
         }
         navigation(startDestination = "utente",route="principale"){
             composable("utente"){

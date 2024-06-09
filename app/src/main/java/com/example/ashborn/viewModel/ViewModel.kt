@@ -108,4 +108,5 @@ class AshbornViewModel(): ViewModel() {
     fun incrementWrongAttempts() {
         this.wrongAttempts++
     }
+
 }
