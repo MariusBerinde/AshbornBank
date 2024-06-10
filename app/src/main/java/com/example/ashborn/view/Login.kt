@@ -201,8 +201,8 @@ fun Registrazione(navController: NavHostController, viewModel: AshbornViewModel)
         Spacer(modifier = Modifier.height(SmallPadding))
         Button(onClick = { /*TODO*/
             viewModel.setUserNameX(nome_attuale)
-            viewModel.setDataNascita(dataN)
-            viewModel.setCognome(cognome_attuale)
+            viewModel.setDataNascitaX(dataN)
+            viewModel.setCognomeX(cognome_attuale)
             viewModel.setCodcliente(cod_attuale)
         }) {
             Text(text = "Conferma")

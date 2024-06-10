@@ -3,6 +3,7 @@ package com.example.ashborn.viewModel
 import android.icu.util.Currency
 import android.icu.util.CurrencyAmount
 import android.util.Log
+import androidx.collection.emptyLongSet
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -11,8 +12,9 @@ import androidx.lifecycle.ViewModel
 import com.example.ashborn.data.Operation
 import com.example.ashborn.data.TransactionType
 import java.time.LocalDateTime
+import java.util.ArrayList
 
-class AshbornViewModel: ViewModel() {
+open class AshbornViewModel: ViewModel() {
     val iban: String = "IT1234567890123456789012345"
     var saldo: Double = 0.0
         private set
@@ -40,35 +42,37 @@ class AshbornViewModel: ViewModel() {
 
     var dataNascita by  mutableStateOf("")
         private set
-    var arrayOperazioni:ArrayList<Operation> = arrayListOf(
-        Operation(
-            0,
-            "1",
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            "Pagamento Bolletta",
-            CurrencyAmount(167.00, Currency.getInstance("EUR")),
-            TransactionType.WITHDRAWAL
-        ),
-        Operation(
-            1,
-            "1",
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            "Pagamento Bolletta",
-            CurrencyAmount(92.00, Currency.getInstance("EUR")),
-            TransactionType.WITHDRAWAL
-        ),
-        Operation(
-            3,
-            "1",
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            "Pagamento Bolletta",
-            CurrencyAmount(147.00, Currency.getInstance("EUR")),
-            TransactionType.WITHDRAWAL
-        ),
-    )
+    var arrayOperazioni: ArrayList<Operation>
+        get() = arrayListOf(
+            Operation(
+                0,
+                "1",
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                "Pagamento Bolletta",
+                CurrencyAmount(167.00, Currency.getInstance("EUR")),
+                TransactionType.WITHDRAWAL
+            ),
+            Operation(
+                1,
+                "1",
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                "Pagamento Bolletta",
+                CurrencyAmount(92.00, Currency.getInstance("EUR")),
+                TransactionType.WITHDRAWAL
+            ),
+            Operation(
+                3,
+                "1",
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                "Pagamento Bolletta",
+                CurrencyAmount(147.00, Currency.getInstance("EUR")),
+                TransactionType.WITHDRAWAL
+            ),
+        )
+        set(value) = TODO()
 
     fun setPinX(pin: String) {
         this.pin = pin
@@ -79,12 +83,12 @@ class AshbornViewModel: ViewModel() {
         this.userName = userName
     }
 
-    fun setCognome(cognome:String){
+    fun setCognomeX(cognome:String){
         this.cognome=cognome
         Log.i(tag,"valore cognome $cognome")
     }
 
-    fun setDataNascita(dataNascita:String){
+    fun setDataNascitaX(dataNascita:String){
         Log.i(tag,"valore data di Nascita $dataNascita")
         this.dataNascita= dataNascita
     }
@@ -108,4 +112,22 @@ class AshbornViewModel: ViewModel() {
         this.wrongAttempts++
     }
 
+    fun formatoDataNascitaValida(dataNascita: String): Boolean{
+        var ris:Boolean = true
+        if (dataNascita.contains("_"))
+            ris = false
+
+        return ris
+    }
+
+    fun formatoCodiceCliente(codCliente: String): Boolean {
+        return true
+    }
+
+    fun formatoNomeValido(nome: String): Boolean {
+        return true
+    }
+    fun formatoCognomeValido(cognome: String): Boolean {
+        return formatoNomeValido(cognome)
+    }
 }
