@@ -2,7 +2,6 @@ package com.example.ashborn.viewModel
 
 import android.icu.util.Currency
 import android.icu.util.CurrencyAmount
-import android.nfc.Tag
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -13,14 +12,14 @@ import com.example.ashborn.data.Operation
 import com.example.ashborn.data.TransactionType
 import java.time.LocalDateTime
 
-class AshbornViewModel(): ViewModel() {
-    val IBAN: String = "IT1234567890123456789012345"
+class AshbornViewModel: ViewModel() {
+    val iban: String = "IT1234567890123456789012345"
     var saldo: Double = 0.0
         private set
     var codConto: String = "0987654321"
         private set
 
-    val tag = AshbornViewModel::class.java.simpleName
+    val tag: String = AshbornViewModel::class.java.simpleName
     var fistLogin: Boolean = false
     var startDest: String = "init"
         private set
@@ -80,22 +79,22 @@ class AshbornViewModel(): ViewModel() {
         this.userName = userName
     }
 
-    fun set_Cognome(cognome:String){
+    fun setCognome(cognome:String){
         this.cognome=cognome
         Log.i(tag,"valore cognome $cognome")
     }
 
-    fun set_DataNascita(dataNascita:String){
+    fun setDataNascita(dataNascita:String){
         Log.i(tag,"valore data di Nascita $dataNascita")
         this.dataNascita= dataNascita
     }
 
-    fun set_CodCliente(codCliente:String ){
+    fun setCodcliente(codCliente:String ){
         Log.i(tag,"valore codice cliente $codCliente")
         this.codCliente=codCliente
     }
 
-    fun set_StartDest(startDest: String){
+    fun setStartdest(startDest: String){
         if (startDest == "init" || startDest == "principale") {
             this.startDest= startDest
         }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -40,6 +41,7 @@ import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.viewModel.AshbornViewModel
 import androidx.compose.ui.res.stringResource
 import com.example.ashborn.R
+import com.example.ashborn.ui.theme.LargePadding
 
 @Composable
 fun Altro(navController: NavHostController, viewModel: AshbornViewModel) {
@@ -134,13 +136,15 @@ fun ListaAzioni(navController: NavHostController, voci: ArrayList<Operation>,) {
 
 @Composable
 fun Avvisi(navController: NavHostController, viewModel: AshbornViewModel) {
-Text(text = stringResource(id = R.string.avvisi))
+    Text(text = stringResource(id = R.string.avvisi))
+
 }
 
 @Composable
 fun Archivio(navController: NavHostController, viewModel: AshbornViewModel) {
-
     Text(text = stringResource(id = R.string.archivio))
+    Spacer(modifier = Modifier.padding(LargePadding))
+
 }
 @Composable
 fun Sicurezza(navController: NavHostController, viewModel: AshbornViewModel) {
@@ -154,6 +158,7 @@ fun Impostazioni(navController: NavHostController, viewModel: AshbornViewModel) 
 @Composable
 fun Logout(navController: NavHostController, viewModel: AshbornViewModel) {
     Text(text = stringResource(id = R.string.logout))
+
 }
 
 @Preview(showBackground = true)

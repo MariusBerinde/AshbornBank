@@ -63,7 +63,7 @@ fun Conti(navController: NavHostController, viewModel: AshbornViewModel) {
                     }
                     Row (modifier = Modifier.padding(MediumPadding)) {
                         Column (modifier = Modifier.align(Alignment.CenterVertically)){
-                            Text(text = "IBAN: " + viewModel.IBAN, fontSize = 12.sp, modifier = Modifier)
+                            Text(text = "IBAN: " + viewModel.iban, fontSize = 12.sp, modifier = Modifier)
                         }
                         Spacer(modifier = Modifier.padding(start= 20.dp))
                         Column {

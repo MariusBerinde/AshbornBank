@@ -1,9 +1,9 @@
 <resources>
     <string name="altro">altro</string>
     <string name="app_name">Ashborn bank</string>
-    <string name="archivio">archivio</string>
-    <string name="avvisi">avvisi</string>
-    <string name="bonifico">bonifico</string>
+    <string name="archivio">Archivio</string>
+    <string name="avvisi">Avvisi</string>
+    <string name="bonifico">Bonifico</string>
     <string name="carte">carte</string>
     <string name="conti">conti</string>
     <string name="conto">conto</string>
@@ -20,7 +20,7 @@
     <string name="profilo">Il mio profilo</string>
     <string name="revoca">revoca</string>
     <string name="saldo">saldo</string>
-    <string name="sicurezza">sicurezza</string>
+    <string name="sicurezza">Sicurezza</string>
     <string name="tipoO">tipoO</string>
     <string name="codice_utente">codice utente</string>
     <string name="welcome">Benvenuto</string>
@@ -37,4 +37,9 @@
     <string name="causale">Causale</string>
     <string name="dataAccredito">Data di accredito</string>
     <string name="scegliData">Scegli data</string>
+    <string name="conferma_operazione">Operazione effettuata con successo</string>
+    <string name="altro_bonifico">Fai un altro bonifico</string>
+    <string name="chiudi">Chiudi e torna al conto</string>
+    <string name="riepilogo_bonifico">Riepilogo bonifico</string>
+    <string name="dettagli_operazione">Dettagli operazione</string>
 </resources>

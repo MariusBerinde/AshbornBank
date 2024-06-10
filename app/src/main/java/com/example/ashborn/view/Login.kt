@@ -119,7 +119,7 @@ fun AskPIN(navController: NavHostController, viewModel: AshbornViewModel) {
                 modifier = Modifier.size(70.dp,40.dp),
                 onClick = {
                     if(!viewModel.checkPin()) {
-                        viewModel.set_StartDest("principale")
+                        viewModel.setStartdest("principale")
                         navController.navigate("conti") {popUpTo("principale")}
                     } else {
                         viewModel.incrementWrongAttempts()
@@ -201,9 +201,9 @@ fun Registrazione(navController: NavHostController, viewModel: AshbornViewModel)
         Spacer(modifier = Modifier.height(SmallPadding))
         Button(onClick = { /*TODO*/
             viewModel.setUserNameX(nome_attuale)
-            viewModel.set_DataNascita(dataN)
-            viewModel.set_Cognome(cognome_attuale)
-            viewModel.set_CodCliente(cod_attuale)
+            viewModel.setDataNascita(dataN)
+            viewModel.setCognome(cognome_attuale)
+            viewModel.setCodcliente(cod_attuale)
         }) {
             Text(text = "Conferma")
         }

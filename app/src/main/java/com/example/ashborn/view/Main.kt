@@ -1,6 +1,6 @@
 package com.example.ashborn.view
 
-import ErroreGenerico
+import ParlaConNoi
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -85,7 +85,7 @@ fun Pagine(navController: NavHostController, viewModel: AshbornViewModel) {
                 0 -> Conti(navController = navController, viewModel = viewModel)
                 1 -> Carte(navController = navController, viewModel = viewModel)
                 2 -> Operazioni(navController = navController, viewModel = viewModel)
-                3 -> ErroreGenerico(navController = navController, viewModel =viewModel )
+                3 -> ParlaConNoi(navController = navController, viewModel =viewModel )
                 4 -> Altro(navController, viewModel)
             }
         }
@@ -93,54 +93,38 @@ fun Pagine(navController: NavHostController, viewModel: AshbornViewModel) {
     }
 }
 
-
-
 @Composable
 fun Operazioni(navController : NavHostController ,viewModel : AshbornViewModel) {
     OperazioniDisponibili(navController = navController, viewModel = viewModel)
 }
 
-
-
 @Composable
-fun ParlaConNoi() {
-
-    Text(text = "4")
-}
-
-@Composable
-fun DettagliOperazione(index_operation: Long,navController: NavHostController, viewModel: AshbornViewModel){ //TODO: inserisci parametro operazion o vedere come passargli i dettagli
+fun DettagliOperazione(index_operation: Long,navController: NavHostController, viewModel: AshbornViewModel) {
     var op=viewModel.arrayOperazioni.find { e->e.id==index_operation}
     Log.i("Dettagli operazione","Oggetto $index_operation")
-Log.i("Dettagli operazione","Oggetto $op")
+    Log.i("Dettagli operazione","Oggetto $op")
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+        modifier = Modifier.fillMaxSize().padding(16.dp)
     ) {
         // Custom Top Bar
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .padding(horizontal = 16.dp),
+            modifier = Modifier.fillMaxWidth().height(56.dp).padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = {
-                navController.popBackStack()
-            }) {
+            IconButton( onClick = { navController.popBackStack() } ) {
                 Icon(Icons.Default.ArrowBack, contentDescription = "Back")
             }
         }
         Row(
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
-
-            Text(text = "Dettagli Operazione", fontSize = 30.sp, fontWeight = FontWeight.Bold)
+            Text(
+                text = stringResource(id = R.string.dettagli_operazione),
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
-
         Spacer(modifier = Modifier.height(16.dp))
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -171,7 +155,6 @@ Log.i("Dettagli operazione","Oggetto $op")
                     Text(text = "Ammontare: ${op!!.amount}", fontSize = 24.sp)
                 }
             }
-
             // Riquadro B: Contiene Data operazione, descrizione e pulsanti share e delete
             Box(
                 modifier = Modifier
@@ -181,28 +164,45 @@ Log.i("Dettagli operazione","Oggetto $op")
                     .padding(16.dp)
             ) {
                 Column {
-                    Text(text = "Data Operazione: ${op!!.dateO.toLocalDate().toString()}", fontSize = 18.sp, modifier = Modifier.padding(bottom = 8.dp))
-                    Text(text = "Descrizione: ${op!!.description}", fontSize = 18.sp, modifier = Modifier.padding(bottom = 16.dp))
+                    Text(
+                        text = stringResource(id = R.string.dataO) + op!!.dateO.toLocalDate().toString(),
+                        fontSize = 18.sp,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    Text(
+                        text = stringResource(id = R.string.descrizione) + op!!.description,
+                        fontSize = 18.sp,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
 
                     Row(
                         horizontalArrangement = Arrangement.SpaceEvenly,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                       IconButton(onClick = { /*TODO*/ }) {
-
-                           Icon(Icons.Default.Share, contentDescription = "share", tint = Color.Gray)
-                       }
+                        IconButton(onClick = { /*TODO*/ }) {
+                           Icon(
+                               imageVector = Icons.Default.Share,
+                               contentDescription = "share",
+                               tint = Color.Gray
+                           )
+                        }
                         Button(
                             colors = ButtonDefaults.buttonColors(Color.Red),
                             onClick = { /* Azione delete */ }) {
-                            Text("Revoca/disconosci")
+                            Text(
+                                //TODO true se non ancora eseguita false altrimenti
+                                if (true) {
+                                    stringResource(id = R.string.revoca)
+                                } else {
+                                    stringResource(id = R.string.disconosci)
+                                }
+                            )
                         }
                     }
                 }
             }
         }
     }
-
 }
 
 @Preview(showBackground = true)
@@ -211,7 +211,6 @@ fun DettagliPreview() {
     val viewModel = AshbornViewModel()
     val navController = rememberNavController()
     AshbornTheme {
-
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background

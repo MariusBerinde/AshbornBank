@@ -21,10 +21,12 @@ import com.example.ashborn.view.Archivio
 import com.example.ashborn.view.AskPIN
 import com.example.ashborn.view.Avvisi
 import com.example.ashborn.view.Bonifico
+import com.example.ashborn.view.BonificoConfermato
 import com.example.ashborn.view.DettagliOperazione
 import com.example.ashborn.view.Impostazioni
 import com.example.ashborn.view.Logout
 import com.example.ashborn.view.Mav
+import com.example.ashborn.view.PINBonifico
 import com.example.ashborn.view.Pagine
 import com.example.ashborn.view.Registrazione
 import com.example.ashborn.view.RiepilogoBonifico
@@ -65,10 +67,10 @@ fun AppNavigazione(viewModel: AshbornViewModel, operationViewModel: OperationVie
     val navController = rememberNavController()
     val startDest = viewModel.startDest;
     NavHost(navController=navController, startDestination = startDest){
-        navigation(startDestination = "welcome",route="init"){
+        navigation(startDestination = "welcome", route="init"){
             composable("welcome"){
                 Welcome(navController = navController, viewModel = viewModel)
-                //Conti(navController = navController, viewModel = viewModel )
+                //Conti(navController = navalvController, viewModel = viewModel )
             }
             composable("login"){
                 AskPIN(navController = navController, viewModel = viewModel)
@@ -107,11 +109,15 @@ fun AppNavigazione(viewModel: AshbornViewModel, operationViewModel: OperationVie
             composable("mav") {
                 Mav(navController = navController, viewModel = viewModel )
             }
-
             composable("riepilogo") {
                 RiepilogoBonifico(navController = navController, viewModel = operationViewModel )
             }
-
+            composable("conferma-bonifico") {
+                PINBonifico(navController = navController, viewModel = operationViewModel )
+            }
+            composable("bonifico-effettuato") {
+                BonificoConfermato(navController = navController, viewModel = operationViewModel )
+            }
         }
         navigation(startDestination = "utente",route="principale"){
             composable("utente"){
