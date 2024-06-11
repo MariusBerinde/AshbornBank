@@ -3,7 +3,6 @@ package com.example.ashborn.viewModel
 import android.icu.util.Currency
 import android.icu.util.CurrencyAmount
 import android.util.Log
-import androidx.collection.emptyLongSet
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -112,20 +111,55 @@ open class AshbornViewModel: ViewModel() {
         this.wrongAttempts++
     }
 
+    /**
+     * Controlla il formato di dataNascita , il formato è considerato valido se rispetta il pattern giorno/mese/anno o giorno-mese-anno
+     * @param dataNascita : la data di nascita del cliente
+     * @return true se data di nascita ha un formato valido
+     */
     fun formatoDataNascitaValida(dataNascita: String): Boolean{
-        var ris:Boolean = true
-        if (dataNascita.contains("_"))
-            ris = false
+        var ris:Boolean = false
+        val pattern= "\\d{2}-\\d{2}-\\d{4}||\\d{2}/\\d{2}/\\d{4}"
+
+        if (Regex(pattern).matches(dataNascita)){
+            val day=dataNascita.substring(0,2).toInt()
+            val month=dataNascita.substring(3,5).toInt()
+            val year=dataNascita.substring(6,dataNascita.length).toInt()
+            if(year >= 1900){
+                when(month){
+                    1,3,5,7,8,10,12 ->ris=if(day>0 && day<=31) true else false
+                    4,6,9,11 -> ris=if(day>0 && day<=30) true else false
+                    2 -> if( (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)){ris=if(day>0 && day<=29) true else false}else{ris=if(day>0 && day<=28) true else false}
+                    else -> ris=false
+                }
+
+            }
+        }
 
         return ris
     }
 
     fun formatoCodiceCliente(codCliente: String): Boolean {
-        return true
-    }
+        var ris:Boolean = false
+        if( codCliente.length == 9){
+            val regex = Regex("[^a-z0-9]")
+            ris = !regex.containsMatchIn(codCliente)
+        }
+
+        return ris
+        }
+
 
     fun formatoNomeValido(nome: String): Boolean {
-        return true
+        var ris:Boolean = false
+        val regex = Regex("[^a-zA-Z0-9]")
+
+        val caratteri_speciali = regex.containsMatchIn(nome)
+        if ( nome.length > 2 && nome.length < 20 ){
+            if ( !caratteri_speciali){
+                ris = true
+            }
+        }
+        return ris
     }
     fun formatoCognomeValido(cognome: String): Boolean {
         return formatoNomeValido(cognome)

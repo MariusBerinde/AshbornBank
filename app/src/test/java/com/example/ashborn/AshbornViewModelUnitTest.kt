@@ -25,13 +25,13 @@ class AshbornViewModelUnitTest {
         assertTrue("formato data di nascita valido", viewModel.formatoDataNascitaValida(formato1))
         assertTrue("formato data di nascita valido", viewModel.formatoDataNascitaValida(formato2))
         assertFalse("formato1Sbagliato ", viewModel.formatoDataNascitaValida(formato1Sbagliato))
-  /*      assertFalse("formato2Sbagliato ", viewModel.formatoDataNascitaValida(formato2Sbagliato))
+        assertFalse("formato2Sbagliato ", viewModel.formatoDataNascitaValida(formato2Sbagliato))
         assertFalse("formato3Sbagliato ", viewModel.formatoDataNascitaValida(formato3Sbagliato))
         assertFalse("formato4Sbagliato ", viewModel.formatoDataNascitaValida(formato4Sbagliato))
         assertFalse("formato5Sbagliato ", viewModel.formatoDataNascitaValida(formato5Sbagliato))
         assertFalse("formato6Sbagliato ", viewModel.formatoDataNascitaValida(formato6Sbagliato))
         assertFalse("formato7Sbagliato ", viewModel.formatoDataNascitaValida(formato7Sbagliato))
-        assertFalse("formato8Sbagliato ", viewModel.formatoDataNascitaValida(formato8Sbagliato))*/
+        assertFalse("formato8Sbagliato ", viewModel.formatoDataNascitaValida(formato8Sbagliato))
     }
 
     @Test
@@ -49,13 +49,15 @@ class AshbornViewModelUnitTest {
         val lenMaxWrong = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
 
         assertTrue("formato1Nome ", viewModel.formatoNomeValido(formato1))
-        assertTrue("formato2Nome ", viewModel.formatoNomeValido(formato1))
-      /*  assertFalse("formato1Sbabliato ", viewModel.formatoNomeValido(formato1Sbagliato))
-        assertFalse("formato2Sbabliato ", viewModel.formatoNomeValido(formato1Sbagliato))
-        assertFalse("formato3Sbabliato ", viewModel.formatoNomeValido(formato1Sbagliato))
-        assertFalse("formato4Sbabliato ", viewModel.formatoNomeValido(formato1Sbagliato))
-        assertFalse("formato5Sbabliato ", viewModel.formatoNomeValido(formato1Sbagliato))
-        assertFalse("formato6Sbabliato ", viewModel.formatoNomeValido(formato1Sbagliato)) */
+        assertTrue("formato2Nome ", viewModel.formatoNomeValido(formato2))
+        assertFalse("formato1Sbabliato ", viewModel.formatoNomeValido(formato1Sbagliato))
+        assertFalse("formato2Sbabliato ", viewModel.formatoNomeValido(formato2Sbagliato))
+        assertFalse("formato3Sbabliato ", viewModel.formatoNomeValido(formato3Sbagliato))
+        assertFalse("formato4Sbabliato ", viewModel.formatoNomeValido(formato4Sbagliato))
+        assertFalse("formato5Sbabliato ", viewModel.formatoNomeValido(formato5Sbagliato))
+        assertFalse("formato6Sbabliato ", viewModel.formatoNomeValido(formato6Sbagliato))
+        assertFalse("lunghezza minima ", viewModel.formatoNomeValido(lenMinWrong))
+        assertFalse("lunghezza massima", viewModel.formatoNomeValido(lenMaxWrong))
     }
 
     @Test
@@ -73,12 +75,14 @@ class AshbornViewModelUnitTest {
 
         assertTrue("formato1 ", viewModel.formatoCognomeValido(formato1))
         assertTrue("formato2 ", viewModel.formatoCognomeValido(formato1))
-       /* assertFalse("formato1Sbabliato ", viewModel.formatoCognomeValido(formato1Sbagliato))
+        assertFalse("formato1Sbabliato ", viewModel.formatoCognomeValido(formato1Sbagliato))
         assertFalse("formato2Sbabliato ", viewModel.formatoCognomeValido(formato1Sbagliato))
         assertFalse("formato3Sbabliato ", viewModel.formatoCognomeValido(formato1Sbagliato))
         assertFalse("formato4Sbabliato ", viewModel.formatoCognomeValido(formato1Sbagliato))
         assertFalse("formato5Sbabliato ", viewModel.formatoCognomeValido(formato1Sbagliato))
-        assertFalse("formato6Sbabliato ", viewModel.formatoCognomeValido(formato1Sbagliato))*/
+        assertFalse("formato6Sbabliato ", viewModel.formatoCognomeValido(formato1Sbagliato))
+        assertFalse("lunghezza minima", viewModel.formatoCognomeValido(lenMinWrong))
+        assertFalse("lunghezza massimo", viewModel.formatoCognomeValido(lenMaxWrong))
     }
 
 
@@ -93,12 +97,12 @@ class AshbornViewModelUnitTest {
         val formato4Sbagliato="a"
         val formato5Sbagliato="aaaaaaaaaaaaa"
         assertTrue("formato1 codice cliente ", viewModel.formatoCodiceCliente(formato1))
-        assertTrue("formato2 codice cliente ", viewModel.formatoCodiceCliente(formato1))
-        /*assertTrue("formato1Sbagliato codice cliente ", viewModel.formatoCodiceCliente(formato1Sbagliato))
-        assertTrue("formato2Sbagliato codice cliente ", viewModel.formatoCodiceCliente(formato2Sbagliato))
-        assertTrue("formato3Sbagliato codice cliente ", viewModel.formatoCodiceCliente(formato3Sbagliato))
-        assertTrue("formato4Sbagliato codice cliente ", viewModel.formatoCodiceCliente(formato4Sbagliato))
-        assertTrue("formato5Sbagliato codice cliente ", viewModel.formatoCodiceCliente(formato5Sbagliato))*/
+        assertTrue("formato2 codice cliente ", viewModel.formatoCodiceCliente(formato2))
+        assertFalse("formato1Sbagliato codice cliente ", viewModel.formatoCodiceCliente(formato1Sbagliato))
+        assertFalse("formato2Sbagliato codice cliente ", viewModel.formatoCodiceCliente(formato2Sbagliato))
+        assertFalse("formato3Sbagliato codice cliente ", viewModel.formatoCodiceCliente(formato3Sbagliato))
+        assertFalse("formato4Sbagliato codice cliente ", viewModel.formatoCodiceCliente(formato4Sbagliato))
+        assertFalse("formato5Sbagliato codice cliente ", viewModel.formatoCodiceCliente(formato5Sbagliato))
 
     }
 
