@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
@@ -160,8 +159,21 @@ fun Mav(navController: NavHostController, viewModel: AshbornViewModel){
     }
 }
 
-fun gestisciErrori() {
-  //  TODO("Not yet implemented")
+fun gestisciErrori(
+    beneficiario: String,
+    iban: String,
+    importo: String,
+    causale: String,
+    dataAccredito: String,
+    viewModelOp: OperationViewModel
+) {
+    viewModelOp.setErroreBeneficiarioX(!viewModelOp.formatoBeneficiarioValido(beneficiario))
+    viewModelOp.setErroreIbanX(!viewModelOp.formatoIbanValido(iban))
+    viewModelOp.setErroreImportoX(!viewModelOp.formatoImportoValido(importo))
+    viewModelOp.setErroreCausaleX(!viewModelOp.formatoCausaleValida(causale))
+    viewModelOp.setErroreDataAccreditoX(!viewModelOp.formatoDataAccreditoValida(dataAccredito))
+
+
 }
 
 @Composable
@@ -259,15 +271,18 @@ fun Bonifico(navController: NavHostController, viewModel: AshbornViewModel,viewM
             }
             Row () {
                 Button(
-                    onClick = { if(bonificoValido(beneficiario, iban, importo, causale, dataAccredito)) {
-                        viewModelOp.setBeneficiarioX(beneficiario)
-                        viewModelOp.setIbanX(iban)
-                        viewModelOp.setImportoX(importo)
-                        viewModelOp.setCausaleX(causale)
-                        viewModelOp.setDataAccreditoX(dataAccredito)
-                        navController.navigate("riepilogo") } else { gestisciErrori()
+                    onClick = {
+                        if(viewModelOp.formatoBonificoValido(beneficiario, iban, importo, causale, dataAccredito)) {
+                            viewModelOp.setBeneficiarioX(beneficiario)
+                            viewModelOp.setIbanX(iban)
+                            viewModelOp.setImportoX(importo)
+                            viewModelOp.setCausaleX(causale)
+                            viewModelOp.setDataAccreditoX(dataAccredito)
+                            navController.navigate("riepilogo")
+                        } else {
+                            gestisciErrori(beneficiario, iban, importo, causale, dataAccredito, viewModelOp)
                         }
-                              },
+                    },
                     modifier = modifier
                 ) {
                     Text(text = stringResource(id = R.string.continua))
