@@ -36,7 +36,6 @@ class AshbornViewModelUnitTest {
 
     @Test
     fun formatoNomeValidoTest(){
-
         val formato1="Marius"
         val formato2="Giorgio"
         val formato1Sbagliato="__Giorgio__"
@@ -74,13 +73,13 @@ class AshbornViewModelUnitTest {
         val lenMaxWrong = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
 
         assertTrue("formato1 ", viewModel.formatoCognomeValido(formato1))
-        assertTrue("formato2 ", viewModel.formatoCognomeValido(formato1))
+        assertTrue("formato2 ", viewModel.formatoCognomeValido(formato2))
         assertFalse("formato1Sbabliato ", viewModel.formatoCognomeValido(formato1Sbagliato))
-        assertFalse("formato2Sbabliato ", viewModel.formatoCognomeValido(formato1Sbagliato))
-        assertFalse("formato3Sbabliato ", viewModel.formatoCognomeValido(formato1Sbagliato))
-        assertFalse("formato4Sbabliato ", viewModel.formatoCognomeValido(formato1Sbagliato))
-        assertFalse("formato5Sbabliato ", viewModel.formatoCognomeValido(formato1Sbagliato))
-        assertFalse("formato6Sbabliato ", viewModel.formatoCognomeValido(formato1Sbagliato))
+        assertFalse("formato2Sbabliato ", viewModel.formatoCognomeValido(formato2Sbagliato))
+        assertFalse("formato3Sbabliato ", viewModel.formatoCognomeValido(formato3Sbagliato))
+        assertFalse("formato4Sbabliato ", viewModel.formatoCognomeValido(formato4Sbagliato))
+        assertFalse("formato5Sbabliato ", viewModel.formatoCognomeValido(formato5Sbagliato))
+        assertFalse("formato6Sbabliato ", viewModel.formatoCognomeValido(formato6Sbagliato))
         assertFalse("lunghezza minima", viewModel.formatoCognomeValido(lenMinWrong))
         assertFalse("lunghezza massimo", viewModel.formatoCognomeValido(lenMaxWrong))
     }
@@ -88,7 +87,6 @@ class AshbornViewModelUnitTest {
 
     @Test
     fun  formatoCodiceClienteTest(){
-
         val formato1="123467890"
         val formato2="ab123cd00"
         val formato1Sbagliato="Ab123CD00"
@@ -103,7 +101,33 @@ class AshbornViewModelUnitTest {
         assertFalse("formato3Sbagliato codice cliente ", viewModel.formatoCodiceCliente(formato3Sbagliato))
         assertFalse("formato4Sbagliato codice cliente ", viewModel.formatoCodiceCliente(formato4Sbagliato))
         assertFalse("formato5Sbagliato codice cliente ", viewModel.formatoCodiceCliente(formato5Sbagliato))
-
     }
 
+   /* @Test
+    fun checkPINTest() {
+        val pin1 = "09876543"
+        val pin2 = "12345678"
+        val pin1Sbagliato = "defrsgdthfgjk"
+        val pin2Sbagliato = "abcdefab"
+        val pin3Sbagliato = "A!ibnh&7"
+        val pin4Sbagliato = "1 or 1=1"
+        val pin5Sbagliato = "0xab4422"
+        val pin6Sbagliato = "0x432524"
+        viewModel.setPinX(pin1)
+        assertTrue(viewModel.checkPin())
+        viewModel.setPinX(pin2)
+        assertTrue(viewModel.checkPin())
+        viewModel.setPinX(pin1Sbagliato)
+        assertFalse(viewModel.checkPin())
+        viewModel.setPinX(pin2Sbagliato)
+        assertFalse(viewModel.checkPin())
+        viewModel.setPinX(pin3Sbagliato)
+        assertFalse(viewModel.checkPin())
+        viewModel.setPinX(pin4Sbagliato)
+        assertFalse(viewModel.checkPin())
+        viewModel.setPinX(pin5Sbagliato)
+        assertFalse(viewModel.checkPin())
+        viewModel.setPinX(pin6Sbagliato)
+        assertFalse(viewModel.checkPin())
+    }*/
 }

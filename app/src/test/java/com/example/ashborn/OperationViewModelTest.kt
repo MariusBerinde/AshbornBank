@@ -1,6 +1,7 @@
 package com.example.ashborn
 
 
+import android.util.Log
 import com.example.ashborn.viewModel.AshbornViewModel
 import com.example.ashborn.viewModel.OperationViewModel
 import kotlinx.datetime.Clock
@@ -46,6 +47,7 @@ class OperationViewModelTest {
 
     @Test
     fun formatoIbanValido(){
+        TODO("non ancora pronto")
         val formato1="Marius"
         val formato2="Giorgio"
         val formato1Sbagliato="__Giorgio__"
@@ -73,21 +75,14 @@ class OperationViewModelTest {
     @Test
     fun  formatoCausaleValidaTest(){
 
-        val formato1="123467890"
-        val formato2="ab123cd00"
-        val formato1Sbagliato="Ab123CD00"
-        val formato2Sbagliato="AA123CD00"
-        val formato3Sbagliato="#AA123CD00à"
-        val formato4Sbagliato="a"
-        val formato5Sbagliato="aaaaaaaaaaaaa"
+        val formato1="pagamento Bolletta"
+        val formato2="versamento 2000€ rimborso danni auto noleggiata in aeroporto"
+        val formato1Sbagliato=""
+        val formato2Sbagliato="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
         assertTrue("formato1 codice cliente ", viewModel.formatoCausaleValida(formato1))
         assertTrue("formato2 codice cliente ", viewModel.formatoCausaleValida(formato2))
         assertFalse("formato1Sbagliato codice cliente ", viewModel.formatoCausaleValida(formato1Sbagliato))
-        assertFalse("formato2Sbagliato codice cliente ", viewModel.formatoCausaleValida(formato2Sbagliato))
-        assertFalse("formato3Sbagliato codice cliente ", viewModel.formatoCausaleValida(formato3Sbagliato))
-        assertFalse("formato4Sbagliato codice cliente ", viewModel.formatoCausaleValida(formato4Sbagliato))
-        assertFalse("formato5Sbagliato codice cliente ", viewModel.formatoCausaleValida(formato5Sbagliato))
-
+        assertFalse("formato1Sbagliato codice cliente ", viewModel.formatoCausaleValida(formato2Sbagliato))
     }
     @Test
     fun formatoDataAccreditoValidaTest(){
@@ -95,8 +90,9 @@ class OperationViewModelTest {
         val domani = oggi.plus(1, DateTimeUnit.DAY)
         val tra5mesi = oggi.plus(5, DateTimeUnit.MONTH)
         val formato1 = domani.format(LocalDate.Format {dayOfMonth();chars("/");monthNumber();chars("/");year() })
-        println(formato1)
+        //println(formato1)
         val formato2 = tra5mesi.format(LocalDate.Format {dayOfMonth();chars("-");monthNumber();chars("-");year() })
+        //println(formato2)
         val formato1Sbagliato="01_01_2000"
         val formato2Sbagliato="01 33 2000"
         val formato3Sbagliato="45 01 2000"

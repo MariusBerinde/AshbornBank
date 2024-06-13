@@ -5,12 +5,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import kotlinx.datetime.*
 import kotlinx.datetime.format.*
 
 class OperationViewModel: ViewModel() {
+    var erroreCausale by mutableIntStateOf(0)
+        private set
+    var erroreBeneficiario by mutableIntStateOf(0)
+        private set
+    var erroreIban by mutableIntStateOf(0)
+        private set
+    var erroreImporto by mutableIntStateOf(0)
+        private set
     var erroreDataAccredito by mutableIntStateOf(0)
+        private set
+//    var errore by mutableIntStateOf(0)
+//        private set
     var wrongAttempts by mutableIntStateOf(0)
         private set // Optional: restrict external modification
     var startDest: String = ""
@@ -69,7 +81,7 @@ class OperationViewModel: ViewModel() {
      * @return true se il beneficiario è valido false altrimenti
      */
     fun formatoBeneficiarioValido(beneficiario: String): Boolean {
-        return true
+        return beneficiario.isNotEmpty() && beneficiario.length < 100
     }
 
     /**
@@ -77,7 +89,7 @@ class OperationViewModel: ViewModel() {
      * @return true se l'iban è valido false altrimenti
      */
     fun formatoIbanValido(iban: String): Boolean {
-        return true
+        return iban.length == 27
     }
 
     /**
@@ -85,7 +97,7 @@ class OperationViewModel: ViewModel() {
      * @return true se la causale è valida false altrimenti
      */
     fun formatoCausaleValida(causale: String): Boolean {
-        return true
+        return causale.isNotEmpty() && causale.length < 300
     }
 
     /**
@@ -94,12 +106,13 @@ class OperationViewModel: ViewModel() {
      */
     fun formatoDataAccreditoValida(dataAccredito: String): Boolean {
         var ris:Boolean = false
-        val pattern= "\\d{2}-\\d{2}-\\d{4}||\\d{2}/\\d{2}/\\d{4}"
+        val pattern= "\\d{1,2}-\\d{1,2}-\\d{4}||\\d{1,2}/\\d{1,2}/\\d{4}"
         if (Regex(pattern).matches(dataAccredito)){
-            val day=dataAccredito.substring(0,2).toInt()
-            val month=dataAccredito.substring(3,5).toInt()
-            val year=dataAccredito.substring(6,dataAccredito.length).toInt()
-            var dataEsistente: Boolean = false
+            val campiData: List<String> = dataAccredito.replace("-","/").split("/")
+            val day = campiData[0].toInt()
+            val month = campiData[1].toInt()
+            val year = campiData[2].toInt()
+            var dataEsistente = false
             when(month){
                 1,3,5,7,8,10,12 -> dataEsistente = if(day > 0 && day <= 31) true
                                                    else false
@@ -114,6 +127,7 @@ class OperationViewModel: ViewModel() {
                      }
                 else -> dataEsistente = false
             }
+
             if(dataEsistente) {
                 val dataAccreditoData = LocalDate(year, month, day)
                 val oggi = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
@@ -144,18 +158,21 @@ class OperationViewModel: ViewModel() {
     }
 
     fun setErroreCausaleX(b: Boolean) {
-
+        this.erroreCausale = if (b) {1} else {0}
     }
 
     fun setErroreImportoX(b: Boolean) {
+        this.erroreImporto = if (b) {1} else {0}
 
     }
 
     fun setErroreIbanX(b: Boolean) {
+        this.erroreIban = if (b) {1} else {0}
 
     }
 
     fun setErroreBeneficiarioX(b: Boolean) {
+        this.erroreBeneficiario = if (b) {1} else {0}
 
     }
 }

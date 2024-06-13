@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
 import com.example.ashborn.data.Operation
 import com.example.ashborn.data.TransactionType
@@ -104,7 +105,7 @@ open class AshbornViewModel: ViewModel() {
 
     }
     fun checkPin(): Boolean {
-        return false
+        return this.pin.length == 8 && this.pin.isDigitsOnly()
     }
 
     fun incrementWrongAttempts() {

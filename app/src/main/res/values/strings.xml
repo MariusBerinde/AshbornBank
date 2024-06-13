@@ -35,7 +35,7 @@
     <string name="beneficiario">Beneficiario</string>
     <string name="iban">IBAN</string>
     <string name="causale">Causale</string>
-    <string name="dataAccredito">Data di accredito</string>
+    <string name="dataAccredito">Data di accredito dd/mm/yyyy</string>
     <string name="scegliData">Scegli data</string>
     <string name="conferma_operazione">Operazione effettuata con successo</string>
     <string name="altro_bonifico">Fai un altro bonifico</string>

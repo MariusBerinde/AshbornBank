@@ -1,5 +1,6 @@
 package com.example.ashborn.view
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,20 +18,20 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Black
+import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
@@ -172,12 +173,11 @@ fun gestisciErrori(
     viewModelOp.setErroreImportoX(!viewModelOp.formatoImportoValido(importo))
     viewModelOp.setErroreCausaleX(!viewModelOp.formatoCausaleValida(causale))
     viewModelOp.setErroreDataAccreditoX(!viewModelOp.formatoDataAccreditoValida(dataAccredito))
-
-
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Bonifico(navController: NavHostController, viewModel: AshbornViewModel,viewModelOp: OperationViewModel){
+fun Bonifico(navController: NavHostController, viewModel: AshbornViewModel, viewModelOp: OperationViewModel){
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -202,62 +202,75 @@ fun Bonifico(navController: NavHostController, viewModel: AshbornViewModel,viewM
             val modifier = Modifier
                 .padding(SmallPadding)
                 .fillMaxWidth()
-            val ordinante = viewModel.codConto
-            var beneficiario by remember { mutableStateOf("") }
-            var iban by remember { mutableStateOf("") }
-            var importo by remember { mutableStateOf("") }
-            var causale by remember { mutableStateOf("") }
-            var dataAccredito by remember { mutableStateOf("") }
             Row (){
                 OutlinedTextField(
-                    value = ordinante,
+                    value = viewModel.codConto,
                     onValueChange = {},
                     modifier = modifier,
                     readOnly = true,
-                    label = { Text(stringResource(id = R.string.ordinante)) }
+                    label = { Text(stringResource(id = R.string.ordinante)) },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Black,
+                        unfocusedBorderColor = Black
+                    )
                 )
             }
             Row () {
                 val maxLength = 100
                 OutlinedTextField(
-                    value = beneficiario,
-                    onValueChange = { if (it.length <= maxLength) { beneficiario = it } },
+                    value = viewModelOp.beneficiario,
+                    onValueChange = { if (it.length <= maxLength) { viewModelOp.setBeneficiarioX(it) } },
                     modifier = modifier,
-                    label = { Text(stringResource(id = R.string.beneficiario)) }
+                    label = { Text(stringResource(id = R.string.beneficiario)) },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = if(viewModelOp.erroreBeneficiario == 1) {Red} else {Black},
+                        unfocusedBorderColor = if(viewModelOp.erroreBeneficiario == 1) {Red} else {Black}
+                    )
                 )
             }
             Row () {
                 val maxLength = 27
                 OutlinedTextField(
-                    value = iban,
-                    onValueChange = { if(it.length <= maxLength) { iban = it } },
+                    value = viewModelOp.iban,
+                    onValueChange = { if(it.length <= maxLength) { viewModelOp.setIbanX(it) } },
                     modifier = modifier,
-                    label = { Text(stringResource(id = R.string.iban)) }
+                    label = { Text(stringResource(id = R.string.iban)) },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = if(viewModelOp.erroreIban == 1) {Red} else {Black},
+                        unfocusedBorderColor = if(viewModelOp.erroreIban == 1) {Red} else {Black}
+                    )
                 )
             }
             Row () {
                 OutlinedTextField(
-                    value = importo,
-                    onValueChange = { importo = it },
+                    value = viewModelOp.importo,
+                    onValueChange = { viewModelOp.setImportoX(it) },
                     modifier = modifier,
                     label = { Text(stringResource(id = R.string.importo)) },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = if(viewModelOp.erroreImporto == 1) {Red} else {Black},
+                        unfocusedBorderColor = if(viewModelOp.erroreImporto == 1) {Red} else {Black}
+                    )
                 )
             }
             Row () {
                 val maxLength = 300
                 OutlinedTextField(
-                    value = causale,
-                    onValueChange = { if(it.length <= maxLength) { causale = it } },
+                    value = viewModelOp.causale,
+                    onValueChange = { if(it.length <= maxLength) { viewModelOp.setCausaleX(it) } },
                     modifier = modifier,
                     label = { Text(stringResource(id = R.string.causale)) },
-
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = if(viewModelOp.erroreCausale == 1) {Red} else {Black},
+                        unfocusedBorderColor = if(viewModelOp.erroreCausale == 1) {Red} else {Black}
+                    )
                 )
             }
             Row () {
                 OutlinedTextField(
-                    value = dataAccredito,
-                    onValueChange = { dataAccredito = it },
+                    value = viewModelOp.dataAccredito,
+                    onValueChange = { viewModelOp.setDataAccreditoX(it) },
                     modifier = modifier,
                     label = { Text(stringResource(id = R.string.dataAccredito)) },
                     trailingIcon = {
@@ -266,21 +279,22 @@ fun Bonifico(navController: NavHostController, viewModel: AshbornViewModel,viewM
                             contentDescription = stringResource(id = R.string.scegliData),
                             tint = Color.Black)
                         }
-                    }
+                    },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = if(viewModelOp.erroreDataAccredito == 1) {Red} else {Black},
+                        unfocusedBorderColor = if(viewModelOp.erroreDataAccredito == 1) {Red} else {Black}
+                    )
+
                 )
             }
             Row () {
                 Button(
                     onClick = {
-                        if(viewModelOp.formatoBonificoValido(beneficiario, iban, importo, causale, dataAccredito)) {
-                            viewModelOp.setBeneficiarioX(beneficiario)
-                            viewModelOp.setIbanX(iban)
-                            viewModelOp.setImportoX(importo)
-                            viewModelOp.setCausaleX(causale)
-                            viewModelOp.setDataAccreditoX(dataAccredito)
+                        if(viewModelOp.formatoBonificoValido(viewModelOp.beneficiario, viewModelOp.iban, viewModelOp.importo, viewModelOp.causale, viewModelOp.dataAccredito)) {
+                            Log.i("Bonifico", "Sto per andare in riepilogo")
                             navController.navigate("riepilogo")
                         } else {
-                            gestisciErrori(beneficiario, iban, importo, causale, dataAccredito, viewModelOp)
+                            gestisciErrori(viewModelOp.beneficiario, viewModelOp.iban, viewModelOp.importo, viewModelOp.causale, viewModelOp.dataAccredito, viewModelOp)
                         }
                     },
                     modifier = modifier
@@ -366,6 +380,7 @@ fun PINBonifico(navController: NavHostController, viewModel: OperationViewModel)
 
 @Composable
 fun RiepilogoBonifico(navController : NavHostController, viewModel : OperationViewModel){
+    Log.i("RiepilogoBonifico", "Sono entrato")
     val modifier = Modifier.padding(LargePadding)
     Column (modifier = Modifier.padding(LargePadding)) {
         Text(text = stringResource(id = R.string.riepilogo_bonifico), fontSize = 40.sp)
@@ -500,9 +515,9 @@ fun PreviewO() {
             color = MaterialTheme.colorScheme.background
         ) {
             //OperazioniDisponibili (navController = navController, viewModel =viewModel )
-            //Bonifico(navController = navController, viewModel = viewModel,viewModelOp = viewModelOp)
+            Bonifico(navController = navController, viewModel = viewModel,viewModelOp = viewModelOp)
             //BonificoConfermato(navController = navController, viewModel = viewModelOp)
-            RiepilogoBonifico(navController = navController, viewModel = viewModelOp)
+            //RiepilogoBonifico(navController = navController, viewModel = viewModelOp)
         }
     }
 }
