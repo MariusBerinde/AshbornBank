@@ -18,34 +18,32 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color.Companion.Black
+import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.ashborn.R
 import com.example.ashborn.ui.theme.AshbornTheme
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.ui.theme.SmallVerticalSpacing
 import com.example.ashborn.viewModel.AshbornViewModel
-import androidx.compose.ui.res.stringResource
-import com.example.ashborn.R
 
 @Composable
 fun Welcome(navController: NavHostController, viewModel: AshbornViewModel) {
-    val context = LocalContext.current
     Column (
         modifier = Modifier.padding(MediumPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -59,10 +57,10 @@ fun Welcome(navController: NavHostController, viewModel: AshbornViewModel) {
             .padding(SmallPadding),
             //TODO:aggiungere controllo per verifica primo login
                onClick = {
-                   if (!viewModel.fistLogin) {
-                       navController.navigate("login")
-                   } else {
+                   if (viewModel.fistLogin) {
                        navController.navigate("primo-login")
+                   } else {
+                       navController.navigate("login")
                    }
                }
 
@@ -80,13 +78,19 @@ fun AskPIN(navController: NavHostController, viewModel: AshbornViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Row (modifier = Modifier.align(Alignment.CenterHorizontally)) {
-            Text(stringResource(id = R.string.pin))
+        Row (modifier = Modifier.align(Alignment.CenterHorizontally)
+
+        ) {
+            Text(stringResource(id = R.string.pin,
+
+                ))
         }
         Row (modifier = Modifier.align(Alignment.CenterHorizontally)) {
             OutlinedTextField(
                 value = viewModel.pin,
-                onValueChange = {viewModel.setPinX(it)}
+                onValueChange = {viewModel.setPinX(it)},
+                readOnly = true,
+                visualTransformation = PasswordVisualTransformation()
             )
         }
         Spacer(modifier = Modifier.height(MediumPadding))
@@ -151,11 +155,6 @@ fun AskPIN(navController: NavHostController, viewModel: AshbornViewModel) {
 }
 @Composable
 fun Registrazione(navController: NavHostController, viewModel: AshbornViewModel) {
-    val context = LocalContext.current
-    var nome_attuale by remember { mutableStateOf("") }
-    var cognome_attuale by remember { mutableStateOf("") }
-    var dataN by remember { mutableStateOf("") }
-    var cod_attuale by remember { mutableStateOf("") }
 
     Column (
         modifier = Modifier
@@ -168,48 +167,102 @@ fun Registrazione(navController: NavHostController, viewModel: AshbornViewModel)
         Text(text = "Ashborn Bank", fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic) //TODO: da sistemare
         Spacer(modifier = Modifier.height(SmallPadding))
         Text(text = "Nome")
-       TextField(
-           value = nome_attuale,
-           onValueChange = { nome_attuale = it },
-           label = { Text("Inserisci nome") }
+       OutlinedTextField(
+           value = viewModel.userName,
+           onValueChange = { viewModel.setUserNameX(it)  },
+           label = { Text(stringResource(id = R.string.inserisci_nome) )},
+           colors = OutlinedTextFieldDefaults.colors(
+               focusedBorderColor = if(viewModel.erroreNome == 1) {
+                   Red
+               } else {
+                   Black
+               },
+               unfocusedBorderColor = if(viewModel.erroreNome == 1) {
+                   Red
+               } else {
+                   Black
+               }
+           )
        )
 
         Spacer(modifier = Modifier.height(SmallPadding))
 
         Text(text = "Cognome")
-        TextField(
-            value = cognome_attuale,
-            onValueChange = { cognome_attuale = it },
-            label = { Text("Inserisci cognome") }
+        OutlinedTextField(
+            value = viewModel.cognome,
+            onValueChange = {viewModel.setCognomeX(it)},
+            label = { Text( stringResource (R.string.inserisci_cognome)) }
         )
 
         Spacer(modifier = Modifier.height(SmallPadding))
         Text(text = "Data di nascita")
-        TextField(
-            value = dataN,
-            onValueChange = { dataN = it },
-            label = { Text("Inserisci data di nascita") }
+        OutlinedTextField(
+            value = viewModel.dataNascita,
+            onValueChange = {viewModel.setDataNascitaX(it)},
+            label = { Text(stringResource(id = R.string.ins_data_nascita))},
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = if(viewModel.erroreCognome == 1) {
+                    Red
+                } else {
+                    Black
+                },
+                unfocusedBorderColor = if(viewModel.erroreCognome == 1) {
+                    Red
+                } else {
+                    Black
+                }
+            )
         )
 
         Spacer(modifier = Modifier.height(SmallPadding))
         Text(text = "Codice cliente")
-        TextField(
-            value = cod_attuale,
-            onValueChange = { cod_attuale = it },
-            label = { Text("Inserisci codice cliente") }
+        OutlinedTextField(
+            value = viewModel.codCliente,
+            onValueChange = {viewModel.setCodClienteX(it)},
+            label = { Text(stringResource (R.string.inserisci_codice_cliente)) },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = if(viewModel.erroreCodCliente == 1) {
+                    Red
+                } else {
+                    Black
+                },
+                unfocusedBorderColor = if(viewModel.erroreCodCliente == 1) {
+                    Red
+                } else {
+                    Black
+                }
+            )
         )
         Spacer(modifier = Modifier.height(SmallPadding))
-        Button(onClick = { /*TODO*/
-            viewModel.setUserNameX(nome_attuale)
-            viewModel.setDataNascitaX(dataN)
-            viewModel.setCognomeX(cognome_attuale)
-            viewModel.setCodcliente(cod_attuale)
+        Button(onClick = {
+            if (
+                viewModel.formatoNomeValido(viewModel.userName) &&
+                viewModel.formatoDataNascitaValida(viewModel.dataNascita) &&
+                viewModel.formatoCognomeValido(viewModel.cognome) &&
+                viewModel.formatoCodiceCliente(viewModel.codCliente)
+                ) {
+                    viewModel.fistLogin=false
+                    navController.navigate("welcome")
+                } else {
+                   gestisciErrori(viewModel.userName,viewModel.cognome,viewModel.codCliente,viewModel.dataNascita,viewModel)
+                }
         }) {
             Text(text = "Conferma")
         }
     }
 }
-
+fun gestisciErrori(
+    nome:String,
+    cognome: String,
+    cod_cliente:String,
+    dataN:String,
+    viewModel: AshbornViewModel
+) {
+    viewModel.setErroreNomeX(!viewModel.formatoNomeValido(nome))
+    viewModel.setErroreCognomeX(!viewModel.formatoCognomeValido(cognome))
+    viewModel.setErroreCodClienteX(!viewModel.formatoCodiceCliente(cod_cliente))
+    viewModel.setErroreDataNX(!viewModel.formatoDataNascitaValida(dataN))
+}
 @Preview(showBackground = true)
 @Composable
  fun Preview() {

@@ -1,21 +1,18 @@
 package com.example.ashborn
 
 
-import android.util.Log
-import com.example.ashborn.viewModel.AshbornViewModel
 import com.example.ashborn.viewModel.OperationViewModel
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
-import kotlinx.datetime.format.char
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+
 class OperationViewModelTest {
     private  var viewModel: OperationViewModel = OperationViewModel()
 
@@ -46,29 +43,33 @@ class OperationViewModelTest {
     }
 
     @Test
-    fun formatoIbanValido(){
-        TODO("non ancora pronto")
-        val formato1="Marius"
-        val formato2="Giorgio"
-        val formato1Sbagliato="__Giorgio__"
-        val formato2Sbagliato="!Giorgio"
-        val formato3Sbagliato="#Giorgio"
-        val formato4Sbagliato="?Giorgio"
-        val formato5Sbagliato=""
-        val formato6Sbagliato=" "
-        val lenMinWrong = "A"
-        val lenMaxWrong = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    fun formatoIbanValidoTest(){
 
-        assertTrue("formato1 ", viewModel.formatoIbanValido(formato1))
-        assertTrue("formato2 ", viewModel.formatoIbanValido(formato1))
-        assertFalse("formato1Sbabliato ", viewModel.formatoIbanValido(formato1Sbagliato))
-        assertFalse("formato2Sbabliato ", viewModel.formatoIbanValido(formato1Sbagliato))
-        assertFalse("formato3Sbabliato ", viewModel.formatoIbanValido(formato1Sbagliato))
-        assertFalse("formato4Sbabliato ", viewModel.formatoIbanValido(formato1Sbagliato))
-        assertFalse("formato5Sbabliato ", viewModel.formatoIbanValido(formato1Sbagliato))
-        assertFalse("formato6Sbabliato ", viewModel.formatoIbanValido(formato1Sbagliato))
-        assertFalse("lunghezza minima", viewModel.formatoIbanValido(lenMinWrong))
-        assertFalse("lunghezza massimo", viewModel.formatoIbanValido(lenMaxWrong))
+        val formato1="GB82 WEST 1234 5698 7654 32"
+        val formato2="DE89 3704 0044 0532 0130 00"
+        val formato3="IT60 X054 2811 1010 0000 0123 456"
+        val formato4="IT60X0542811101000000123456"
+
+        val formato1Sbagliato = "GB82 TEST 1234 5698 7654 32"
+        val formato2Sbagliato = "DE89 3704 0044 0532 0130 01"
+        val formato3Sbagliato = "#DE89!704 *004"
+        val formato4Sbagliato = "drop table utenti from Users"
+        val formato5Sbagliato = "123456rgsfdhghuu or 1=1 "
+        val formato6Sbagliato = "ababaababaababaababaababaababaababaababaababaababaababaababaababaa"
+
+
+
+        assertTrue("formato1 iban", viewModel.formatoIbanValido(formato1))
+        assertTrue("formato2 iban", viewModel.formatoIbanValido(formato2))
+        assertTrue("formato3 iban", viewModel.formatoIbanValido(formato3))
+        assertTrue("formato4 iban", viewModel.formatoIbanValido(formato4))
+        assertFalse("formato1 sbagliato", viewModel.formatoIbanValido(formato1Sbagliato))
+        assertFalse("formato2 sbagliato", viewModel.formatoIbanValido(formato2Sbagliato))
+        assertFalse("formato3 sbagliato", viewModel.formatoIbanValido(formato3Sbagliato))
+        assertFalse("formato4 sbagliato", viewModel.formatoIbanValido(formato4Sbagliato))
+        assertFalse("formato5 sbagliato", viewModel.formatoIbanValido(formato5Sbagliato))
+        assertFalse("formato6 sbagliato", viewModel.formatoIbanValido(formato6Sbagliato))
+
     }
 
 

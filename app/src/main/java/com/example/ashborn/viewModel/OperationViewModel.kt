@@ -1,14 +1,15 @@
 package com.example.ashborn.viewModel
-import android.util.Log
-import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
-import kotlinx.datetime.*
-import kotlinx.datetime.format.*
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
+import kotlinx.datetime.toLocalDateTime
 
 class OperationViewModel: ViewModel() {
     var erroreCausale by mutableIntStateOf(0)
@@ -55,6 +56,8 @@ class OperationViewModel: ViewModel() {
             this.startDest= startDest
         }
     }
+
+
     fun checkPin(): Boolean { return false }
 
     fun incrementWrongAttempts() { this.wrongAttempts++ }
@@ -81,7 +84,16 @@ class OperationViewModel: ViewModel() {
      * @return true se il beneficiario è valido false altrimenti
      */
     fun formatoBeneficiarioValido(beneficiario: String): Boolean {
-        return beneficiario.isNotEmpty() && beneficiario.length < 100
+        var ris:Boolean = false
+        val regex = Regex("[^a-zA-Z]")
+
+        val caratteri_speciali = regex.containsMatchIn(beneficiario)
+        if ( beneficiario.length > 2 && beneficiario.length < 100 ){
+            if ( !caratteri_speciali){
+                ris = true
+            }
+        }
+        return ris
     }
 
     /**
@@ -89,7 +101,28 @@ class OperationViewModel: ViewModel() {
      * @return true se l'iban è valido false altrimenti
      */
     fun formatoIbanValido(iban: String): Boolean {
-        return iban.length == 27
+        // Rimuove gli spazi e converte l'IBAN in maiuscolo
+        val cleanedIban = iban.replace(" ", "").uppercase()
+
+        // Verifica la lunghezza minima e massima dell'IBAN
+        if (cleanedIban.length < 15 || cleanedIban.length > 34) {
+            return false
+        }
+
+        // Verifica che l'IBAN contenga solo lettere e cifre
+        if (!cleanedIban.all { it.isLetterOrDigit() }) {
+            return false
+        }
+
+        // Algoritmo di controllo (mod 97)
+        val rearrangedIban = cleanedIban.drop(4) + cleanedIban.take(4)
+        val numericIban = rearrangedIban.map {
+            if (it.isDigit()) it.toString()
+            else (it.code - 'A'.code + 10).toString()
+        }.joinToString("")
+
+        val ibanAsBigInteger = numericIban.toBigInteger()
+        return ibanAsBigInteger.mod(97.toBigInteger()) == 1.toBigInteger()
     }
 
     /**
@@ -174,5 +207,9 @@ class OperationViewModel: ViewModel() {
     fun setErroreBeneficiarioX(b: Boolean) {
         this.erroreBeneficiario = if (b) {1} else {0}
 
+    }
+
+    fun bloccaUtente() {
+        TODO("Not yet implemented")
     }
 }

@@ -34,22 +34,23 @@ import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.ashborn.R
 import com.example.ashborn.ui.theme.AshbornTheme
-import com.example.ashborn.ui.theme.SmallPadding
-import com.example.ashborn.viewModel.AshbornViewModel
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.sp
 import com.example.ashborn.ui.theme.LargePadding
 import com.example.ashborn.ui.theme.MediumPadding
+import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.ui.theme.SmallVerticalSpacing
+import com.example.ashborn.viewModel.AshbornViewModel
 import com.example.ashborn.viewModel.OperationViewModel
 
 @Composable
@@ -177,7 +178,7 @@ fun gestisciErrori(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Bonifico(navController: NavHostController, viewModel: AshbornViewModel, viewModelOp: OperationViewModel){
+fun Bonifico(navController: NavHostController , viewModelOp: OperationViewModel){
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -204,7 +205,7 @@ fun Bonifico(navController: NavHostController, viewModel: AshbornViewModel, view
                 .fillMaxWidth()
             Row (){
                 OutlinedTextField(
-                    value = viewModel.codConto,
+                    value = viewModelOp.codConto,
                     onValueChange = {},
                     modifier = modifier,
                     readOnly = true,
@@ -292,7 +293,7 @@ fun Bonifico(navController: NavHostController, viewModel: AshbornViewModel, view
                     onClick = {
                         if(viewModelOp.formatoBonificoValido(viewModelOp.beneficiario, viewModelOp.iban, viewModelOp.importo, viewModelOp.causale, viewModelOp.dataAccredito)) {
                             Log.i("Bonifico", "Sto per andare in riepilogo")
-                            navController.navigate("riepilogo")
+                            navController.navigate("riepilogo-bonifico")
                         } else {
                             gestisciErrori(viewModelOp.beneficiario, viewModelOp.iban, viewModelOp.importo, viewModelOp.causale, viewModelOp.dataAccredito, viewModelOp)
                         }
@@ -307,7 +308,7 @@ fun Bonifico(navController: NavHostController, viewModel: AshbornViewModel, view
 }
 
 @Composable
-fun PINBonifico(navController: NavHostController, viewModel: OperationViewModel) {
+fun PINOperazione(navController: NavHostController, viewModel: OperationViewModel) {
     val context = LocalContext.current
     Column (
         modifier = Modifier.padding(MediumPadding),
@@ -320,7 +321,9 @@ fun PINBonifico(navController: NavHostController, viewModel: OperationViewModel)
         Row (modifier = Modifier.align(Alignment.CenterHorizontally)) {
             OutlinedTextField(
                 value = viewModel.pin,
-                onValueChange = {viewModel.setPinX(it)}
+                onValueChange = {viewModel.setPinX(it) },
+                readOnly = true,
+                visualTransformation = PasswordVisualTransformation()
             )
         }
         Spacer(modifier = Modifier.height(MediumPadding))
@@ -352,10 +355,13 @@ fun PINBonifico(navController: NavHostController, viewModel: OperationViewModel)
                 modifier = Modifier.size(70.dp,40.dp),
                 onClick = {
                     if(!viewModel.checkPin()) {
-                        viewModel.set_StartDest("bonifico-effettuato")
-                        navController.navigate("bonifico-effettuato") {popUpTo("bonifico-effettuato")}
+                        viewModel.set_StartDest("operazioni")
+                        navController.navigate("operazioneConfermata") {popUpTo("operazioneConfermata")}
                     } else {
                         viewModel.incrementWrongAttempts()
+                        if(viewModel.wrongAttempts >= 3){
+                            viewModel.bloccaUtente()
+                        }
                     }
                 }
             ) {
@@ -404,7 +410,7 @@ fun RiepilogoBonifico(navController : NavHostController, viewModel : OperationVi
         Text(text = viewModel.dataAccredito)
         Spacer(modifier = modifier)
         Button(
-            onClick = { navController.navigate("conferma-bonifico") },
+            onClick = { navController.navigate("pin") },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = stringResource(id = R.string.continua))
@@ -413,7 +419,7 @@ fun RiepilogoBonifico(navController : NavHostController, viewModel : OperationVi
 }
 
 @Composable
-fun BonificoConfermato(navController : NavHostController, viewModel : OperationViewModel) {
+fun OperazioneConfermata(navController : NavHostController, viewModel : OperationViewModel) {
     Column(
         modifier = Modifier
             .padding(MediumPadding)
@@ -515,7 +521,7 @@ fun PreviewO() {
             color = MaterialTheme.colorScheme.background
         ) {
             //OperazioniDisponibili (navController = navController, viewModel =viewModel )
-            Bonifico(navController = navController, viewModel = viewModel,viewModelOp = viewModelOp)
+            Bonifico(navController = navController, viewModelOp = viewModelOp)
             //BonificoConfermato(navController = navController, viewModel = viewModelOp)
             //RiepilogoBonifico(navController = navController, viewModel = viewModelOp)
         }

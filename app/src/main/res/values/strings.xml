@@ -42,4 +42,8 @@
     <string name="chiudi">Chiudi e torna al conto</string>
     <string name="riepilogo_bonifico">Riepilogo bonifico</string>
     <string name="dettagli_operazione">Dettagli operazione</string>
+    <string name="inserisci_codice_cliente">Inserisci codice cliente</string>
+    <string name="ins_data_nascita">Inserisci data di nascita nel formato dd/mm/anno</string>
+    <string name="inserisci_cognome">Inserisci cognome</string>
+    <string name="inserisci_nome">Inserisci nome</string>
 </resources>

@@ -103,31 +103,7 @@ class AshbornViewModelUnitTest {
         assertFalse("formato5Sbagliato codice cliente ", viewModel.formatoCodiceCliente(formato5Sbagliato))
     }
 
-   /* @Test
-    fun checkPINTest() {
-        val pin1 = "09876543"
-        val pin2 = "12345678"
-        val pin1Sbagliato = "defrsgdthfgjk"
-        val pin2Sbagliato = "abcdefab"
-        val pin3Sbagliato = "A!ibnh&7"
-        val pin4Sbagliato = "1 or 1=1"
-        val pin5Sbagliato = "0xab4422"
-        val pin6Sbagliato = "0x432524"
-        viewModel.setPinX(pin1)
-        assertTrue(viewModel.checkPin())
-        viewModel.setPinX(pin2)
-        assertTrue(viewModel.checkPin())
-        viewModel.setPinX(pin1Sbagliato)
-        assertFalse(viewModel.checkPin())
-        viewModel.setPinX(pin2Sbagliato)
-        assertFalse(viewModel.checkPin())
-        viewModel.setPinX(pin3Sbagliato)
-        assertFalse(viewModel.checkPin())
-        viewModel.setPinX(pin4Sbagliato)
-        assertFalse(viewModel.checkPin())
-        viewModel.setPinX(pin5Sbagliato)
-        assertFalse(viewModel.checkPin())
-        viewModel.setPinX(pin6Sbagliato)
-        assertFalse(viewModel.checkPin())
-    }*/
+
+
+
 }

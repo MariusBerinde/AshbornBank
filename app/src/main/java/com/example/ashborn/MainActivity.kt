@@ -21,12 +21,12 @@ import com.example.ashborn.view.Archivio
 import com.example.ashborn.view.AskPIN
 import com.example.ashborn.view.Avvisi
 import com.example.ashborn.view.Bonifico
-import com.example.ashborn.view.BonificoConfermato
 import com.example.ashborn.view.DettagliOperazione
 import com.example.ashborn.view.Impostazioni
 import com.example.ashborn.view.Logout
 import com.example.ashborn.view.Mav
-import com.example.ashborn.view.PINBonifico
+import com.example.ashborn.view.OperazioneConfermata
+import com.example.ashborn.view.PINOperazione
 import com.example.ashborn.view.Pagine
 import com.example.ashborn.view.Registrazione
 import com.example.ashborn.view.RiepilogoBonifico
@@ -70,13 +70,22 @@ fun AppNavigazione(viewModel: AshbornViewModel, operationViewModel: OperationVie
         navigation(startDestination = "welcome", route="init"){
             composable("welcome"){
                 Welcome(navController = navController, viewModel = viewModel)
-                //Conti(navController = navalvController, viewModel = viewModel )
             }
             composable("login"){
                 AskPIN(navController = navController, viewModel = viewModel)
             }
             composable("primo-login"){
                 Registrazione(navController = navController, viewModel = viewModel )
+            }
+
+        }
+        navigation(startDestination = "utente",route="principale"){
+            composable("utente"){
+                Utente(navController = navController, viewModel = viewModel )
+            }
+
+            composable("conti"){
+                Pagine(navController = navController, viewModel = viewModel )
             }
             composable("dettagli-operazione/{index_op}",
                 arguments = listOf(
@@ -104,29 +113,27 @@ fun AppNavigazione(viewModel: AshbornViewModel, operationViewModel: OperationVie
                 Logout(navController = navController, viewModel = viewModel )
             }
             composable("bonifico") {
-                Bonifico(navController = navController, viewModel = viewModel, viewModelOp = operationViewModel  )
+                Bonifico(navController = navController,  viewModelOp = operationViewModel  )
             }
             composable("mav") {
                 Mav(navController = navController, viewModel = viewModel )
             }
-            composable("riepilogo") {
+            composable("riepilogo-bonifico") {
                 RiepilogoBonifico(navController = navController, viewModel = operationViewModel )
             }
-            composable("conferma-bonifico") {
-                PINBonifico(navController = navController, viewModel = operationViewModel )
-            }
-            composable("bonifico-effettuato") {
-                BonificoConfermato(navController = navController, viewModel = operationViewModel )
-            }
         }
-        navigation(startDestination = "utente",route="principale"){
-            composable("utente"){
-                Utente(navController = navController, viewModel = viewModel )
-            }
 
-            composable("conti"){
-                Pagine(navController = navController, viewModel = viewModel )
+        navigation(startDestination = "riepilogo-bonifico",route="operazioni"){
+
+            composable("pin") {
+                PINOperazione(navController = navController, viewModel = operationViewModel )
             }
+            composable("operazioneConfermata") {
+                OperazioneConfermata(navController = navController, viewModel = operationViewModel )
+            }
+           /* composable("operazioneRifiutata"){
+
+            }*/
         }
     }
 }

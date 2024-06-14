@@ -12,9 +12,18 @@ import androidx.lifecycle.ViewModel
 import com.example.ashborn.data.Operation
 import com.example.ashborn.data.TransactionType
 import java.time.LocalDateTime
-import java.util.ArrayList
 
 open class AshbornViewModel: ViewModel() {
+    var erroreNome by mutableIntStateOf(0)
+        private set
+
+    var erroreCognome by mutableIntStateOf(0)
+        private set
+    var erroreDataNascita by mutableIntStateOf(0)
+        private set
+    var erroreCodCliente by mutableIntStateOf(0)
+        private set
+
     val iban: String = "IT1234567890123456789012345"
     var saldo: Double = 0.0
         private set
@@ -22,7 +31,7 @@ open class AshbornViewModel: ViewModel() {
         private set
 
     val tag: String = AshbornViewModel::class.java.simpleName
-    var fistLogin: Boolean = false
+    var fistLogin: Boolean = true
     var startDest: String = "init"
         private set
     var wrongAttempts by mutableIntStateOf(0)
@@ -93,7 +102,7 @@ open class AshbornViewModel: ViewModel() {
         this.dataNascita= dataNascita
     }
 
-    fun setCodcliente(codCliente:String ){
+    fun setCodClienteX(codCliente:String ){
         Log.i(tag,"valore codice cliente $codCliente")
         this.codCliente=codCliente
     }
@@ -125,7 +134,9 @@ open class AshbornViewModel: ViewModel() {
             val day=dataNascita.substring(0,2).toInt()
             val month=dataNascita.substring(3,5).toInt()
             val year=dataNascita.substring(6,dataNascita.length).toInt()
-            if(year >= 1900){
+            //Todo: fare in modo che solo i maggiorenni possano avere un conto
+            //Todo: metti test per età minima
+            if(year >= 1900   ){
                 when(month){
                     1,3,5,7,8,10,12 ->ris=if(day>0 && day<=31) true else false
                     4,6,9,11 -> ris=if(day>0 && day<=30) true else false
@@ -153,7 +164,7 @@ open class AshbornViewModel: ViewModel() {
     fun formatoNomeValido(nome: String): Boolean {
         var ris:Boolean = false
         val regex = Regex("[^a-zA-Z0-9]")
-
+//Todo: fai in modo che prenda gli spazi se c'è un doppio nome
         val caratteri_speciali = regex.containsMatchIn(nome)
         if ( nome.length > 2 && nome.length < 20 ){
             if ( !caratteri_speciali){
@@ -165,4 +176,20 @@ open class AshbornViewModel: ViewModel() {
     fun formatoCognomeValido(cognome: String): Boolean {
         return formatoNomeValido(cognome)
     }
+
+    fun setErroreNomeX(b: Boolean) {
+        this.erroreNome = if (b) {1} else {0}
+    }
+
+    fun setErroreCognomeX(b: Boolean) {
+        this.erroreCognome = if (b) {1} else {0}
+    }
+
+    fun setErroreDataNX(b: Boolean) {
+        this.erroreDataNascita = if (b) {1} else {0}
+    }
+    fun setErroreCodClienteX(b:Boolean){
+        this.erroreCodCliente = if (b) {1} else {0}
+    }
+
 }
