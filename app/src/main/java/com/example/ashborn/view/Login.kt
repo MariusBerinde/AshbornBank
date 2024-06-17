@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -41,10 +42,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.ashborn.R
 import com.example.ashborn.ui.theme.AshbornTheme
+import com.example.ashborn.ui.theme.LargePadding
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.ui.theme.SmallVerticalSpacing
@@ -179,9 +182,13 @@ fun Registrazione(navController: NavHostController, viewModel: AshbornViewModel)
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
 
-        Text(text = "Ashborn Bank", fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic) //TODO: da sistemare
+        Text(
+            text = stringResource(id = R.string.app_name),
+            fontWeight = FontWeight.Bold,
+            fontStyle = FontStyle.Italic,
+            fontSize = 40.sp
+        ) //TODO: da sistemare
         Spacer(modifier = Modifier.height(SmallPadding))
-        Text(text = "Nome")
         OutlinedTextField(
             value = viewModel.userName,
             onValueChange = { viewModel.setUserNameX(it)  },
@@ -202,12 +209,11 @@ fun Registrazione(navController: NavHostController, viewModel: AshbornViewModel)
             keyboardActions = KeyboardActions(
                 onNext = { focusRequester2.requestFocus() }
             ),
-            modifier = Modifier.focusRequester(focusRequester1)
+            modifier = Modifier
+                .focusRequester(focusRequester1)
+                .fillMaxWidth()
         )
-
-        Spacer(modifier = Modifier.height(SmallPadding))
-
-        Text(text = "Cognome")
+        Spacer(modifier = Modifier.height(LargePadding))
         OutlinedTextField(
             value = viewModel.cognome,
             onValueChange = {viewModel.setCognomeX(it)},
@@ -228,11 +234,12 @@ fun Registrazione(navController: NavHostController, viewModel: AshbornViewModel)
             keyboardActions = KeyboardActions(
                 onNext = { focusRequester3.requestFocus() }
             ),
-            modifier = Modifier.focusRequester(focusRequester2)
+            modifier = Modifier
+                .focusRequester(focusRequester2)
+                .fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(SmallPadding))
-        Text(text = "Data di nascita")
+        Spacer(modifier = Modifier.height(LargePadding))
         OutlinedTextField(
             value = viewModel.dataNascita,
             onValueChange = {viewModel.setDataNascitaX(it)},
@@ -253,11 +260,12 @@ fun Registrazione(navController: NavHostController, viewModel: AshbornViewModel)
             keyboardActions = KeyboardActions(
                 onNext = { focusRequester4.requestFocus() }
             ),
-            modifier = Modifier.focusRequester(focusRequester3)
+            modifier = Modifier
+                .focusRequester(focusRequester3)
+                .fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(SmallPadding))
-        Text(text = "Codice cliente")
+        Spacer(modifier = Modifier.height(LargePadding))
         OutlinedTextField(
             value = viewModel.codCliente,
             onValueChange = {viewModel.setCodClienteX(it)},
@@ -291,10 +299,14 @@ fun Registrazione(navController: NavHostController, viewModel: AshbornViewModel)
                     focusManager.clearFocus()
                 }
             ),
-            modifier = Modifier.focusRequester(focusRequester4)
+            modifier = Modifier
+                .focusRequester(focusRequester4)
+                .fillMaxWidth()
         )
-        Spacer(modifier = Modifier.height(SmallPadding))
-        Button(onClick = {
+        Spacer(modifier = Modifier.height(LargePadding))
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = {
             if (
                 viewModel.formatoNomeValido(viewModel.userName) &&
                 viewModel.formatoDataNascitaValida(viewModel.dataNascita) &&
@@ -307,7 +319,7 @@ fun Registrazione(navController: NavHostController, viewModel: AshbornViewModel)
                    gestisciErrori(viewModel.userName,viewModel.cognome,viewModel.codCliente,viewModel.dataNascita,viewModel)
                 }
         }) {
-            Text(text = "Conferma")
+            Text(text = stringResource(id = R.string.conferma))
         }
     }
 }
@@ -334,7 +346,8 @@ fun gestisciErrori(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            AskPIN(navController = navController, viewModel = viewModel)
+            Registrazione(navController, viewModel)
+            //AskPIN(navController = navController, viewModel = viewModel)
         }
     }
 }

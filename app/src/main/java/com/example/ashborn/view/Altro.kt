@@ -61,7 +61,7 @@ fun Altro(navController: NavHostController, viewModel: AshbornViewModel) {
                             .padding(MediumPadding)
                         ) {
                             Text(
-                                text = "PP",
+                                text = viewModel.userName[0].toString() + viewModel.cognome[0].toString(),
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.padding(20.dp),
                                 color = Color.LightGray,
