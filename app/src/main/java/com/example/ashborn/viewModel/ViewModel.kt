@@ -11,6 +11,14 @@ import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
 import com.example.ashborn.data.Operation
 import com.example.ashborn.data.TransactionType
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.minus
+import kotlinx.datetime.periodUntil
+import kotlinx.datetime.plus
+import kotlinx.datetime.toLocalDateTime
 import java.time.LocalDateTime
 
 open class AshbornViewModel: ViewModel() {
@@ -43,7 +51,7 @@ open class AshbornViewModel: ViewModel() {
     var codCliente by mutableStateOf("")
         private set
 
-    var userName by mutableStateOf("Mariolone Bubbarello")
+    var userName by mutableStateOf("")
         private set // Optional: restrict external modification
 
     var cognome by mutableStateOf("")
@@ -128,25 +136,36 @@ open class AshbornViewModel: ViewModel() {
      */
     fun formatoDataNascitaValida(dataNascita: String): Boolean{
         var ris:Boolean = false
-        val pattern= "\\d{2}-\\d{2}-\\d{4}||\\d{2}/\\d{2}/\\d{4}"
-
+        if (dataNascita.isEmpty()) return ris
+        val pattern= "\\d{1,2}-\\d{1,2}-\\d{4}||\\d{1,2}/\\d{1,2}/\\d{4}"
         if (Regex(pattern).matches(dataNascita)){
-            val day=dataNascita.substring(0,2).toInt()
-            val month=dataNascita.substring(3,5).toInt()
-            val year=dataNascita.substring(6,dataNascita.length).toInt()
-            //Todo: fare in modo che solo i maggiorenni possano avere un conto
-            //Todo: metti test per età minima
-            if(year >= 1900   ){
-                when(month){
-                    1,3,5,7,8,10,12 ->ris=if(day>0 && day<=31) true else false
-                    4,6,9,11 -> ris=if(day>0 && day<=30) true else false
-                    2 -> if( (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)){ris=if(day>0 && day<=29) true else false}else{ris=if(day>0 && day<=28) true else false}
-                    else -> ris=false
+            val campiData: List<String> = dataNascita.replace("-","/").split("/")
+            val day = campiData[0].toInt()
+            val month = campiData[1].toInt()
+            val year = campiData[2].toInt()
+            var dataEsistente = false
+            when(month){
+                1,3,5,7,8,10,12 -> dataEsistente = if(day > 0 && day <= 31) true
+                else false
+                4,6,9,11 -> dataEsistente = if(day > 0 && day <= 30) true
+                else false
+                2 -> if( (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)){
+                    dataEsistente = if(day > 0 && day <= 29) true
+                    else false
+                } else {
+                    dataEsistente = if(day > 0 && day <= 28) true
+                    else false
                 }
+                else -> dataEsistente = false
+            }
 
+            if(dataEsistente) {
+                val oggi = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+                val maggiorenne = LocalDate(year, month, day) <= oggi.minus(18, DateTimeUnit.YEAR)
+                if (maggiorenne)
+                    ris = true
             }
         }
-
         return ris
     }
 
@@ -166,7 +185,7 @@ open class AshbornViewModel: ViewModel() {
         val regex = Regex("[^a-zA-Z0-9]")
 //Todo: fai in modo che prenda gli spazi se c'è un doppio nome
         val caratteri_speciali = regex.containsMatchIn(nome)
-        if ( nome.length > 2 && nome.length < 20 ){
+        if ( nome.length >= 2 && nome.length <= 20 ){
             if ( !caratteri_speciali){
                 ris = true
             }

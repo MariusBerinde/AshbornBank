@@ -2,6 +2,7 @@
 
 package com.example.ashborn.view
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
@@ -22,14 +25,19 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -122,11 +130,13 @@ fun AskPIN(navController: NavHostController, viewModel: AshbornViewModel) {
             Button(
                 modifier = Modifier.size(70.dp,40.dp),
                 onClick = {
-                    if(!viewModel.checkPin()) {
+                    Log.i("AskPIN", (!viewModel.checkPin()).toString())
+                    if(viewModel.checkPin()) {
                         viewModel.setStartdest("principale")
                         navController.navigate("conti") {popUpTo("principale")}
                     } else {
                         viewModel.incrementWrongAttempts()
+                        Log.i("AskPIN", viewModel.wrongAttempts.toString())
                     }
                 }
             ) {
@@ -136,7 +146,7 @@ fun AskPIN(navController: NavHostController, viewModel: AshbornViewModel) {
             Spacer(modifier = Modifier.width(SmallVerticalSpacing))
             Button(
                 modifier = Modifier.size(70.dp,40.dp),
-                onClick = {if(viewModel.pin.length <= 8) {viewModel.setPinX(viewModel.pin + "0")}}) {
+                onClick = { if(viewModel.pin.length <= 8) { viewModel.setPinX(viewModel.pin + "0") } }) {
                 Text(text = "0")
             }
 
@@ -155,6 +165,11 @@ fun AskPIN(navController: NavHostController, viewModel: AshbornViewModel) {
 }
 @Composable
 fun Registrazione(navController: NavHostController, viewModel: AshbornViewModel) {
+    val focusRequester1 = remember { FocusRequester() }
+    val focusRequester2 = remember { FocusRequester() }
+    val focusRequester3 = remember { FocusRequester() }
+    val focusRequester4 = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
 
     Column (
         modifier = Modifier
@@ -167,23 +182,28 @@ fun Registrazione(navController: NavHostController, viewModel: AshbornViewModel)
         Text(text = "Ashborn Bank", fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic) //TODO: da sistemare
         Spacer(modifier = Modifier.height(SmallPadding))
         Text(text = "Nome")
-       OutlinedTextField(
-           value = viewModel.userName,
-           onValueChange = { viewModel.setUserNameX(it)  },
-           label = { Text(stringResource(id = R.string.inserisci_nome) )},
-           colors = OutlinedTextFieldDefaults.colors(
-               focusedBorderColor = if(viewModel.erroreNome == 1) {
+        OutlinedTextField(
+            value = viewModel.userName,
+            onValueChange = { viewModel.setUserNameX(it)  },
+            label = { Text(stringResource(id = R.string.inserisci_nome) )},
+            colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = if(viewModel.erroreNome == 1) {
+                    Red
+                } else {
+                    Black
+                },
+                unfocusedBorderColor = if(viewModel.erroreNome == 1) {
                    Red
-               } else {
-                   Black
-               },
-               unfocusedBorderColor = if(viewModel.erroreNome == 1) {
-                   Red
-               } else {
-                   Black
-               }
-           )
-       )
+                } else {
+                    Black
+                }
+            ),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(
+                onNext = { focusRequester2.requestFocus() }
+            ),
+            modifier = Modifier.focusRequester(focusRequester1)
+        )
 
         Spacer(modifier = Modifier.height(SmallPadding))
 
@@ -191,15 +211,7 @@ fun Registrazione(navController: NavHostController, viewModel: AshbornViewModel)
         OutlinedTextField(
             value = viewModel.cognome,
             onValueChange = {viewModel.setCognomeX(it)},
-            label = { Text( stringResource (R.string.inserisci_cognome)) }
-        )
-
-        Spacer(modifier = Modifier.height(SmallPadding))
-        Text(text = "Data di nascita")
-        OutlinedTextField(
-            value = viewModel.dataNascita,
-            onValueChange = {viewModel.setDataNascitaX(it)},
-            label = { Text(stringResource(id = R.string.ins_data_nascita))},
+            label = { Text( stringResource (R.string.inserisci_cognome)) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = if(viewModel.erroreCognome == 1) {
                     Red
@@ -211,7 +223,37 @@ fun Registrazione(navController: NavHostController, viewModel: AshbornViewModel)
                 } else {
                     Black
                 }
-            )
+            ),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(
+                onNext = { focusRequester3.requestFocus() }
+            ),
+            modifier = Modifier.focusRequester(focusRequester2)
+        )
+
+        Spacer(modifier = Modifier.height(SmallPadding))
+        Text(text = "Data di nascita")
+        OutlinedTextField(
+            value = viewModel.dataNascita,
+            onValueChange = {viewModel.setDataNascitaX(it)},
+            label = { Text(stringResource(id = R.string.ins_data_nascita))},
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = if(viewModel.erroreDataNascita == 1) {
+                    Red
+                } else {
+                    Black
+                },
+                unfocusedBorderColor = if(viewModel.erroreDataNascita == 1) {
+                    Red
+                } else {
+                    Black
+                }
+            ),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(
+                onNext = { focusRequester4.requestFocus() }
+            ),
+            modifier = Modifier.focusRequester(focusRequester3)
         )
 
         Spacer(modifier = Modifier.height(SmallPadding))
@@ -231,7 +273,25 @@ fun Registrazione(navController: NavHostController, viewModel: AshbornViewModel)
                 } else {
                     Black
                 }
-            )
+            ),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
+            keyboardActions = KeyboardActions(
+                onSend = {
+                    if (
+                        viewModel.formatoNomeValido(viewModel.userName) &&
+                        viewModel.formatoDataNascitaValida(viewModel.dataNascita) &&
+                        viewModel.formatoCognomeValido(viewModel.cognome) &&
+                        viewModel.formatoCodiceCliente(viewModel.codCliente)
+                    ) {
+                        viewModel.fistLogin = false
+                        navController.navigate("welcome")
+                    } else {
+                        gestisciErrori(viewModel.userName, viewModel.cognome, viewModel.codCliente, viewModel.dataNascita, viewModel)
+                    }
+                    focusManager.clearFocus()
+                }
+            ),
+            modifier = Modifier.focusRequester(focusRequester4)
         )
         Spacer(modifier = Modifier.height(SmallPadding))
         Button(onClick = {
