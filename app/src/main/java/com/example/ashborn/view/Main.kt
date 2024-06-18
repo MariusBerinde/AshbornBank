@@ -1,6 +1,5 @@
 package com.example.ashborn.view
 
-import ParlaConNoi
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -17,7 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -49,24 +48,29 @@ import com.example.ashborn.R
 import com.example.ashborn.ui.theme.AshbornTheme
 import com.example.ashborn.viewModel.AshbornViewModel
 import androidx.compose.ui.res.stringResource
+import com.example.ashborn.ConnectivityObserver
 
 
 @Composable
-fun Pagine(navController: NavHostController, viewModel: AshbornViewModel) {
+fun Pagine(
+    navController: NavHostController,
+    viewModel: AshbornViewModel,
+    connectionStatus: ConnectivityObserver.Status
+) {
     val tabList: ArrayList<String> = arrayListOf("conti", "carte", "operazioni", "parla con noi", "altro")
     var selectedItem by remember { mutableIntStateOf(0) }
-    val icons: ArrayList<ImageVector>  = arrayListOf<ImageVector>(
+    val icons: ArrayList<ImageVector>  = arrayListOf(
         ImageVector.vectorResource(R.drawable.bank),
         ImageVector.vectorResource(R.drawable.credit_card_outline),
         ImageVector.vectorResource(R.drawable.currency_eur),
         ImageVector.vectorResource(R.drawable.chat_outline),
         ImageVector.vectorResource(R.drawable.dots_horizontal)
     )
-    Scaffold (
+    Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
-            NavigationBar () {
-                tabList.forEachIndexed{ index, item ->
+            NavigationBar {
+                tabList.forEachIndexed { index, item ->
                     NavigationBarItem(
                         selected = selectedItem == index,
                         onClick = { selectedItem = index },
@@ -77,42 +81,62 @@ fun Pagine(navController: NavHostController, viewModel: AshbornViewModel) {
             }
         }
     ) { innerPadding ->
-        Column(modifier = Modifier
-            .verticalScroll(rememberScrollState())
-            .padding(innerPadding)
-        ) {
-            when (selectedItem) {
-                0 -> Conti(navController = navController, viewModel = viewModel)
-                1 -> Carte(navController = navController, viewModel = viewModel)
-                2 -> Operazioni(navController = navController, viewModel = viewModel)
-                3 -> ParlaConNoi(navController = navController, viewModel =viewModel )
-                4 -> Altro(navController, viewModel)
+        ErroreConnessione(connectionStatus = connectionStatus) {
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(innerPadding)
+            ) {
+                when (selectedItem) {
+                    0 -> Conti(
+                        navController = navController,
+                        viewModel = viewModel
+                    )
+                    1 -> Carte(
+                        navController = navController,
+                        viewModel = viewModel
+                    )
+                    2 -> Operazioni(
+                        navController = navController,
+                        viewModel = viewModel,
+                        connectionStatus = connectionStatus
+                    )
+                    3 -> ParlaConNoi()
+                    4 -> Altro(
+                        navController = navController,
+                        viewModel = viewModel
+                    )
+                }
             }
         }
-
     }
 }
 
-@Composable
-fun Operazioni(navController : NavHostController ,viewModel : AshbornViewModel) {
-    OperazioniDisponibili(navController = navController, viewModel = viewModel)
-}
 
 @Composable
-fun DettagliOperazione(index_operation: Long,navController: NavHostController, viewModel: AshbornViewModel) {
-    var op=viewModel.arrayOperazioni.find { e->e.id==index_operation}
-    Log.i("Dettagli operazione","Oggetto $index_operation")
+fun DettagliOperazione(
+    indexOperation: Long,
+    navController: NavHostController,
+    viewModel: AshbornViewModel
+) {
+    var op=viewModel.arrayOperazioni.find { e->e.id==indexOperation}
+    Log.i("Dettagli operazione","Oggetto $indexOperation")
     Log.i("Dettagli operazione","Oggetto $op")
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
         // Custom Top Bar
         Row(
-            modifier = Modifier.fillMaxWidth().height(56.dp).padding(horizontal = 16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton( onClick = { navController.popBackStack() } ) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = "Back")
             }
         }
         Row(
@@ -170,7 +194,7 @@ fun DettagliOperazione(index_operation: Long,navController: NavHostController, v
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     Text(
-                        text = stringResource(id = R.string.descrizione) + op!!.description,
+                        text = stringResource(id = R.string.descrizione) + op.description,
                         fontSize = 18.sp,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
@@ -216,7 +240,8 @@ fun DettagliPreview() {
             color = MaterialTheme.colorScheme.background
         ) {
             //DettagliOperazione(0,navController,viewModel = viewModel)
-            Altro(navController, viewModel)
+            //Altro(navController, viewModel)
+            Pagine(navController = navController, viewModel = viewModel, connectionStatus = ConnectivityObserver.Status.Lost)
         }
     }
 }

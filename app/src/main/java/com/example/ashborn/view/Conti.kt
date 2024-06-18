@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.ashborn.data.Operation
 import com.example.ashborn.data.TransactionType
 import com.example.ashborn.ui.theme.AshbornTheme
 import com.example.ashborn.ui.theme.MediumPadding
@@ -42,84 +41,131 @@ import androidx.compose.ui.res.stringResource
 import com.example.ashborn.R
 
 @Composable
-fun Conti(navController: NavHostController, viewModel: AshbornViewModel) {
-    Column (modifier = Modifier){
-        Row (modifier = Modifier){
+fun Conti(
+    navController: NavHostController,
+    viewModel: AshbornViewModel
+) {
+    Column(modifier = Modifier) {
+        Row(modifier = Modifier) {
             Box(modifier = Modifier.padding(MediumPadding)) {
-                Card (modifier = Modifier.padding(MediumPadding)) {
-                    Row (modifier = Modifier.padding(MediumPadding)){
-                        Text(text = stringResource(id = R.string.conto)+": " + viewModel.codConto, modifier = Modifier)
-                    }
-                    Row (modifier = Modifier.padding(MediumPadding)) {
-                        Column (modifier = Modifier.align(Alignment.CenterVertically)){
-                            Text(text = stringResource(id = R.string.saldo)+": " + viewModel.saldo, fontSize = 20.sp)
+                Card(modifier = Modifier.padding(MediumPadding)) {
+                    Column {
+                        Row(modifier = Modifier.padding(MediumPadding)) {
+                            Text(
+                                text = stringResource(id = R.string.conto) + ": " + viewModel.codConto,
+                                modifier = Modifier
+                            )
                         }
-                        Spacer(modifier = Modifier.padding(start= 160.dp))
-                        Column {
-                            IconButton(onClick = { /*TODO*/ }, modifier = Modifier) {
-                                Icon(Icons.Filled.Info, contentDescription = "mostra saldo")
+                        Row(modifier = Modifier.padding(MediumPadding)) {
+                            Column(modifier = Modifier.align(Alignment.CenterVertically)) {
+                                Text(
+                                    text = stringResource(id = R.string.saldo) + ": " + viewModel.saldo,
+                                    fontSize = 20.sp
+                                )
+                            }
+                            Spacer(modifier = Modifier.padding(start = 160.dp))
+                            Column {
+                                IconButton(onClick = { /*TODO*/ }, modifier = Modifier) {
+                                    Icon(Icons.Filled.Info, contentDescription = "mostra saldo")
+                                }
+                            }
+                        }
+                        Row(modifier = Modifier.padding(MediumPadding)) {
+                            Column(modifier = Modifier.align(Alignment.CenterVertically)) {
+                                Text(
+                                    text = "IBAN: " + viewModel.iban,
+                                    fontSize = 12.sp,
+                                    modifier = Modifier
+                                )
+                            }
+                            Spacer(modifier = Modifier.padding(start = 20.dp))
+                            Column {
+                                IconButton(onClick = { /*TODO*/ }, modifier = Modifier) {
+                                    Icon(
+                                        Icons.Filled.Share,
+                                        contentDescription = "share IBAN",
+                                        modifier = Modifier.padding(SmallPadding)
+                                    )
+                                }
                             }
                         }
                     }
-                    Row (modifier = Modifier.padding(MediumPadding)) {
-                        Column (modifier = Modifier.align(Alignment.CenterVertically)){
-                            Text(text = "IBAN: " + viewModel.iban, fontSize = 12.sp, modifier = Modifier)
-                        }
-                        Spacer(modifier = Modifier.padding(start= 20.dp))
-                        Column {
-                            IconButton(onClick = { /*TODO*/ }, modifier = Modifier) {
-                                Icon(Icons.Filled.Share, contentDescription = "share IBAN", modifier = Modifier.padding(SmallPadding))
-                            }
-                        }
-                    }
-
                 }
             }
         }
         Spacer(modifier = Modifier.padding(SmallPadding))
         Row {
-            Column (modifier = Modifier.padding(SmallPadding)){
-                val voci: ArrayList<Operation> = viewModel.arrayOperazioni
-                ListaOperazioniFatte(navController,voci = voci)
+            Column(modifier = Modifier.padding(SmallPadding)) {
+                ListaOperazioniFatte(navController, viewModel)
             }
         }
-
     }
-
 }
-private data class  TC(val a:Int,val boolean: Boolean){}
+
 @Composable
-fun ListaOperazioniFatte(navController: NavHostController,voci: ArrayList<Operation>,) {
-    Column(modifier = Modifier.run {
-        padding(SmallPadding)
-            .border(1.dp, Color.Black, shape = RoundedCornerShape(9.dp))
-            .fillMaxWidth()
-            .height(450.dp)
-    }
+fun ListaOperazioniFatte(
+    navController: NavHostController,
+    viewModel: AshbornViewModel
+) {
+    var voci=viewModel.operazioni
+    var ordineInversoData = true
+    var ordineInversoDescrizione = true
+    var ordineInversoImporto = true
+    Column(modifier = Modifier
+        .padding(SmallPadding)
+        .border(1.dp, Color.Black, shape = RoundedCornerShape(9.dp))
+        .fillMaxWidth()
+        .height(450.dp)
     ) {
         Row (modifier = Modifier.padding(SmallPadding)){
-            Button(onClick = { /*TODO*/ }) {
+            Button(
+                onClick = { /*TODO*/
+                    if (ordineInversoData){
+                        viewModel.operazioni = ArrayList(voci.sortedByDescending {it.dateO})
+                        ordineInversoData=!ordineInversoData
+                    } else {
+                        viewModel.operazioni = ArrayList(voci.sortedBy {it.dateO})
+                        ordineInversoData=!ordineInversoData
+                    }
+                }
+            ) {
                 Text(text = stringResource(id = R.string.data))
 
-                Icon(Icons.Filled.KeyboardArrowUp, contentDescription = "ordine ascendente")
+                Icon(
+                    imageVector = Icons.Filled.KeyboardArrowUp,
+                    contentDescription = "ordine ascendente"
+                )
 
             }
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = { /*TODO*/
+                if (ordineInversoDescrizione){
+                    viewModel.operazioni = ArrayList(voci.sortedByDescending {it.description})
+                    ordineInversoData=!ordineInversoData
+                } else {
+                    viewModel.operazioni = ArrayList(voci.sortedBy {it.description})
+                    ordineInversoDescrizione=!ordineInversoDescrizione
+                }
+            }) {
                 Text(text = stringResource(id = R.string.descrizione))
-
             }
-            Button(onClick = { /*TODO*/ }) {
-
+            Button(
+                onClick = { /*TODO*/
+                    if (ordineInversoImporto){
+                        viewModel.operazioni = ArrayList(voci.sortedByDescending {it.amount})
+                        ordineInversoImporto=!ordineInversoImporto
+                    } else {
+                        viewModel.operazioni = ArrayList(voci.sortedBy {it.amount})
+                        ordineInversoImporto=!ordineInversoImporto
+                    }
+                }
+            ) {
                 Text(text = stringResource(id = R.string.importo))
-                Icon(Icons.Filled.KeyboardArrowUp, contentDescription = "ordine ascendente")
+                Icon(
+                    Icons.Filled.KeyboardArrowUp,
+                    contentDescription = "ordine ascendente"
+                )
             }
         }
-        val t:ArrayList<TC> = arrayListOf(
-            TC(1,true),
-
-            TC(2,true),
-        )
-
         for (i in voci) {
             Card (
                 modifier = Modifier
@@ -141,21 +187,17 @@ fun ListaOperazioniFatte(navController: NavHostController,voci: ArrayList<Operat
                         fontSize = 13.sp,
                         modifier = modifier
                     )
-
-                    //Spacer(modifier = Modifier.padding(SmallPadding))
                     Text(
                         text = i.description,
                         fontSize = 13.sp,
                         modifier = modifier
                     )
-                    //Spacer(modifier = Modifier.padding(SmallPadding))
                     Text(
-                        text = if(i.operationType == TransactionType.WITHDRAWAL) {"-"} else {"+"} + i.amount.toString(),
+                        text = if(i.operationType == TransactionType.WITHDRAWAL) {"-"} else {"+"} + i.amount.toString()+ "€",
                         fontSize = 13.sp,
                         modifier = modifier
                     )
                 }
-
             }
         }
     }
@@ -167,12 +209,14 @@ fun ContiPreview() {
     val viewModel = AshbornViewModel()
     val navController = rememberNavController()
     AshbornTheme {
-
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Conti(navController,viewModel = viewModel)
+            Conti(
+                navController = navController,
+                viewModel = viewModel
+            )
         }
     }
 }

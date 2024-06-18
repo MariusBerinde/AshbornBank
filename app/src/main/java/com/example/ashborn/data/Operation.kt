@@ -1,7 +1,7 @@
 package com.example.ashborn.data
 
-import android.icu.util.CurrencyAmount
 import java.time.LocalDateTime
+
 enum class TransactionType {
     DEPOSIT, WITHDRAWAL
 }
@@ -11,6 +11,10 @@ data class Operation(
     val dateO: LocalDateTime,
     val dateV: LocalDateTime,
     val description:String,
-    val amount: CurrencyAmount,
+    //val amount: CurrencyAmount,
+    val amount: Double,
     val operationType:TransactionType
-)
+){
+   open fun getValue(){}
+
+}

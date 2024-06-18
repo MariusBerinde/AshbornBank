@@ -33,7 +33,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.ashborn.data.Operation
 import com.example.ashborn.data.Voice
 import com.example.ashborn.ui.theme.AshbornTheme
 import com.example.ashborn.ui.theme.MediumPadding
@@ -44,21 +43,26 @@ import com.example.ashborn.R
 import com.example.ashborn.ui.theme.LargePadding
 
 @Composable
-fun Altro(navController: NavHostController, viewModel: AshbornViewModel) {
-    Column() {
-
-        Row (modifier = Modifier.fillMaxWidth()){
-            Card (modifier = Modifier
-                .padding(MediumPadding)
-                .fillMaxWidth()
-                .padding(MediumPadding)) {
+fun Altro(
+    navController: NavHostController,
+    viewModel: AshbornViewModel
+) {
+    Column {
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Card(
+                modifier = Modifier
+                    .padding(MediumPadding)
+                    .fillMaxWidth()
+                    .padding(MediumPadding)
+            ) {
                 Row {
-                    Column (modifier = Modifier.padding(MediumPadding)) {
-                        Box(modifier = Modifier
-                            .size(100.dp)
-                            .clip(CircleShape)
-                            .background(Color.Blue)
-                            .padding(MediumPadding)
+                    Column(modifier = Modifier.padding(MediumPadding)) {
+                        Box(
+                            modifier = Modifier
+                                .size(100.dp)
+                                .clip(CircleShape)
+                                .background(Color.Blue)
+                                .padding(MediumPadding)
                         ) {
                             Text(
                                 text = viewModel.userName[0].toString() + viewModel.cognome[0].toString(),
@@ -76,18 +80,17 @@ fun Altro(navController: NavHostController, viewModel: AshbornViewModel) {
                         Text(stringResource(id = R.string.app_name))
 
                     }
-                    Column (modifier = Modifier
+                    Column(modifier = Modifier
                         .padding(horizontal = SmallPadding, vertical = 50.dp)
-                        .clickable { }){
+                        .clickable { }) {
                         Text("Dettagli", fontWeight = FontWeight.Bold)
                     }
                 }
             }
         }
         Row {
-            Column (modifier = Modifier.padding(SmallPadding)){
-                val voci: ArrayList<Operation> = viewModel.arrayOperazioni
-                ListaAzioni(navController,voci = voci)
+            Column(modifier = Modifier.padding(SmallPadding)) {
+                ListaAzioni(navController)
             }
         }
     }
@@ -95,7 +98,7 @@ fun Altro(navController: NavHostController, viewModel: AshbornViewModel) {
 
 
 @Composable
-fun ListaAzioni(navController: NavHostController, voci: ArrayList<Operation>,) {
+fun ListaAzioni(navController: NavHostController) {
     Column(modifier = Modifier.run {
         padding(SmallPadding)
             .border(1.dp, Color.Black, shape = RoundedCornerShape(9.dp))
@@ -121,7 +124,7 @@ fun ListaAzioni(navController: NavHostController, voci: ArrayList<Operation>,) {
                 Row(modifier = Modifier
                     .fillMaxSize()
                     .clickable {
-                        Log.i("OperazioniAltro", "${i.name}")
+                        Log.i("OperazioniAltro", i.name)
                         navController.navigate(i.destination)
                     }
                 ) {
@@ -135,30 +138,42 @@ fun ListaAzioni(navController: NavHostController, voci: ArrayList<Operation>,) {
 }
 
 @Composable
-fun Avvisi(navController: NavHostController, viewModel: AshbornViewModel) {
+fun Avvisi(
+    navController: NavHostController,
+    viewModel: AshbornViewModel
+) {
     Text(text = stringResource(id = R.string.avvisi))
-
 }
 
 @Composable
-fun Archivio(navController: NavHostController, viewModel: AshbornViewModel) {
+fun Archivio(
+    navController: NavHostController,
+    viewModel: AshbornViewModel
+) {
     Text(text = stringResource(id = R.string.archivio))
     Spacer(modifier = Modifier.padding(LargePadding))
-
 }
 @Composable
-fun Sicurezza(navController: NavHostController, viewModel: AshbornViewModel) {
+fun Sicurezza(
+    navController: NavHostController,
+    viewModel: AshbornViewModel
+) {
     Text(text = stringResource(id = R.string.sicurezza))
 
 }
 @Composable
-fun Impostazioni(navController: NavHostController, viewModel: AshbornViewModel) {
+fun Impostazioni(
+    navController: NavHostController,
+    viewModel: AshbornViewModel
+) {
     Text(text = stringResource(id = R.string.impostazioni))
 }
 @Composable
-fun Logout(navController: NavHostController, viewModel: AshbornViewModel) {
+fun Logout(
+    navController: NavHostController,
+    viewModel: AshbornViewModel
+) {
     Text(text = stringResource(id = R.string.logout))
-
 }
 
 @Preview(showBackground = true)

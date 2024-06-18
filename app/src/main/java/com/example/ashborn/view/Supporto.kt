@@ -1,3 +1,5 @@
+package com.example.ashborn.view
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -10,23 +12,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.ashborn.ui.theme.AshbornTheme
 import com.example.ashborn.ui.theme.MediumPadding
-import com.example.ashborn.viewModel.AshbornViewModel
 import androidx.compose.ui.res.stringResource
 import com.example.ashborn.R
 
 @Composable
-fun ParlaConNoi(navController: NavHostController, viewModel: AshbornViewModel) {
-    val context = LocalContext.current
-    Column (
+fun ParlaConNoi() {
+    Column(
         modifier = Modifier.padding(MediumPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -54,16 +51,13 @@ fun ParlaConNoi(navController: NavHostController, viewModel: AshbornViewModel) {
 
 
 @Preview(showBackground = true) @Composable
-fun Preview() {
-    val viewModel = AshbornViewModel()
-    val navController = rememberNavController()
+fun PreviewP() {
     AshbornTheme {
-
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            ParlaConNoi(navController = navController, viewModel =viewModel )
+            ParlaConNoi()
         }
     }
 }

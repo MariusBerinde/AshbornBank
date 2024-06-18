@@ -11,8 +11,10 @@ import androidx.compose.ui.res.stringResource
 import com.example.ashborn.R
 
 @Composable
-fun Utente(viewModel: AshbornViewModel, navController: NavHostController) {
-
+fun Utente(
+    viewModel: AshbornViewModel,
+    navController: NavHostController
+) {
     Text(text = stringResource(id = R.string.welcome) +" "+ viewModel.userName)
 }
 

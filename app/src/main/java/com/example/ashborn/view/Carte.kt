@@ -28,7 +28,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,48 +37,45 @@ import androidx.navigation.compose.rememberNavController
 import com.example.ashborn.ui.theme.AshbornTheme
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.viewModel.AshbornViewModel
-import com.example.ashborn.data.Operation
 import com.example.ashborn.ui.theme.SmallPadding
-
 import androidx.compose.ui.res.stringResource
 import com.example.ashborn.R
 @Composable
-fun RigaMagnetica(modifier: Modifier = Modifier){
-    Surface(modifier = Modifier.height(60.dp).fillMaxWidth().background(Color.Black), color=Color.Black, content = { Text("") })
+fun RigaMagnetica(){
+    Surface(modifier = Modifier
+        .height(60.dp)
+        .fillMaxWidth()
+        .background(Color.Black), color=Color.Black, content = { Text("") })
 }
 @Composable
 fun FronteCarta() {
-    val nr_carta="1234 5678 9101 1121";
-    val utente="Mariolone Bubbarello";
+    val nrCarta="1234 5678 9101 1121"
+    val utente="Mariolone Bubbarello"
     val scadenza="06/06/06"
     val cvc="avadv"
-    val cod_utente="21435444325555324"
+    val codUtente="21435444325555324"
     var isFront by remember { mutableStateOf(true) }
   Card {
       Column(
           modifier =  Modifier.padding(0.dp,16.dp),
-        //  verticalArrangement = Arrangement.Center,
           horizontalAlignment = Alignment.CenterHorizontally
       ) {
           if(!isFront){
-              RigaMagnetica(modifier = Modifier)
-
-                  Spacer(modifier = Modifier.width(32.dp))
-                  Text(text = "CVC: $cvc")
-
-
-              Text(text = stringResource(id = R.string.codice_utente)+ cod_utente)
+              RigaMagnetica()
+              Spacer(modifier = Modifier.width(32.dp))
+              Text(text = "CVC: $cvc")
+              Text(text = stringResource(id = R.string.codice_utente)+ codUtente)
           }else{
               Text(text = stringResource(id = R.string.app_name), textAlign = TextAlign.Center, fontWeight = FontWeight.Bold)
               Spacer(modifier = Modifier.width(32.dp))
               Icon(Icons.Filled.Star, contentDescription ="Simbolo sim", modifier = Modifier.size(48.dp))
-              Text(text = "$nr_carta")
+              Text(text = nrCarta)
               Row (modifier = Modifier.padding(16.dp))
               {
 
-                  Text(text = "$utente")
+                  Text(text = utente)
                   Spacer(modifier = Modifier.width(32.dp))
-                  Text("$scadenza")
+                  Text(scadenza)
               }
           }
 
@@ -94,8 +90,10 @@ fun FronteCarta() {
 }
 
 @Composable
-fun Carte(navController: NavHostController, viewModel: AshbornViewModel) {
-    val context = LocalContext.current
+fun Carte(
+    navController: NavHostController,
+    viewModel: AshbornViewModel
+) {
     Column (
         modifier = Modifier.padding(MediumPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -105,8 +103,7 @@ fun Carte(navController: NavHostController, viewModel: AshbornViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
         Row {
             Column (modifier = Modifier.padding(SmallPadding)){
-                val voci: ArrayList<Operation> = viewModel.arrayOperazioni
-                ListaOperazioniFatte(navController,voci = voci)
+                ListaOperazioniFatte(navController, viewModel)
             }
         }
     }
@@ -115,16 +112,18 @@ fun Carte(navController: NavHostController, viewModel: AshbornViewModel) {
 
 @Preview(showBackground = true)
 @Composable
-fun previewC() {
+fun PreviewC() {
     val viewModel = AshbornViewModel()
     val navController = rememberNavController()
     AshbornTheme {
-
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Carte (navController = navController, viewModel =viewModel )
+            Carte (
+                navController = navController,
+                viewModel =viewModel
+            )
         }
     }
 }

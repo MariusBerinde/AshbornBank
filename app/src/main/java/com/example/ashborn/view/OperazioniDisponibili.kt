@@ -2,6 +2,7 @@ package com.example.ashborn.view
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -45,11 +46,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.ashborn.ConnectivityObserver
 import com.example.ashborn.R
 import com.example.ashborn.ui.theme.AshbornTheme
 import com.example.ashborn.ui.theme.LargePadding
@@ -60,84 +63,98 @@ import com.example.ashborn.viewModel.AshbornViewModel
 import com.example.ashborn.viewModel.OperationViewModel
 
 @Composable
-fun OperazioniDisponibili(navController: NavHostController, viewModel: AshbornViewModel) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+fun Operazioni(
+    navController: NavHostController,
+    viewModel: AshbornViewModel,
+    connectionStatus: ConnectivityObserver.Status
+) {
+    Box(
+        modifier = Modifier,
+
     ) {
-        // Custom Top Bar
-        val icons: ArrayList<ImageVector>  = arrayListOf(
-            ImageVector.vectorResource(R.drawable.bank),
-            ImageVector.vectorResource(R.drawable.credit_card_outline),
-            ImageVector.vectorResource(R.drawable.currency_eur),
-            ImageVector.vectorResource(R.drawable.chat_outline),
-            ImageVector.vectorResource(R.drawable.dots_horizontal)
-        )
-        val index=0
-        Row(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxSize()
+                .padding(16.dp)
         ) {
-            IconButton(onClick = {
-                navController.popBackStack()
-            }) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+            // Custom Top Bar
+            val icons: ArrayList<ImageVector>  = arrayListOf(
+                ImageVector.vectorResource(R.drawable.bank),
+                ImageVector.vectorResource(R.drawable.credit_card_outline),
+                ImageVector.vectorResource(R.drawable.currency_eur),
+                ImageVector.vectorResource(R.drawable.chat_outline),
+                ImageVector.vectorResource(R.drawable.dots_horizontal)
+            )
+            val index=0
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = {
+                    navController.popBackStack()
+                }) {
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                }
+            }
+            Row(
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+
+                Card(
+                    onClick = {
+                             navController.navigate("bonifico")
+
+                },
+                    modifier = Modifier.fillMaxWidth()
+                    ) {
+                    Row (
+                        modifier = Modifier.padding(SmallPadding)
+                    ){
+
+                        Icon(icons[index], contentDescription = "ll")
+                         Spacer(modifier = Modifier.padding(SmallPadding))
+                        Text(text = "Bonifico")
+                    }
+
+
+                }
+            }
+
+            Spacer(modifier = Modifier
+                .padding(SmallPadding)
+                .fillMaxWidth())
+            Row(
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+
+                Card(
+                    onClick = {
+
+                        navController.navigate("mav")
+
+                },
+                    modifier = Modifier.fillMaxWidth()
+                    ) {
+                    Row (
+                        modifier = Modifier.padding(SmallPadding)
+                    ){
+
+                        Icon(icons[index], contentDescription = "ll")
+                         Spacer(modifier = Modifier.padding(SmallPadding))
+                        Text(text = "MAV/RAV")
+                    }
+
+
+                }
             }
         }
-        Row(
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        ) {
-
-            Card(
-                onClick = {
-                         navController.navigate("bonifico")
-
-            },
-                modifier = Modifier.fillMaxWidth()
-                ) {
-                Row (
-                    modifier = Modifier.padding(SmallPadding)
-                ){
-
-                    Icon(icons[index], contentDescription = "ll")
-                     Spacer(modifier = Modifier.padding(SmallPadding))
-                    Text(text = "Bonifico")
-                }
-
-
-            }
-        }
-
-        Spacer(modifier = Modifier
-            .padding(SmallPadding)
-            .fillMaxWidth())
-        Row(
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        ) {
-
-            Card(
-                onClick = {
-
-                    navController.navigate("mav")
-
-            },
-                modifier = Modifier.fillMaxWidth()
-                ) {
-                Row (
-                    modifier = Modifier.padding(SmallPadding)
-                ){
-
-                    Icon(icons[index], contentDescription = "ll")
-                     Spacer(modifier = Modifier.padding(SmallPadding))
-                    Text(text = "MAV/RAV")
-                }
-
-
-            }
+        Surface(modifier = Modifier
+            .fillMaxSize()
+            .align(Alignment.Center)) {
+            Text(text = stringResource(id = R.string.connessione_persa), textAlign = TextAlign.Center)
         }
     }
 }
@@ -507,62 +524,6 @@ fun OperazioneConfermata(navController : NavHostController, viewModel : Operatio
     }
 }
 
-/**@param beneficiario il nome e il cognome del beneficiario
- * @param iban il codice iban del beneficiario
- * @param importo l'importo del bonifico in formato stringa
- * @param causale la motivazione del bonifico
- * @param dataAccredito la data in cui verrà effettuato il bonifico
- * @return true se il bonifico ha dati validi per effettuarlo false altrimenti
- */
-fun bonificoValido(beneficiario: String, iban: String, importo: String, causale: String, dataAccredito: String): Boolean {
-    val beneficiarioOK: Boolean = beneficiarioValido(beneficiario)
-    val ibanOK: Boolean = ibanValido(iban)
-    val importoOK: Boolean = importoValido(importo)
-    val causaleOK: Boolean = causaleValida(causale)
-    val dataAccreditoOK: Boolean = dataAccreditoValida(dataAccredito)
-    return beneficiarioOK && ibanOK && importoOK && causaleOK && dataAccreditoOK
-}
-
-/**
- * @param beneficiario il beneficiario del bonifico deve contenere nome e cognome del beneficiario o il nome di un'azienda
- * @return true se il beneficiario è valido false altrimenti
- */
-fun beneficiarioValido(beneficiario: String): Boolean {
-    return true
-}
-
-/**
- * @param iban l'iban da controllare
- * @return true se l'iban è valido false altrimenti
- */
-fun ibanValido(iban: String): Boolean {
-    return true
-}
-
-/**
- * @param causale la causale del bonifico da effettuare
- * @return true se la causale è valida false altrimenti
- */
-fun causaleValida(causale: String): Boolean {
-    return true
-}
-
-/**
- * @param dataAccredito la data in cui verrà effettuato il bonifico
- * @return true se la data è valida false altrimenti
- */
-fun dataAccreditoValida(dataAccredito: String): Boolean {
-    return true
-}
-
-/**
- * @param importo l'importo del bonifico da effettuare
- * @return true se l'importo è valido false altrimenti
- */
-fun importoValido(importo: String): Boolean {
-    return true
-}
-
 @Preview(showBackground = true)
 @Composable
 fun PreviewO() {
@@ -574,8 +535,12 @@ fun PreviewO() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            //OperazioniDisponibili (navController = navController, viewModel =viewModel )
-            Bonifico(navController = navController, viewModelOp = viewModelOp)
+            Operazioni(
+                navController = navController,
+                viewModel =viewModel,
+                connectionStatus = ConnectivityObserver.Status.Lost
+            )
+            //Bonifico(navController = navController, viewModelOp = viewModelOp)
             //BonificoConfermato(navController = navController, viewModel = viewModelOp)
             //RiepilogoBonifico(navController = navController, viewModel = viewModelOp)
         }
