@@ -1,5 +1,6 @@
 package com.example.ashborn.viewModel
 
+import android.app.Application
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
@@ -7,9 +8,18 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.text.isDigitsOnly
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import com.example.ashborn.data.ErroreUiRegistrazioneStato
 import com.example.ashborn.data.Operation
 import com.example.ashborn.data.TransactionType
+import com.example.ashborn.data.User
+import com.example.ashborn.data.UserState
+import com.example.ashborn.db.UserDb
+import com.example.ashborn.repository.OfflineUserRepository
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
@@ -18,7 +28,67 @@ import kotlinx.datetime.minus
 import kotlinx.datetime.toLocalDateTime
 import java.time.LocalDateTime
 
-open class AshbornViewModel: ViewModel() {
+open class AshbornViewModel(
+    application: Application
+): AndroidViewModel(application) {
+
+     private val userRepository: OfflineUserRepository
+    init {
+        val userDao = UserDb.getDatabase(application).userDao()
+        userRepository = OfflineUserRepository(userDao)
+
+    }
+   var statoUtente by mutableStateOf(UserState())
+       private set
+
+    var statoUtenteUi by mutableStateOf(UserState())
+        private set
+    var erroreUiRegistrazioneStato by mutableStateOf(ErroreUiRegistrazioneStato())
+        private set
+
+
+    fun upsertUser(utente: User) {
+        viewModelScope.launch {
+            userRepository.upsertUser(utente)
+        }
+    }
+
+    fun deleteUser(utente: User) {
+        viewModelScope.launch {
+            userRepository.deleteUser(utente)
+        }
+    }
+
+    fun getUserById(id: Int): LiveData<User?> {
+    /*    var ris:Unit? = null
+        viewModelScope.launch {
+             ris = userRepository.getUserById(id)
+                .collect{
+                    user ->
+                     val name = user.name
+                     val surname = user.surname
+                     val dateOfBirth = user.dateOfBirth
+                     val clientCode = user.clientCode
+                     val id = user.id
+                }
+
+
+        }
+        return ris
+     */
+        val result = MutableLiveData<User?>()
+
+        viewModelScope.launch {
+            userRepository.getUserById(id).collect { user ->
+                result.postValue(user)
+            }
+        }
+
+        return result
+    }
+
+
+
     val tag: String = AshbornViewModel::class.java.simpleName
     var erroreNome by mutableIntStateOf(0)
         private set
@@ -193,3 +263,4 @@ open class AshbornViewModel: ViewModel() {
         this.erroreCodCliente = if (b) {1} else {0}
     }
 }
+

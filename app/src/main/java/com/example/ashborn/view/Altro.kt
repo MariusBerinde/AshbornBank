@@ -19,28 +19,23 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import com.example.ashborn.R
 import com.example.ashborn.data.Voice
-import com.example.ashborn.ui.theme.AshbornTheme
+import com.example.ashborn.ui.theme.LargePadding
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.viewModel.AshbornViewModel
-import androidx.compose.ui.res.stringResource
-import com.example.ashborn.R
-import com.example.ashborn.ui.theme.LargePadding
 
 @Composable
 fun Altro(
@@ -175,7 +170,7 @@ fun Logout(
 ) {
     Text(text = stringResource(id = R.string.logout))
 }
-
+/*
 @Preview(showBackground = true)
 @Composable
 fun OpPreview() {
@@ -189,4 +184,4 @@ fun OpPreview() {
             Altro(navController, viewModel)
         }
     }
-}
+}*/

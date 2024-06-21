@@ -24,7 +24,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
@@ -45,14 +44,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.ashborn.ConnectivityObserver
 import com.example.ashborn.R
-import com.example.ashborn.ui.theme.AshbornTheme
+import com.example.ashborn.data.User
 import com.example.ashborn.ui.theme.LargePadding
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
@@ -83,7 +80,7 @@ fun Welcome(
                 .padding(SmallPadding),
                 //TODO:aggiungere controllo per verifica primo login
                 onClick = {
-                    if (!viewModel.fistLogin) {
+                    if (viewModel.fistLogin) {
                         navController.navigate("primo-login")
                     } else {
                         navController.navigate("login")
@@ -336,6 +333,14 @@ fun Registrazione(
                         viewModel.formatoCodiceCliente(viewModel.codCliente)
                     ) {
                         viewModel.fistLogin=false
+                        viewModel.upsertUser(
+                            User(
+                                viewModel.userName,
+                                viewModel.dataNascita,
+                                viewModel.cognome,
+                               viewModel.codCliente
+                            )
+                        )
                         navController.navigate("welcome")
                     } else {
                         gestisciErrori(
@@ -398,7 +403,7 @@ fun gestisciErrori(
     viewModel.setErroreCodClienteX(!viewModel.formatoCodiceCliente(codCliente))
     viewModel.setErroreDataNX(!viewModel.formatoDataNascitaValida(dataN))
 }
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
  fun Preview() {
     val viewModel = AshbornViewModel()
@@ -422,5 +427,5 @@ fun gestisciErrori(
         }
     }
 }
-
+*/
 

@@ -17,28 +17,23 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import com.example.ashborn.R
 import com.example.ashborn.data.TransactionType
-import com.example.ashborn.ui.theme.AshbornTheme
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.viewModel.AshbornViewModel
-import androidx.compose.material3.Card as Card
-import androidx.compose.ui.res.stringResource
-import com.example.ashborn.R
 
 @Composable
 fun Conti(
@@ -202,7 +197,7 @@ fun ListaOperazioniFatte(
         }
     }
 }
-
+/*
 @Preview(showBackground = true)
 @Composable
 fun ContiPreview() {
@@ -220,4 +215,4 @@ fun ContiPreview() {
         }
     }
 }
-
+*/

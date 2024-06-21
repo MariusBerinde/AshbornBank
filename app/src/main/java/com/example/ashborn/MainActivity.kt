@@ -1,13 +1,10 @@
 package com.example.ashborn
 
-import android.app.Application
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -15,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -28,7 +24,6 @@ import com.example.ashborn.view.AskPIN
 import com.example.ashborn.view.Avvisi
 import com.example.ashborn.view.Bonifico
 import com.example.ashborn.view.DettagliOperazione
-import com.example.ashborn.view.ErroreConnessione
 import com.example.ashborn.view.Impostazioni
 import com.example.ashborn.view.Logout
 import com.example.ashborn.view.Mav
@@ -44,6 +39,7 @@ import com.example.ashborn.viewModel.AshbornViewModel
 import com.example.ashborn.viewModel.OperationViewModel
 
 class MainActivity : ComponentActivity() {
+
     private lateinit var connectivityObserver: ConnectivityObserver
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +50,7 @@ class MainActivity : ComponentActivity() {
                     initial = ConnectivityObserver.Status.Unavailable
                 )
                 val viewModel: AshbornViewModel by viewModels()
+
                 val operationViewModel: OperationViewModel by viewModels()
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -77,7 +74,7 @@ fun AppNavigazione(
     connectionStatus: ConnectivityObserver.Status
 ){
     val navController = rememberNavController()
-    val startDest = viewModel.startDest;
+    val startDest = viewModel.startDest
     NavHost(
         navController = navController,
         startDestination = startDest
@@ -206,11 +203,12 @@ fun AppNavigazione(
         }
     }
 }
-
+/*
 @Preview(showBackground = true)
 @Composable
 fun AshbornPreview() {
     AshbornTheme {
+
         val viewModel: AshbornViewModel = AshbornViewModel()
         val operationViewModel: OperationViewModel = OperationViewModel()
         AppNavigazione(
@@ -220,3 +218,4 @@ fun AshbornPreview() {
         )
     }
 }
+*/
