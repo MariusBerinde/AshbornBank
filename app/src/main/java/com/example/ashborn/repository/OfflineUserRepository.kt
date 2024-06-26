@@ -9,5 +9,6 @@ class OfflineUserRepository(private val userDao: UserDao):UserRepository{
 
     override suspend fun deleteUser(utente: User) = userDao.deleteUser(utente)
 
-    override fun getUserById(id:Int): Flow<User> = userDao.getUserById(id)
+    //override fun getUserById(id:Int): Flow<User> = userDao.getUserById(id)
+    override fun getUserById(id:String): Flow<User> = userDao.getUserById(id)
 }

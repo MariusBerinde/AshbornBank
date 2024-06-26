@@ -1,7 +1,6 @@
 package com.example.ashborn
 
 
-import com.example.ashborn.viewModel.OperationViewModel
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
@@ -14,7 +13,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class OperationViewModelTest {
-    private  var viewModel: OperationViewModel = OperationViewModel()
+    private  var viewModel: Validatore = Validatore()
 
     @Test
     fun formatoBeneficiarioValidoTest(){

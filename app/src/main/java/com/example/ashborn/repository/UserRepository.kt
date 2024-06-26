@@ -8,6 +8,7 @@ interface UserRepository{
 
     suspend fun deleteUser(utente: User)
 
-    fun getUserById(id:Int): Flow<User>
+    fun getUserById(id:String): Flow<User>
+    //fun getUserById(id:Int): Flow<User>
 
 }

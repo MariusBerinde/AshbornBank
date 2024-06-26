@@ -49,6 +49,7 @@ class MainActivity : ComponentActivity() {
                 val status by connectivityObserver.observe().collectAsState(
                     initial = ConnectivityObserver.Status.Unavailable
                 )
+
                 val viewModel: AshbornViewModel by viewModels()
 
                 val operationViewModel: OperationViewModel by viewModels()

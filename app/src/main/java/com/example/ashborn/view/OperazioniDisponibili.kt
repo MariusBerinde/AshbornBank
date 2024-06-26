@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.ashborn.ConnectivityObserver
 import com.example.ashborn.R
+import com.example.ashborn.Validatore
 import com.example.ashborn.ui.theme.LargePadding
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
@@ -188,11 +189,11 @@ fun gestisciErrori(
     dataAccredito: String,
     viewModelOp: OperationViewModel
 ) {
-    viewModelOp.setErroreBeneficiarioX(!viewModelOp.formatoBeneficiarioValido(beneficiario))
-    viewModelOp.setErroreIbanX(!viewModelOp.formatoIbanValido(iban))
-    viewModelOp.setErroreImportoX(!viewModelOp.formatoImportoValido(importo))
-    viewModelOp.setErroreCausaleX(!viewModelOp.formatoCausaleValida(causale))
-    viewModelOp.setErroreDataAccreditoX(!viewModelOp.formatoDataAccreditoValida(dataAccredito))
+    viewModelOp.setErroreBeneficiarioX(!Validatore().formatoBeneficiarioValido(beneficiario))
+    viewModelOp.setErroreIbanX(!Validatore().formatoIbanValido(iban))
+    viewModelOp.setErroreImportoX(!Validatore().formatoImportoValido(importo))
+    viewModelOp.setErroreCausaleX(!Validatore().formatoCausaleValida(causale))
+    viewModelOp.setErroreDataAccreditoX(!Validatore().formatoDataAccreditoValida(dataAccredito))
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -339,7 +340,7 @@ fun Bonifico(navController: NavHostController , viewModelOp: OperationViewModel)
                     keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
                     keyboardActions = KeyboardActions(
                         onSend = {
-                            if(viewModelOp.formatoBonificoValido(viewModelOp.beneficiario, viewModelOp.iban, viewModelOp.importo, viewModelOp.causale, viewModelOp.dataAccredito)) {
+                            if(Validatore().formatoBonificoValido(viewModelOp.beneficiario, viewModelOp.iban, viewModelOp.importo, viewModelOp.causale, viewModelOp.dataAccredito)) {
                                 Log.i("Bonifico", "Sto per andare in riepilogo")
                                 navController.navigate("riepilogo-bonifico")
                             } else {
@@ -358,7 +359,7 @@ fun Bonifico(navController: NavHostController , viewModelOp: OperationViewModel)
             Row () {
                 Button(
                     onClick = {
-                        if(viewModelOp.formatoBonificoValido(viewModelOp.beneficiario, viewModelOp.iban, viewModelOp.importo, viewModelOp.causale, viewModelOp.dataAccredito)) {
+                        if(Validatore().formatoBonificoValido(viewModelOp.beneficiario, viewModelOp.iban, viewModelOp.importo, viewModelOp.causale, viewModelOp.dataAccredito)) {
                             Log.i("Bonifico", "Sto per andare in riepilogo")
                             navController.navigate("riepilogo-bonifico")
                         } else {

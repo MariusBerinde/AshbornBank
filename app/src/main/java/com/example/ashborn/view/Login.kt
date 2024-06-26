@@ -29,7 +29,9 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -49,6 +51,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.ashborn.ConnectivityObserver
 import com.example.ashborn.R
+import com.example.ashborn.Validatore
 import com.example.ashborn.data.User
 import com.example.ashborn.ui.theme.LargePadding
 import com.example.ashborn.ui.theme.MediumPadding
@@ -70,8 +73,13 @@ fun Welcome(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
+
+            Log.i("Welcome",viewModel.dataStoreManager.usernameFlow.collectAsState(initial = "val Iniziale").value)
             Text(
-                text = stringResource(id = R.string.app_name)+"\n"+stringResource(id = R.string.welcome)+"\n"+viewModel.userName,
+                //text = stringResource(id = R.string.app_name)+"\n"+stringResource(id = R.string.welcome)+"\n"+viewModel.userName,
+                text = stringResource(id = R.string.app_name)+"\n"+stringResource(id = R.string.welcome)+"\n"+viewModel.dataStoreManager.usernameFlow.collectAsState(
+                    initial = ""
+                ).value,
                  modifier = Modifier.align(Alignment.CenterHorizontally)
             )
             Spacer(modifier = Modifier.height(SmallVerticalSpacing))
@@ -84,6 +92,7 @@ fun Welcome(
                         navController.navigate("primo-login")
                     } else {
                         navController.navigate("login")
+
                     }
                 }
             ) {
@@ -186,6 +195,7 @@ fun Registrazione(
     val focusRequester3 = remember { FocusRequester() }
     val focusRequester4 = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
+    val coroutineScope = rememberCoroutineScope()
     ErroreConnessione(connectionStatus = connectionStatus) {
         Column (
             modifier = Modifier
@@ -299,11 +309,12 @@ fun Registrazione(
                 keyboardActions = KeyboardActions(
                     onSend = {
                         if (
-                            viewModel.formatoNomeValido(viewModel.userName) &&
-                            viewModel.formatoDataNascitaValida(viewModel.dataNascita) &&
-                            viewModel.formatoCognomeValido(viewModel.cognome) &&
-                            viewModel.formatoCodiceCliente(viewModel.codCliente)
+                            Validatore().formatoNomeValido(viewModel.userName) &&
+                            Validatore().formatoDataNascitaValida(viewModel.dataNascita) &&
+                            Validatore().formatoCognomeValido(viewModel.cognome) &&
+                            Validatore().formatoCodiceCliente(viewModel.codCliente)
                         ) {
+                            viewModel.writePreferences()
                             viewModel.fistLogin = false
                             navController.navigate("welcome")
                         } else {
@@ -327,10 +338,10 @@ fun Registrazione(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
                     if (
-                        viewModel.formatoNomeValido(viewModel.userName) &&
-                        viewModel.formatoDataNascitaValida(viewModel.dataNascita) &&
-                        viewModel.formatoCognomeValido(viewModel.cognome) &&
-                        viewModel.formatoCodiceCliente(viewModel.codCliente)
+                        Validatore().formatoNomeValido(viewModel.userName) &&
+                        Validatore().formatoDataNascitaValida(viewModel.dataNascita) &&
+                        Validatore().formatoCognomeValido(viewModel.cognome) &&
+                        Validatore().formatoCodiceCliente(viewModel.codCliente)
                     ) {
                         viewModel.fistLogin=false
                         viewModel.upsertUser(
@@ -341,6 +352,7 @@ fun Registrazione(
                                viewModel.codCliente
                             )
                         )
+                        viewModel.writePreferences()
                         navController.navigate("welcome")
                     } else {
                         gestisciErrori(
@@ -398,10 +410,10 @@ fun gestisciErrori(
     dataN:String,
     viewModel: AshbornViewModel
 ) {
-    viewModel.setErroreNomeX(!viewModel.formatoNomeValido(nome))
-    viewModel.setErroreCognomeX(!viewModel.formatoCognomeValido(cognome))
-    viewModel.setErroreCodClienteX(!viewModel.formatoCodiceCliente(codCliente))
-    viewModel.setErroreDataNX(!viewModel.formatoDataNascitaValida(dataN))
+    viewModel.setErroreNomeX(!Validatore().formatoNomeValido(nome))
+    viewModel.setErroreCognomeX(!Validatore().formatoCognomeValido(cognome))
+    viewModel.setErroreCodClienteX(!Validatore().formatoCodiceCliente(codCliente))
+    viewModel.setErroreDataNX(!Validatore().formatoDataNascitaValida(dataN))
 }
 /*@Preview(showBackground = true)
 @Composable

@@ -18,7 +18,9 @@ interface UserDao {
    @Delete
    suspend fun deleteUser(utente: User)
 
-   @Query ("Select * from users where id= :id limit 1" )
-   fun getUserById(id:Int):Flow<User>
+   @Query ("Select * from users where " + "clientCode= :id limit 1" )
+   fun getUserById(id:String):Flow<User>
+   //@Query ("Select * from users where " + "id= :id limit 1" )
+   // fun getUserById(id:Int):Flow<User>
 
 }

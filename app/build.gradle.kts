@@ -95,6 +95,14 @@ dependencies {
 
     // optional - Paging 3 Integration
     implementation("androidx.room:room-paging:$room_version")
+
+    // per datastore
+    implementation("androidx.datastore:datastore:1.1.1")
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+    implementation("androidx.datastore:datastore-rxjava2:1.1.1")
+    implementation("androidx.datastore:datastore-rxjava3:1.1.1")
+
+
 }
 
 kapt {

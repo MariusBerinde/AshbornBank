@@ -1,13 +1,12 @@
 package com.example.ashborn
 
-import com.example.ashborn.viewModel.AshbornViewModel
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 
 class AshbornViewModelUnitTest {
-    private  var viewModel: AshbornViewModel = AshbornViewModel()
+    private lateinit var viewModel: Validatore
 
     @Test
     fun formatoDataNascitaValidaTest() {

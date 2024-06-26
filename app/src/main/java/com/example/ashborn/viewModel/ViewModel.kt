@@ -1,6 +1,6 @@
 package com.example.ashborn.viewModel
-
 import android.app.Application
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
@@ -8,6 +8,11 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.text.isDigitsOnly
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -19,23 +24,38 @@ import com.example.ashborn.data.User
 import com.example.ashborn.data.UserState
 import com.example.ashborn.db.UserDb
 import com.example.ashborn.repository.OfflineUserRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
-import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.minus
-import kotlinx.datetime.toLocalDateTime
 import java.time.LocalDateTime
 
 open class AshbornViewModel(
     application: Application
 ): AndroidViewModel(application) {
 
+
      private val userRepository: OfflineUserRepository
+
+
+     val dataStoreManager:DataStoreManager = DataStoreManager(application)
+
     init {
         val userDao = UserDb.getDatabase(application).userDao()
         userRepository = OfflineUserRepository(userDao)
+        viewModelScope.launch{
+           // viewModelScope.launch{
+            if(dataStoreManager.usernameFlow.first().isEmpty() ){
+                fistLogin=true
+                Log.i("ViewModel","Utente nullo")
+                Log.i("ViewModel","Utente = ${dataStoreManager.usernameFlow.first().toString()}")
+            }else {
+                fistLogin=false
+                Log.i("ViewModel","Utente = ${dataStoreManager.usernameFlow.first().toString()}")
+            }
+        }
+
 
     }
    var statoUtente by mutableStateOf(UserState())
@@ -59,23 +79,7 @@ open class AshbornViewModel(
         }
     }
 
-    fun getUserById(id: Int): LiveData<User?> {
-    /*    var ris:Unit? = null
-        viewModelScope.launch {
-             ris = userRepository.getUserById(id)
-                .collect{
-                    user ->
-                     val name = user.name
-                     val surname = user.surname
-                     val dateOfBirth = user.dateOfBirth
-                     val clientCode = user.clientCode
-                     val id = user.id
-                }
-
-
-        }
-        return ris
-     */
+    fun getUserById(id: String): LiveData<User?> {
         val result = MutableLiveData<User?>()
 
         viewModelScope.launch {
@@ -183,70 +187,7 @@ open class AshbornViewModel(
     fun incrementWrongAttempts() {
         this.wrongAttempts++
     }
-    /**
-     * Controlla il formato di dataNascita , il formato è considerato valido se rispetta il pattern giorno/mese/anno o giorno-mese-anno
-     * @param dataNascita : la data di nascita del cliente
-     * @return true se data di nascita ha un formato valido
-     */
-    fun formatoDataNascitaValida(dataNascita: String): Boolean{
-        var ris:Boolean = false
-        if (dataNascita.isEmpty()) return ris
-        val pattern= "\\d{1,2}-\\d{1,2}-\\d{4}||\\d{1,2}/\\d{1,2}/\\d{4}"
-        if (Regex(pattern).matches(dataNascita)){
-            val campiData: List<String> = dataNascita.replace("-","/").split("/")
-            val day = campiData[0].toInt()
-            val month = campiData[1].toInt()
-            val year = campiData[2].toInt()
-            var dataEsistente = false
-            when(month){
-                1,3,5,7,8,10,12 -> dataEsistente = if(day > 0 && day <= 31) true
-                else false
-                4,6,9,11 -> dataEsistente = if(day > 0 && day <= 30) true
-                else false
-                2 -> if( (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)){
-                    dataEsistente = if(day > 0 && day <= 29) true
-                    else false
-                } else {
-                    dataEsistente = if(day > 0 && day <= 28) true
-                    else false
-                }
-                else -> dataEsistente = false
-            }
 
-            if(dataEsistente) {
-                val oggi = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
-                val maggiorenne = LocalDate(year, month, day) <= oggi.minus(18, DateTimeUnit.YEAR)
-                if (maggiorenne)
-                    ris = true
-            }
-        }
-        return ris
-    }
-
-    fun formatoCodiceCliente(codCliente: String): Boolean {
-        var ris:Boolean = false
-        if( codCliente.length == 9){
-            val regex = Regex("[^a-z0-9]")
-            ris = !regex.containsMatchIn(codCliente)
-        }
-        return ris
-    }
-
-    fun formatoNomeValido(nome: String): Boolean {
-        var ris:Boolean = false
-        val regex = Regex("[^a-zA-Z0-9]")
-//Todo: fai in modo che prenda gli spazi se c'è un doppio nome
-        val caratteri_speciali = regex.containsMatchIn(nome)
-        if ( nome.length >= 2 && nome.length <= 20 ){
-            if ( !caratteri_speciali){
-                ris = true
-            }
-        }
-        return ris
-    }
-    fun formatoCognomeValido(cognome: String): Boolean {
-        return formatoNomeValido(cognome)
-    }
 
     fun setErroreNomeX(b: Boolean) {
         this.erroreNome = if (b) {1} else {0}
@@ -262,5 +203,73 @@ open class AshbornViewModel(
     fun setErroreCodClienteX(b:Boolean){
         this.erroreCodCliente = if (b) {1} else {0}
     }
+
+    fun writePreferences(){
+      Log.i("ViewModel","Lancio writePreferences")
+        viewModelScope.launch(Dispatchers.IO){
+        dataStoreManager.writeUserPrefernces(User(
+            userName,
+            cognome,
+            codCliente,
+            dataNascita
+        ))
+        }
+    }
+
 }
 
+class DataStoreManager(val context: Context){
+
+    // per datastore
+    val Context.dataStore: DataStore<Preferences> by preferencesDataStore("settings")
+    // implementazione lettura preferenze
+    private val USERNAME_KEY = stringPreferencesKey("username_key")
+    private val COGNOME_KEY = stringPreferencesKey("cognome_key")
+    private val COD_CLIENTE_KEY= stringPreferencesKey("cod_cliente_key")
+
+
+    val usernameFlow: Flow<String> = context.dataStore
+        .data.map{
+                preferences -> preferences[USERNAME_KEY]?:""
+        }
+    val cognomeFlow: Flow<String> = context.dataStore
+        .data.map{
+                preferences -> preferences[COGNOME_KEY]?:""
+        }
+
+    val codClienteFlow: Flow<String> = context.dataStore
+        .data.map{
+                preferences -> preferences[COD_CLIENTE_KEY]?:""
+        }
+
+    suspend fun writeUsername(userName: String){
+        Log.i("DataStorage","scrivo"+userName)
+        context.dataStore.edit {
+            settings -> settings[USERNAME_KEY]=userName
+
+        }
+
+    }
+
+     suspend fun writeCognome(cognome:  String){
+        context.dataStore.edit {
+
+            settings -> settings[COGNOME_KEY]=cognome
+        }
+    }
+    suspend fun writeCodCliente(codCliente: String){
+        context.dataStore.edit {
+
+            settings -> settings[COD_CLIENTE_KEY]=codCliente
+        }
+    }
+
+    suspend fun writeUserPrefernces(user: User){
+
+            writeCognome(user.surname)
+            writeUsername(user.name)
+            writeCodCliente(user.clientCode)
+
+    }
+
+}
