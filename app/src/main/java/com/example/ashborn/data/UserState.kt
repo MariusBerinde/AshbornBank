@@ -5,6 +5,5 @@ data class UserState(
     val surname:String ="",
     val dateOfBirth:String ="",
     val clientCode:String ="",
-    //val id:Int = 0
 )
 

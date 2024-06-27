@@ -45,7 +45,6 @@ open class AshbornViewModel(
         val userDao = UserDb.getDatabase(application).userDao()
         userRepository = OfflineUserRepository(userDao)
         viewModelScope.launch{
-           // viewModelScope.launch{
             if(dataStoreManager.usernameFlow.first().isEmpty() ){
                 fistLogin=true
                 Log.i("ViewModel","Utente nullo")
@@ -54,6 +53,8 @@ open class AshbornViewModel(
                 fistLogin=false
                 Log.i("ViewModel","Utente = ${dataStoreManager.usernameFlow.first().toString()}")
             }
+
+            initDb()
         }
 
 
@@ -72,18 +73,18 @@ open class AshbornViewModel(
             userRepository.upsertUser(utente)
         }
     }
-
     fun deleteUser(utente: User) {
         viewModelScope.launch {
             userRepository.deleteUser(utente)
         }
     }
 
-    fun getUserById(id: String): LiveData<User?> {
+
+    fun getUserByClientCode(clientCode:String): LiveData<User?> {
         val result = MutableLiveData<User?>()
 
         viewModelScope.launch {
-            userRepository.getUserById(id).collect { user ->
+            userRepository.getUserByClientCode(codCliente).collect { user ->
                 result.postValue(user)
             }
         }
@@ -208,12 +209,51 @@ open class AshbornViewModel(
       Log.i("ViewModel","Lancio writePreferences")
         viewModelScope.launch(Dispatchers.IO){
         dataStoreManager.writeUserPrefernces(User(
-            userName,
-            cognome,
-            codCliente,
-            dataNascita
+            name = userName,
+           surname = cognome,
+           clientCode = codCliente,
+           dateOfBirth =  "",
+            pin = ""
         ))
         }
+    }
+
+    fun validUser(user: User):Boolean{
+       val userFromDb:LiveData<User?> = getUserByClientCode(user.clientCode)
+       return userFromDb.value?.name==user.name && userFromDb.value?.surname == user.surname && userFromDb.value?.dateOfBirth == user.dateOfBirth
+        //return true
+    }
+     fun initDb(){
+
+         viewModelScope.launch {
+             upsertUser(
+                 User(
+                     "Tom",
+                     "Riddle",
+                     "1/01/1990",
+                     "987654321".hashCode().toString(),
+                     "77777777"
+                 )
+             )
+             upsertUser(
+                 User(
+                     "Sauron",
+                     "Lo oscuro",
+                     "1/01/1990",
+                     "123456789".hashCode().toString(),
+                     "666666666"
+                 )
+             )
+             //TODO:
+         }
+    }
+    fun validatePin(pin: String): MutableLiveData<Boolean>  {
+        var result = MutableLiveData<Boolean>()
+        viewModelScope.launch {
+            userRepository.isPinCorrect(codCliente.toString(),pin.hashCode().toString()).collect{valid -> result.postValue(valid)}
+        }
+        Log.i("ViewModel","pin inserito ${pin} , codCliente= $codCliente. e risultato operazione ${result.value}")
+        return result
     }
 
 }

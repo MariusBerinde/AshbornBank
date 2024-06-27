@@ -8,7 +8,8 @@ interface UserRepository{
 
     suspend fun deleteUser(utente: User)
 
-    fun getUserById(id:String): Flow<User>
-    //fun getUserById(id:Int): Flow<User>
+    fun getUserByClientCode(clientCode:String): Flow<User>
+
+    fun isPinCorrect(aCodCliente:String, aPin:String): Flow<Boolean>
 
 }

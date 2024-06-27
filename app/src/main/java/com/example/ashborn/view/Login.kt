@@ -138,7 +138,7 @@ fun AskPIN(
                         Spacer(modifier = Modifier.width(SmallVerticalSpacing))
                         Button(
                             modifier = Modifier.size(70.dp,40.dp),
-                            onClick = {if(viewModel.pin.length <= 8) {viewModel.setPinX(viewModel.pin + (3*i+j).toString())}}) {
+                            onClick = {if(viewModel.pin.length <= 8) {viewModel.setPinX(viewModel.pin + (3*i+j+1).toString())}}) {
                             Text(text = (3*i+j+1).toString())
                         }
                     }
@@ -154,7 +154,10 @@ fun AskPIN(
                     modifier = Modifier.size(70.dp,40.dp),
                     onClick = {
                         Log.i("AskPIN", (!viewModel.checkPin()).toString())
-                        if(viewModel.checkPin()) {
+                        val isPinValid=viewModel.validatePin(viewModel.pin).value?:false
+                        Log.i("AskPIN","validità pin $isPinValid" )
+                        if(viewModel.checkPin() && isPinValid ){
+
                             viewModel.setStartdest("principale")
                             navController.navigate("conti") //{popUpTo("principale")}
                             //navController.navigate("conti")
@@ -314,7 +317,17 @@ fun Registrazione(
                             Validatore().formatoCognomeValido(viewModel.cognome) &&
                             Validatore().formatoCodiceCliente(viewModel.codCliente)
                         ) {
-                            viewModel.writePreferences()
+                            if(viewModel.validUser(User(viewModel.userName, viewModel.cognome, viewModel.dataNascita, "", viewModel.codCliente,))){
+                                viewModel.writePreferences()
+                                navController.navigate("welcome")
+                            }else{
+                                gestisciErrori(
+                                    viewModel.userName,
+                                    viewModel.cognome,
+                                    viewModel.codCliente,
+                                    viewModel.dataNascita,viewModel
+                                )
+                            }
                             viewModel.fistLogin = false
                             navController.navigate("welcome")
                         } else {
@@ -344,16 +357,17 @@ fun Registrazione(
                         Validatore().formatoCodiceCliente(viewModel.codCliente)
                     ) {
                         viewModel.fistLogin=false
-                        viewModel.upsertUser(
-                            User(
+                        if(viewModel.validUser(User(viewModel.userName, viewModel.cognome, viewModel.dataNascita, "", viewModel.codCliente,))){
+                            viewModel.writePreferences()
+                            navController.navigate("welcome")
+                        }else{
+                            gestisciErrori(
                                 viewModel.userName,
-                                viewModel.dataNascita,
                                 viewModel.cognome,
-                               viewModel.codCliente
+                                viewModel.codCliente,
+                                viewModel.dataNascita,viewModel
                             )
-                        )
-                        viewModel.writePreferences()
-                        navController.navigate("welcome")
+                        }
                     } else {
                         gestisciErrori(
                             viewModel.userName,

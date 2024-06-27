@@ -8,12 +8,11 @@ data class User(
     val name:String,
     val surname:String,
     val dateOfBirth:String,
+    val pin:String,
 
      @PrimaryKey
     val clientCode:String,
 
-   // @PrimaryKey(autoGenerate = true)
-   // val id:Int = 0
 
 )
 

@@ -1,7 +1,4 @@
-package com.example.ashborn.dao
-
-import androidx.room.Dao
-import androidx.room.Delete
+package com.example.ashborn.dao import androidx.room.Dao import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import com.example.ashborn.data.User
@@ -18,9 +15,10 @@ interface UserDao {
    @Delete
    suspend fun deleteUser(utente: User)
 
-   @Query ("Select * from users where " + "clientCode= :id limit 1" )
-   fun getUserById(id:String):Flow<User>
-   //@Query ("Select * from users where " + "id= :id limit 1" )
-   // fun getUserById(id:Int):Flow<User>
+   @Query ("Select * from users where " + "clientCode= :clientCode limit 1" )
+   fun getUserByClientCode(clientCode:String): Flow<User>
+
+   @Query ("SELECT EXISTS(SELECT * from users where clientCode = :aCodCliente AND pin = :aPin ) ")
+   fun isPinCorrect(aCodCliente:String,aPin:String):Flow<Boolean>
 
 }
