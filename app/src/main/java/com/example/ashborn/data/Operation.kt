@@ -1,7 +1,7 @@
 package com.example.ashborn.data
 
 import java.time.LocalDateTime
-
+// todo: scrivere trafila per memorizzare in db
 enum class TransactionType {
     DEPOSIT, WITHDRAWAL
 }

@@ -25,7 +25,7 @@ abstract class UserDb:RoomDatabase() {
                    context,
                    UserDb::class.java,
                    "Ashborn_db"
-               ).build().also { Instance = it}
+               ).createFromAsset("Ashborn_db.db").build().also { Instance = it }
            }
        }
    }

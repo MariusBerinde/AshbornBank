@@ -60,9 +60,10 @@ class Validatore {
 
     fun formatoNomeValido(nome: String): Boolean {
         var ris:Boolean = false
-        val regex = Regex("[^a-zA-Z0-9]")
+        val nome1 = nome.trimEnd().trimStart().replace("  ", " ")
+        val regex = Regex("[^a-zA-Z0-9\\s]")
 //Todo: fai in modo che prenda gli spazi se c'è un doppio nome
-        val caratteri_speciali = regex.containsMatchIn(nome)
+        val caratteri_speciali = regex.containsMatchIn(nome1)
         if ( nome.length >= 2 && nome.length <= 20 ){
             if ( !caratteri_speciali){
                 ris = true
