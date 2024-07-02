@@ -15,14 +15,15 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ashborn.dao.UserDao
+import com.example.ashborn.dao.AshbornDao
 import com.example.ashborn.data.ErroreUiRegistrazioneStato
 import com.example.ashborn.data.Operation
 import com.example.ashborn.data.TransactionType
 import com.example.ashborn.data.User
 import com.example.ashborn.data.UserState
-import com.example.ashborn.db.UserDb
+import com.example.ashborn.db.AshbornDb
 import com.example.ashborn.repository.OfflineUserRepository
+import com.example.ashborn.repository.OperationRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -39,12 +40,12 @@ open class AshbornViewModel(
 
 
      val dataStoreManager:DataStoreManager
-     val userDao: UserDao
+     val ashbornDao: AshbornDao
     init {
-         userDao = UserDb.getDatabase(application).userDao()
+         ashbornDao = AshbornDb.getDatabase(application).ashbornDao()
          dataStoreManager = DataStoreManager(application)
-        userRepository = OfflineUserRepository(userDao)
-       // initDb()
+        userRepository = OfflineUserRepository(ashbornDao)
+        initDb()
         viewModelScope.launch{
             if(dataStoreManager.usernameFlow.first().isEmpty() ){
                 fistLogin=true
@@ -62,6 +63,37 @@ open class AshbornViewModel(
 
 
     }
+
+    fun initDb(){
+
+        viewModelScope.launch(Dispatchers.IO) {
+            upsertUser(
+                User(
+                    "Tom",
+                    "Riddle",
+                    "1/01/1990",
+                    "987654321".hashCode().toString(),
+                    "77777777"
+                )
+            )
+            insertOperation(Operation(1, "777777777", LocalDateTime.now(), LocalDateTime.now(), "pagamento crimini di guerra", 135.89, TransactionType.WITHDRAWAL))
+        }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            upsertUser(
+                User(
+                    "Sauron",
+                    "Lo oscuro",
+                    "1/01/1990",
+                    "123456789".hashCode().toString(),
+                    "666666666"
+                )
+            )
+
+        }
+
+    }
+
    var statoUtente by mutableStateOf(UserState())
        private set
 
@@ -79,6 +111,13 @@ open class AshbornViewModel(
     fun deleteUser(utente: User) {
         viewModelScope.launch {
             userRepository.deleteUser(utente)
+        }
+    }
+    //TODO: da togliere
+    private val operationRepository:OperationRepository = OperationRepository(ashbornDao)
+    private fun insertOperation(operation: Operation) {
+        viewModelScope.launch {
+            operationRepository.insertOperation(operation)
         }
     }
 

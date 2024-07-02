@@ -2,16 +2,19 @@ package com.example.ashborn.dao
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Upsert
+import com.example.ashborn.data.Operation
 import com.example.ashborn.data.User
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDateTime
 
 /**
  * serve a  prendere dati i dati dell'utente dal db
  */
 @Dao
-interface UserDao {
+interface AshbornDao {
 
    @Upsert
    suspend fun upsertUser(utente:User)
@@ -26,4 +29,12 @@ interface UserDao {
    @Query ("SELECT EXISTS(SELECT * from users where clientCode = :aCodCliente AND pin = :aPin ) ")
    fun isPinCorrect(aCodCliente:String,aPin:String):Flow<Boolean>
 
+   @Insert
+   suspend fun insertOperation(operation: Operation)
+
+   @Delete
+   suspend fun deleteOperation(operation: Operation)
+
+   @Query("SELECT * FROM operations WHERE clientCode = :clientCode AND dateO >= :from AND dateO <= :upTo LIMIT :limit OFFSET :offset")
+   fun getOperations(clientCode: String, from: LocalDateTime, upTo: LocalDateTime, offset: Int, limit: Int): Flow<MutableList<Operation>>
 }
