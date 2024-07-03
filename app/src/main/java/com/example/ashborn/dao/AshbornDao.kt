@@ -1,9 +1,9 @@
 package com.example.ashborn.dao
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Upsert
 import com.example.ashborn.data.Operation
 import com.example.ashborn.data.User
@@ -23,8 +23,8 @@ interface AshbornDao {
    suspend fun deleteUser(utente: User)
 
    @Query ("Select * from users where clientCode= :clientCode " )
-   //fun getUserByClientCode(clientCode:String): Flow<User>
-   fun getUserByClientCode(clientCode:String): LiveData<User?>
+   fun getUserByClientCode(clientCode:String): Flow<User>
+  //  fun getUserByClientCode(clientCode:String): LiveData<User?>
 
    @Query ("SELECT EXISTS(SELECT * from users where clientCode = :aCodCliente AND pin = :aPin ) ")
    fun isPinCorrect(aCodCliente:String,aPin:String):Flow<Boolean>
@@ -37,4 +37,8 @@ interface AshbornDao {
 
    @Query("SELECT * FROM operations WHERE clientCode = :clientCode AND dateO >= :from AND dateO <= :upTo LIMIT :limit OFFSET :offset")
    fun getOperations(clientCode: String, from: LocalDateTime, upTo: LocalDateTime, offset: Int, limit: Int): Flow<MutableList<Operation>>
+
+
+   @Transaction
+   suspend fun insertAllOperations(listOperation: List<Operation>) = listOperation.forEach{insertOperation(it)}
 }

@@ -14,6 +14,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.ashborn.dao.AshbornDao
 import com.example.ashborn.data.ErroreUiRegistrazioneStato
@@ -24,7 +26,9 @@ import com.example.ashborn.data.UserState
 import com.example.ashborn.db.AshbornDb
 import com.example.ashborn.repository.OfflineUserRepository
 import com.example.ashborn.repository.OperationRepository
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -72,11 +76,10 @@ open class AshbornViewModel(
                     "Tom",
                     "Riddle",
                     "1/01/1990",
-                    "987654321".hashCode().toString(),
-                    "77777777"
+                    "87654321".hashCode().toString(),
+                    "777777777"
                 )
             )
-            insertOperation(Operation(1, "777777777", LocalDateTime.now(), LocalDateTime.now(), "pagamento crimini di guerra", 135.89, TransactionType.WITHDRAWAL))
         }
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -85,12 +88,17 @@ open class AshbornViewModel(
                     "Sauron",
                     "Lo oscuro",
                     "1/01/1990",
-                    "123456789".hashCode().toString(),
+                    "12345678".hashCode().toString(),
                     "666666666"
                 )
             )
 
         }
+       viewModelScope.launch(Dispatchers.IO) {
+           insertOperation(Operation( clientCode = "777777777", dateO = LocalDateTime.now(), dateV =  LocalDateTime.now(), description = "pagamento crimini di guerra", amount =  135.89, operationType = TransactionType.WITHDRAWAL))
+           insertOperation(Operation( clientCode ="777777777",dateO = LocalDateTime.now().minusDays(1),dateV = LocalDateTime.now().minusDays(1),description = "Pagamento Bolletta", amount =  92.00, operationType = TransactionType.WITHDRAWAL))
+           insertOperation(Operation( clientCode ="777777777",dateO = LocalDateTime.now().minusDays(1),dateV = LocalDateTime.now().minusDays(1),description ="Pagamento Bolletta", amount =  92.00, operationType = TransactionType.WITHDRAWAL))
+       }
 
     }
 
@@ -123,17 +131,29 @@ open class AshbornViewModel(
 
 
     //fun getUserByClientCode(clientCode:String): LiveData<User?> {
-        fun getUserByClientCode(clientCode:String): User? {
-
+   suspend fun getUserByClientCode(clientCode:String): User? {
 
         var  result:User? = null
-        viewModelScope.launch {
-          /*  userRepository.getUserByClientCode(clientCode).collect { user ->
+      /*  viewModelScope.launch {
+           /* userRepository.getUserByClientCode(clientCode).collect { user ->
                 result.postValue(user)
             }*/
-          // result = userDao.getUserByClientCode(clientCode).first()
-            Log.i("VieModel"," con first in getUser = ${result}")
+
+            var  result1 = userRepository.getUserByClientCode(clientCode)
+            delay(1000)
+           result = result1.first()
+
+            Log.i("ViewModel"," con first in getUser in viewScope= ${result}")
         }
+        var i=0
+        while(i<1000000000000  && result==null){i++}
+       // delay(2000)
+        Log.i("ViewModel"," con first in getUser = ${result}")*/
+        result= CoroutineScope(Dispatchers.IO).async{
+            return@async userRepository.getUserByClientCode(clientCode).first()
+        }.await()
+
+        Log.i("ViewModel","getUserByClient risultato query $result")
         return result
     }
 
@@ -190,7 +210,8 @@ open class AshbornViewModel(
                 //CurrencyAmount(92.00, Currency.getInstance("EUR")),
                 92.00,
                 TransactionType.WITHDRAWAL
-            ),
+            )
+            ,
             Operation(
                 3,
                 "1",
@@ -202,7 +223,9 @@ open class AshbornViewModel(
             ),
         )
         set(value) = TODO()
+
     var operazioni by mutableStateOf(arrayOperazioni)
+   // var operazioni by mutableStateOf(emptyList<Operation>())
     fun setPinX(pin: String) {
         this.pin = pin
     }
@@ -260,18 +283,21 @@ open class AshbornViewModel(
     }
 
   fun validUser(user: User):Boolean{
-        Log.i("ViewModel","sono dentro valid user parametri User={${user.name},${user.surname},${user.clientCode},${user.dateOfBirth}}")
-      // val userFromDb:LiveData<User?> = getUserByClientCode(user.clientCode)
-      //Log.i("ViewModel","dati da db $userFromDb")
+          Log.i("ViewModel","sono dentro valid user parametri User={${user.name},${user.surname},${user.clientCode},${user.dateOfBirth}}")
+        /*  val userFromDb= getUserByClientCode(user.clientCode)
+          Log.i("ViewModel"," Valid user dati da db $userFromDb")
+          val validName = userFromDb?.name==user.name
+          val validSurname = userFromDb?.surname == user.surname
+          val validDate = userFromDb?.dateOfBirth == user.dateOfBirth
+          Log.i("ViewModel"," Valid user risultati validName = $validName \n validSurname = $validSurname\nvalid date = $validDate ")
+*/
+   //     val userFromDb = getUserByClientCode(user.clientCode)
 
 
           //getUserByClientCode(user.clientCode)
 
-      /* val validName = userFromDb.value?.name==user.name
-       val validSurname = userFromDb.value?.surname == user.surname
-       val validDate = userFromDb.value?.dateOfBirth == user.dateOfBirth
-        Log.i("ViewModel","validName = $validName \n validSurname = $validSurname\nvalid date = $validDate ")*/
-        //        return validName && validSurname && validDate
+
+               // return validName && validSurname && validDate
 
         return true
     }
@@ -279,6 +305,34 @@ open class AshbornViewModel(
     fun validatePin(pin:String):Flow<Boolean>{
         return userRepository.isPinCorrect(codCliente,pin.hashCode().toString())
     }
+
+    private val _navigationEvent = MutableLiveData<NavigationEvent>()
+    val navigationState: LiveData<NavigationEvent> = _navigationEvent
+    fun auth(user: User){
+        viewModelScope.launch {
+
+            Log.i("ViewModel","sono dentro auth con parametri User={${user.name},${user.surname},${user.clientCode},${user.dateOfBirth}}")
+            val userFromDb = getUserByClientCode(user.clientCode)
+            val validName = userFromDb?.name==user.name
+            val validSurname = userFromDb?.surname == user.surname
+            val validDate = userFromDb?.dateOfBirth == user.dateOfBirth
+            //Log.i("ViewModel","sono dentro auth con parametri UserFromDb={${userFromDb?.name},${userFromDb?.surname},${userFromDb?.clientCode},${userFromDb?.dateOfBirth}}")
+            Log.i("ViewModel"," sono dentro auth user risultati validName = $validName \n validSurname = $validSurname\nvalid date = $validDate ")
+            if( validName && validSurname && validDate ){
+                _navigationEvent.value = NavigationEvent.NavagateToConti
+            }
+            else{
+                _navigationEvent.value = NavigationEvent.NavagateToError
+            }
+        }
+    }
+
+}
+
+
+sealed class NavigationEvent {
+    object NavagateToConti:NavigationEvent()
+    object NavagateToError:NavigationEvent()
 
 }
 

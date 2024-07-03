@@ -14,6 +14,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -37,8 +40,8 @@ import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.view.ErroreConnessione
 import com.example.ashborn.viewModel.AshbornViewModel
+import com.example.ashborn.viewModel.NavigationEvent
 
-//todo: creare file separato
 @Composable
 fun Registrazione(
     navController: NavHostController,
@@ -51,6 +54,7 @@ fun Registrazione(
     val focusRequester4 = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
     val coroutineScope = rememberCoroutineScope()
+    val navigationState by viewModel.navigationState.observeAsState()
     ErroreConnessione(connectionStatus = connectionStatus) {
         Column(
             modifier = Modifier
@@ -163,7 +167,11 @@ fun Registrazione(
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
                 keyboardActions = KeyboardActions(
                     onSend = {
-                        if (
+
+                        //validaUtente(viewModel, navController)
+                        viewModel.auth(User(viewModel.userName, viewModel.cognome, viewModel.dataNascita, "", viewModel.codCliente,))
+                    }
+                    /*    if (
                             Validatore().formatoNomeValido(viewModel.userName) &&
                             Validatore().formatoDataNascitaValida(viewModel.dataNascita) &&
                             Validatore().formatoCognomeValido(viewModel.cognome) &&
@@ -205,7 +213,7 @@ fun Registrazione(
                             )
                         }
                         focusManager.clearFocus()
-                    }
+                    }*/
                 ),
                 modifier = Modifier
                     .focusRequester(focusRequester4)
@@ -215,49 +223,83 @@ fun Registrazione(
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    if (
-                        Validatore().formatoNomeValido(viewModel.userName) &&
-                        Validatore().formatoDataNascitaValida(viewModel.dataNascita) &&
-                        Validatore().formatoCognomeValido(viewModel.cognome) &&
-                        Validatore().formatoCodiceCliente(viewModel.codCliente)
-                    ) {
-                        viewModel.fistLogin = false
+                    //validaUtente(viewModel, navController)
 
-                        if (viewModel.validUser(
-                                User(
-                                    viewModel.userName,
-                                    viewModel.cognome,
-                                    viewModel.dataNascita,
-                                    "",
-                                    viewModel.codCliente
-                                )
-                            )
-                        ) {
+                    viewModel.auth(User(viewModel.userName, viewModel.cognome, viewModel.dataNascita, "", viewModel.codCliente,))
 
-                            Log.i("Registrazione", "sono in onclick con valid user")
-                            viewModel.writePreferences()
-                            navController.navigate("welcome")
-                        } else {
-
-                            Log.i("Registrazione", "sono in onclick else")
-                            gestisciErrori(
-                                viewModel.userName,
-                                viewModel.cognome,
-                                viewModel.codCliente,
-                                viewModel.dataNascita, viewModel
-                            )
-                        }
-                    } else {
-                        gestisciErrori(
-                            viewModel.userName,
-                            viewModel.cognome,
-                            viewModel.codCliente,
-                            viewModel.dataNascita, viewModel
-                        )
-                    }
                 }) {
                 Text(text = stringResource(id = R.string.conferma))
             }
         }
+        LaunchedEffect(navigationState) {
+            when(navigationState){
+                NavigationEvent.NavagateToConti ->{
+                    Log.i("Registrazione","sono in Launced effect con navState.toConti")
+                    viewModel.fistLogin = false
+                    viewModel.writePreferences()
+                    navController.navigate("welcome")
+                }
+                NavigationEvent.NavagateToError ->  gestisciErrori(viewModel)
+                else->{}
+
+            }
+
+        }
+    }
+}
+
+fun validaUtente(viewModel:AshbornViewModel, navController: NavHostController) {
+    if (
+        Validatore().formatoNomeValido(viewModel.userName) &&
+        Validatore().formatoDataNascitaValida(viewModel.dataNascita) &&
+        Validatore().formatoCognomeValido(viewModel.cognome) &&
+        Validatore().formatoCodiceCliente(viewModel.codCliente)
+    ) {
+
+        viewModel.fistLogin = false
+     /*   GlobalScope.launch(Dispatchers.Default) {
+            var  userFromDb:User? =  viewModel.getUserByClientCode(viewModel.codCliente)
+            var actualUser=User(viewModel.userName, viewModel.cognome, viewModel.dataNascita, "", viewModel.codCliente)
+            val validName = userFromDb?.name==actualUser.name
+            val validSurname = userFromDb?.surname == actualUser.surname
+            val validDate = userFromDb?.dateOfBirth == actualUser.dateOfBirth
+            Log.i("Registrazione","validName = $validName \n validSurname = $validSurname\nvalid date = $validDate ")
+            if(validName && validSurname && validDate){
+                Log.i("Registrazione","lancio write preferences")
+                viewModel.writePreferences()
+                navController.navigate("welcome")
+            } else {
+                Log.i("Registrazione", "sono in onclick else")
+                gestisciErrori(
+                    viewModel.userName,
+                    viewModel.cognome,
+                    viewModel.codCliente,
+                    viewModel.dataNascita, viewModel
+                )
+
+            }
+
+        }*/
+        if (viewModel.validUser(
+                User(
+                    viewModel.userName,
+                    viewModel.cognome,
+                    viewModel.dataNascita,
+                    "",
+                    viewModel.codCliente
+                )
+            )
+        ) {
+
+            Log.i("Registrazione", "sono in onclick con valid user")
+            viewModel.writePreferences()
+            navController.navigate("welcome")
+        } else {
+
+            Log.i("Registrazione", "sono in onclick else")
+            gestisciErrori(viewModel)
+        }
+    } else {
+            gestisciErrori(viewModel)
     }
 }

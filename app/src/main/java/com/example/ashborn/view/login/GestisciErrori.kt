@@ -7,16 +7,13 @@ import com.example.ashborn.Validatore
 import com.example.ashborn.viewModel.AshbornViewModel
 
 fun gestisciErrori(
-    nome:String,
-    cognome: String,
-    codCliente:String,
-    dataN:String,
     viewModel: AshbornViewModel
 ) {
-    viewModel.setErroreNomeX(!Validatore().formatoNomeValido(nome))
-    viewModel.setErroreCognomeX(!Validatore().formatoCognomeValido(cognome))
-    viewModel.setErroreCodClienteX(!Validatore().formatoCodiceCliente(codCliente))
-    viewModel.setErroreDataNX(!Validatore().formatoDataNascitaValida(dataN))
+
+    viewModel.setErroreNomeX(!Validatore().formatoNomeValido(viewModel.userName))
+    viewModel.setErroreCognomeX(!Validatore().formatoCognomeValido(viewModel.cognome))
+    viewModel.setErroreCodClienteX(!Validatore().formatoCodiceCliente(viewModel.codCliente))
+    viewModel.setErroreDataNX(!Validatore().formatoDataNascitaValida(viewModel.dataNascita))
 }
 /*@Preview(showBackground = true)
 @Composable
