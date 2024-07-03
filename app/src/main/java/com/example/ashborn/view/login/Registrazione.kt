@@ -33,8 +33,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.ashborn.ConnectivityObserver
 import com.example.ashborn.R
-import com.example.ashborn.Validatore
-import com.example.ashborn.data.User
 import com.example.ashborn.ui.theme.LargePadding
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
@@ -52,8 +50,6 @@ fun Registrazione(
     val focusRequester2 = remember { FocusRequester() }
     val focusRequester3 = remember { FocusRequester() }
     val focusRequester4 = remember { FocusRequester() }
-    val focusManager = LocalFocusManager.current
-    val coroutineScope = rememberCoroutineScope()
     val navigationState by viewModel.navigationState.observeAsState()
     ErroreConnessione(connectionStatus = connectionStatus) {
         Column(
@@ -69,23 +65,15 @@ fun Registrazione(
                 fontWeight = FontWeight.Bold,
                 fontStyle = FontStyle.Italic,
                 fontSize = 40.sp
-            ) //TODO: da sistemare
+            )
             Spacer(modifier = Modifier.height(SmallPadding))
             OutlinedTextField(
                 value = viewModel.userName,
                 onValueChange = { viewModel.setUserNameX(it) },
                 label = { Text(stringResource(id = R.string.inserisci_nome)) },
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = if (viewModel.erroreNome == 1) {
-                        Color.Red
-                    } else {
-                        Color.Black
-                    },
-                    unfocusedBorderColor = if (viewModel.erroreNome == 1) {
-                        Color.Red
-                    } else {
-                        Color.Black
-                    }
+                    focusedBorderColor = if (viewModel.erroreNome == 1) Color.Red else Color.Black,
+                    unfocusedBorderColor = if (viewModel.erroreNome == 1) Color.Red else Color.Black
                 ),
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                 keyboardActions = KeyboardActions(
@@ -167,53 +155,8 @@ fun Registrazione(
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
                 keyboardActions = KeyboardActions(
                     onSend = {
-
-                        //validaUtente(viewModel, navController)
-                        viewModel.auth(User(viewModel.userName, viewModel.cognome, viewModel.dataNascita, "", viewModel.codCliente,))
+                        viewModel.auth()
                     }
-                    /*    if (
-                            Validatore().formatoNomeValido(viewModel.userName) &&
-                            Validatore().formatoDataNascitaValida(viewModel.dataNascita) &&
-                            Validatore().formatoCognomeValido(viewModel.cognome) &&
-                            Validatore().formatoCodiceCliente(viewModel.codCliente)
-                        ) {
-                            viewModel.fistLogin = false
-
-                            if (viewModel.validUser(
-                                    User(
-                                        viewModel.userName,
-                                        viewModel.cognome,
-                                        viewModel.dataNascita,
-                                        "",
-                                        viewModel.codCliente,
-                                    )
-                                )
-                            ) {
-                                Log.i("Registrazione", "sono in onsend con valid user")
-                                viewModel.writePreferences()
-                                navController.navigate("welcome")
-                            } else {
-                                Log.i("Registrazione", "sono in onsend else")
-                                gestisciErrori(
-                                    viewModel.userName,
-                                    viewModel.cognome,
-                                    viewModel.codCliente,
-                                    viewModel.dataNascita, viewModel
-                                )
-                            }
-                            viewModel.fistLogin = false
-                            navController.navigate("welcome")
-                        } else {
-                            gestisciErrori(
-                                viewModel.userName,
-                                viewModel.cognome,
-                                viewModel.codCliente,
-                                viewModel.dataNascita,
-                                viewModel
-                            )
-                        }
-                        focusManager.clearFocus()
-                    }*/
                 ),
                 modifier = Modifier
                     .focusRequester(focusRequester4)
@@ -222,12 +165,8 @@ fun Registrazione(
             Spacer(modifier = Modifier.height(LargePadding))
             Button(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = {
-                    //validaUtente(viewModel, navController)
-
-                    viewModel.auth(User(viewModel.userName, viewModel.cognome, viewModel.dataNascita, "", viewModel.codCliente,))
-
-                }) {
+                onClick = { viewModel.auth() }
+            ) {
                 Text(text = stringResource(id = R.string.conferma))
             }
         }
@@ -239,7 +178,7 @@ fun Registrazione(
                     viewModel.writePreferences()
                     navController.navigate("welcome")
                 }
-                NavigationEvent.NavagateToError ->  gestisciErrori(viewModel)
+                NavigationEvent.NavagateToError -> gestisciErrori(viewModel)
                 else->{}
 
             }
@@ -248,58 +187,3 @@ fun Registrazione(
     }
 }
 
-fun validaUtente(viewModel:AshbornViewModel, navController: NavHostController) {
-    if (
-        Validatore().formatoNomeValido(viewModel.userName) &&
-        Validatore().formatoDataNascitaValida(viewModel.dataNascita) &&
-        Validatore().formatoCognomeValido(viewModel.cognome) &&
-        Validatore().formatoCodiceCliente(viewModel.codCliente)
-    ) {
-
-        viewModel.fistLogin = false
-     /*   GlobalScope.launch(Dispatchers.Default) {
-            var  userFromDb:User? =  viewModel.getUserByClientCode(viewModel.codCliente)
-            var actualUser=User(viewModel.userName, viewModel.cognome, viewModel.dataNascita, "", viewModel.codCliente)
-            val validName = userFromDb?.name==actualUser.name
-            val validSurname = userFromDb?.surname == actualUser.surname
-            val validDate = userFromDb?.dateOfBirth == actualUser.dateOfBirth
-            Log.i("Registrazione","validName = $validName \n validSurname = $validSurname\nvalid date = $validDate ")
-            if(validName && validSurname && validDate){
-                Log.i("Registrazione","lancio write preferences")
-                viewModel.writePreferences()
-                navController.navigate("welcome")
-            } else {
-                Log.i("Registrazione", "sono in onclick else")
-                gestisciErrori(
-                    viewModel.userName,
-                    viewModel.cognome,
-                    viewModel.codCliente,
-                    viewModel.dataNascita, viewModel
-                )
-
-            }
-
-        }*/
-        if (viewModel.validUser(
-                User(
-                    viewModel.userName,
-                    viewModel.cognome,
-                    viewModel.dataNascita,
-                    "",
-                    viewModel.codCliente
-                )
-            )
-        ) {
-
-            Log.i("Registrazione", "sono in onclick con valid user")
-            viewModel.writePreferences()
-            navController.navigate("welcome")
-        } else {
-
-            Log.i("Registrazione", "sono in onclick else")
-            gestisciErrori(viewModel)
-        }
-    } else {
-            gestisciErrori(viewModel)
-    }
-}

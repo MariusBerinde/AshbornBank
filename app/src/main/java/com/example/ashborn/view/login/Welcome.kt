@@ -20,10 +20,10 @@ import com.example.ashborn.R
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.ui.theme.SmallVerticalSpacing
+import com.example.ashborn.view.BloccoPIN
 import com.example.ashborn.view.ErroreConnessione
 import com.example.ashborn.viewModel.AshbornViewModel
 
-// todo: creare cartella dove splittare funzioni
 @Composable
 fun Welcome(
     navController: NavHostController,
@@ -31,41 +31,44 @@ fun Welcome(
     connectionStatus: ConnectivityObserver.Status
 ) {
     ErroreConnessione(connectionStatus = connectionStatus) {
-        Column(
-            modifier = Modifier
-                .padding(MediumPadding)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-
-            Log.i(
-                "Welcome",
-                viewModel.dataStoreManager.usernameFlow.collectAsState(initial = "val Iniziale").value
-            )
-            Text(
-                //text = stringResource(id = R.string.app_name)+"\n"+stringResource(id = R.string.welcome)+"\n"+viewModel.userName,
-                text = stringResource(id = R.string.app_name) + "\n" + stringResource(id = R.string.welcome) + "\n" + viewModel.dataStoreManager.usernameFlow.collectAsState(
-                    initial = ""
-                ).value,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-            Spacer(modifier = Modifier.height(SmallVerticalSpacing))
-            Button(modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(SmallPadding),
-                //TODO:aggiungere controllo per verifica primo login
-                onClick = {
-                    if (viewModel.fistLogin) {
-                        navController.navigate("primo-login")
-                    } else {
-                        navController.navigate("login")
-
-                    }
-                }
+        BloccoPIN(viewModel = viewModel) {
+            Column(
+                modifier = Modifier
+                    .padding(MediumPadding)
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
             ) {
-                Text(stringResource(id = R.string.entra))
+
+                Log.i(
+                    "Welcome",
+                    viewModel.dataStoreManager.usernameFlow.collectAsState(initial = "val Iniziale").value
+                )
+                Text(
+                    //text = stringResource(id = R.string.app_name)+"\n"+stringResource(id = R.string.welcome)+"\n"+viewModel.userName,
+                    text = stringResource(id = R.string.app_name) + "\n" + stringResource(id = R.string.welcome) + "\n" + viewModel.dataStoreManager.usernameFlow.collectAsState(
+                        initial = ""
+                    ).value,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+                Spacer(modifier = Modifier.height(SmallVerticalSpacing))
+                Button(modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(SmallPadding),
+                    //TODO:aggiungere controllo per verifica primo login
+                    onClick = {
+                        if (viewModel.fistLogin) {
+                            navController.navigate("primo-login")
+                        } else {
+                            navController.navigate("login")
+
+                        }
+                    }
+                ) {
+                    Text(stringResource(id = R.string.entra))
+                }
             }
         }
     }
 }
+

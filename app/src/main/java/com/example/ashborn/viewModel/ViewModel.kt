@@ -1,6 +1,8 @@
 package com.example.ashborn.viewModel
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import android.os.CountDownTimer
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
@@ -26,6 +28,7 @@ import com.example.ashborn.data.UserState
 import com.example.ashborn.db.AshbornDb
 import com.example.ashborn.repository.OfflineUserRepository
 import com.example.ashborn.repository.OperationRepository
+import com.example.ashborn.viewModel.TimeFormatExt.timeFormat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -34,42 +37,36 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import java.util.concurrent.TimeUnit
 
 open class AshbornViewModel(
     application: Application
 ): AndroidViewModel(application) {
+    private val userRepository: OfflineUserRepository
+    private val _navigationEvent = MutableLiveData<NavigationEvent>()
+    val navigationState: LiveData<NavigationEvent> = _navigationEvent
+    val dataStoreManager:DataStoreManager
+    val ashbornDao: AshbornDao
 
-
-     private val userRepository: OfflineUserRepository
-
-
-     val dataStoreManager:DataStoreManager
-     val ashbornDao: AshbornDao
     init {
-         ashbornDao = AshbornDb.getDatabase(application).ashbornDao()
-         dataStoreManager = DataStoreManager(application)
+        ashbornDao = AshbornDb.getDatabase(application).ashbornDao()
+        dataStoreManager = DataStoreManager(application)
         userRepository = OfflineUserRepository(ashbornDao)
         initDb()
         viewModelScope.launch{
             if(dataStoreManager.usernameFlow.first().isEmpty() ){
                 fistLogin=true
-                Log.i("ViewModel","Utente nullo")
-                Log.i("ViewModel","Utente = ${dataStoreManager.usernameFlow.first().toString()}")
-            }else {
+            } else {
                 fistLogin=false
                 userName = dataStoreManager.usernameFlow.first()
                 cognome = dataStoreManager.cognomeFlow.first()
                 codCliente = dataStoreManager.codClienteFlow.first()
-                Log.i("ViewModel","Utente = ${dataStoreManager.usernameFlow.first().toString()}")
+                //getOperations()
             }
-
         }
-
-
     }
 
     fun initDb(){
-
         viewModelScope.launch(Dispatchers.IO) {
             upsertUser(
                 User(
@@ -92,24 +89,22 @@ open class AshbornViewModel(
                     "666666666"
                 )
             )
-
         }
-       viewModelScope.launch(Dispatchers.IO) {
-           insertOperation(Operation( clientCode = "777777777", dateO = LocalDateTime.now(), dateV =  LocalDateTime.now(), description = "pagamento crimini di guerra", amount =  135.89, operationType = TransactionType.WITHDRAWAL))
-           insertOperation(Operation( clientCode ="777777777",dateO = LocalDateTime.now().minusDays(1),dateV = LocalDateTime.now().minusDays(1),description = "Pagamento Bolletta", amount =  92.00, operationType = TransactionType.WITHDRAWAL))
-           insertOperation(Operation( clientCode ="777777777",dateO = LocalDateTime.now().minusDays(1),dateV = LocalDateTime.now().minusDays(1),description ="Pagamento Bolletta", amount =  92.00, operationType = TransactionType.WITHDRAWAL))
-       }
-
+        viewModelScope.launch(Dispatchers.IO) {
+            insertOperation(Operation( clientCode = "777777777", dateO = LocalDateTime.now(), dateV =  LocalDateTime.now(), description = "pagamento crimini di guerra", amount =  135.89, operationType = TransactionType.WITHDRAWAL))
+            insertOperation(Operation( clientCode ="777777777",dateO = LocalDateTime.now().minusDays(1),dateV = LocalDateTime.now().minusDays(1),description = "Pagamento Bolletta", amount =  92.00, operationType = TransactionType.WITHDRAWAL))
+            insertOperation(Operation( clientCode ="777777777",dateO = LocalDateTime.now().minusDays(1),dateV = LocalDateTime.now().minusDays(1),description ="Pagamento Bolletta", amount =  92.00, operationType = TransactionType.WITHDRAWAL))
+        }
     }
 
-   var statoUtente by mutableStateOf(UserState())
-       private set
+    var statoUtente by mutableStateOf(UserState())
+        private set
 
     var statoUtenteUi by mutableStateOf(UserState())
         private set
+
     var erroreUiRegistrazioneStato by mutableStateOf(ErroreUiRegistrazioneStato())
         private set
-
 
     fun upsertUser(utente: User) {
         viewModelScope.launch {
@@ -131,33 +126,13 @@ open class AshbornViewModel(
 
 
     //fun getUserByClientCode(clientCode:String): LiveData<User?> {
-   suspend fun getUserByClientCode(clientCode:String): User? {
-
+    suspend fun getUserByClientCode(clientCode:String): User? {
         var  result:User? = null
-      /*  viewModelScope.launch {
-           /* userRepository.getUserByClientCode(clientCode).collect { user ->
-                result.postValue(user)
-            }*/
-
-            var  result1 = userRepository.getUserByClientCode(clientCode)
-            delay(1000)
-           result = result1.first()
-
-            Log.i("ViewModel"," con first in getUser in viewScope= ${result}")
-        }
-        var i=0
-        while(i<1000000000000  && result==null){i++}
-       // delay(2000)
-        Log.i("ViewModel"," con first in getUser = ${result}")*/
         result= CoroutineScope(Dispatchers.IO).async{
             return@async userRepository.getUserByClientCode(clientCode).first()
         }.await()
-
-        Log.i("ViewModel","getUserByClient risultato query $result")
         return result
     }
-
-
 
     val tag: String = AshbornViewModel::class.java.simpleName
     var erroreNome by mutableIntStateOf(0)
@@ -180,7 +155,6 @@ open class AshbornViewModel(
         private set // Optional: restrict external modification
     var pin by mutableStateOf((""))
         private set // Optional: restrict external modification
-
     var codCliente by mutableStateOf("")
         private set
     var userName by mutableStateOf("")
@@ -210,8 +184,7 @@ open class AshbornViewModel(
                 //CurrencyAmount(92.00, Currency.getInstance("EUR")),
                 92.00,
                 TransactionType.WITHDRAWAL
-            )
-            ,
+            ),
             Operation(
                 3,
                 "1",
@@ -224,36 +197,69 @@ open class AshbornViewModel(
         )
         set(value) = TODO()
 
-    var operazioni by mutableStateOf(arrayOperazioni)
-   // var operazioni by mutableStateOf(emptyList<Operation>())
+    var operazioni by mutableStateOf(arrayOperazioni/*listOf<Operation>()*/)
+
+    val ore = TimeUnit.HOURS.toMillis(0)
+    val minuti = TimeUnit.HOURS.toMillis(0)
+    val secondi = TimeUnit.HOURS.toMillis(5)
+    val tempoRimanenteIniziale = ore + minuti + secondi
+    var tempoRimanente = mutableStateOf(tempoRimanenteIniziale)
+    var testoTimer = mutableStateOf(tempoRimanente.value.timeFormat())
+    val intervalloContoRovescia = 1000L
+    var countDownTimer: CountDownTimer? = null
+
+    fun lanciaTimer() = viewModelScope.launch {
+        countDownTimer = object :CountDownTimer(tempoRimanente.value, intervalloContoRovescia) {
+            override fun onTick(tempoRimanenteAttuale: Long) {
+                testoTimer.value = tempoRimanenteAttuale.timeFormat()
+                tempoRimanente.value = tempoRimanenteAttuale
+            }
+
+            override fun onFinish() {
+                testoTimer.value = tempoRimanenteIniziale.timeFormat()
+
+            }
+        }.start()
+    }
+
+    fun fermaTimer() = viewModelScope.launch { countDownTimer?.cancel() }
     fun setPinX(pin: String) {
         this.pin = pin
     }
+
     fun setUserNameX(userName: String) {
         this.userName = userName
     }
+
     fun setCognomeX(cognome:String){
         this.cognome=cognome
     }
+
     fun setDataNascitaX(dataNascita:String){
         this.dataNascita= dataNascita
     }
+
     fun setCodClienteX(codCliente:String ){
         this.codCliente=codCliente
     }
+
     fun setStartdest(startDest: String){
         if (startDest == "init" || startDest == "principale") {
             this.startDest= startDest
         }
     }
+
     fun checkPin(): Boolean {
         return this.pin.length == 8 && this.pin.isDigitsOnly()
     }
+
     fun incrementWrongAttempts() {
         this.wrongAttempts++
     }
 
-
+    fun resetWrongAttempts() {
+        this.wrongAttempts = 0
+    }
     fun setErroreNomeX(b: Boolean) {
         this.erroreNome = if (b) {1} else {0}
     }
@@ -265,70 +271,70 @@ open class AshbornViewModel(
     fun setErroreDataNX(b: Boolean) {
         this.erroreDataNascita = if (b) {1} else {0}
     }
+
     fun setErroreCodClienteX(b:Boolean){
         this.erroreCodCliente = if (b) {1} else {0}
     }
 
     fun writePreferences(){
-      Log.i("ViewModel","Lancio writePreferences")
         viewModelScope.launch(Dispatchers.IO){
-        dataStoreManager.writeUserPrefernces(User(
-            name = userName,
-           surname = cognome,
-           clientCode = codCliente,
-           dateOfBirth =  "",
-            pin = ""
-        ))
+            dataStoreManager.writeUserPrefernces(User(
+                name = userName,
+                surname = cognome,
+                clientCode = codCliente,
+                dateOfBirth =  "",
+                pin = ""
+            ))
         }
     }
 
-  fun validUser(user: User):Boolean{
-          Log.i("ViewModel","sono dentro valid user parametri User={${user.name},${user.surname},${user.clientCode},${user.dateOfBirth}}")
-        /*  val userFromDb= getUserByClientCode(user.clientCode)
-          Log.i("ViewModel"," Valid user dati da db $userFromDb")
-          val validName = userFromDb?.name==user.name
-          val validSurname = userFromDb?.surname == user.surname
-          val validDate = userFromDb?.dateOfBirth == user.dateOfBirth
-          Log.i("ViewModel"," Valid user risultati validName = $validName \n validSurname = $validSurname\nvalid date = $validDate ")
-*/
-   //     val userFromDb = getUserByClientCode(user.clientCode)
+    fun validatePin(){
+        if(!checkPin()) {
+            Log.i("ViewModel","formato pin sbagliato")
+            _navigationEvent.value = NavigationEvent.NavagateToError
+            wrongAttempts++
+        } else {
+            viewModelScope.launch {
+                if(!userRepository.isPinCorrect(codCliente, pin.hashCode().toString()).first()) {
 
+                    Log.i("ViewModel"," pin sbagliato")
 
-          //getUserByClientCode(user.clientCode)
-
-
-               // return validName && validSurname && validDate
-
-        return true
-    }
-
-    fun validatePin(pin:String):Flow<Boolean>{
-        return userRepository.isPinCorrect(codCliente,pin.hashCode().toString())
-    }
-
-    private val _navigationEvent = MutableLiveData<NavigationEvent>()
-    val navigationState: LiveData<NavigationEvent> = _navigationEvent
-    fun auth(user: User){
-        viewModelScope.launch {
-
-            Log.i("ViewModel","sono dentro auth con parametri User={${user.name},${user.surname},${user.clientCode},${user.dateOfBirth}}")
-            val userFromDb = getUserByClientCode(user.clientCode)
-            val validName = userFromDb?.name==user.name
-            val validSurname = userFromDb?.surname == user.surname
-            val validDate = userFromDb?.dateOfBirth == user.dateOfBirth
-            //Log.i("ViewModel","sono dentro auth con parametri UserFromDb={${userFromDb?.name},${userFromDb?.surname},${userFromDb?.clientCode},${userFromDb?.dateOfBirth}}")
-            Log.i("ViewModel"," sono dentro auth user risultati validName = $validName \n validSurname = $validSurname\nvalid date = $validDate ")
-            if( validName && validSurname && validDate ){
-                _navigationEvent.value = NavigationEvent.NavagateToConti
+                    _navigationEvent.value = NavigationEvent.NavagateToError
+                    wrongAttempts++
+                } else {
+                    _navigationEvent.value = NavigationEvent.NavagateToConti
+                }
             }
-            else{
+        }
+    }
+
+    fun auth(){
+        viewModelScope.launch{
+            val userFromDb = getUserByClientCode(codCliente)
+            val validName = userFromDb?.name==userName
+            val validSurname = userFromDb?.surname == cognome
+            val validDate = userFromDb?.dateOfBirth == dataNascita
+            Log.i("ViewModel", "auth")
+            if( validName && validSurname && validDate) {
+                Log.i("ViewModel", "auth2")
+                _navigationEvent.value = NavigationEvent.NavagateToConti
+                Log.i("ViewModel", "auth3")
+
+            } else {
                 _navigationEvent.value = NavigationEvent.NavagateToError
             }
         }
     }
 
+    /*fun getOperations() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val operazioniDb = viewModelScope.async(Dispatchers.IO) {
+                return@async operationRepository.getOperations(codCliente, LocalDateTime.now().minusDays(30), LocalDateTime.now(),0, 10)
+            }.await()
+            operazioni = operazioniDb.first().toList()
+        }
+    }*/
 }
-
 
 sealed class NavigationEvent {
     object NavagateToConti:NavigationEvent()
@@ -361,33 +367,36 @@ class DataStoreManager(val context: Context){
         }
 
     suspend fun writeUsername(userName: String){
-        Log.i("DataStorage","scrivo"+userName)
         context.dataStore.edit {
-            settings -> settings[USERNAME_KEY]=userName
-
+                settings -> settings[USERNAME_KEY]=userName
         }
-
     }
 
-     suspend fun writeCognome(cognome:  String){
+    suspend fun writeCognome(cognome:  String){
         context.dataStore.edit {
-
-            settings -> settings[COGNOME_KEY]=cognome
+                settings -> settings[COGNOME_KEY]=cognome
         }
     }
     suspend fun writeCodCliente(codCliente: String){
         context.dataStore.edit {
-
-            settings -> settings[COD_CLIENTE_KEY]=codCliente
+                settings -> settings[COD_CLIENTE_KEY]=codCliente
         }
     }
 
     suspend fun writeUserPrefernces(user: User){
-
-            writeCognome(user.surname)
-            writeUsername(user.name)
-            writeCodCliente(user.clientCode)
-
+        writeCognome(user.surname)
+        writeUsername(user.name)
+        writeCodCliente(user.clientCode)
     }
+}
 
+object TimeFormatExt {
+    private const val FORMAT = "%02d:%02d:%02d"
+
+    fun Long.timeFormat(): String = String.format(
+        FORMAT,
+        TimeUnit.MILLISECONDS.toHours(this),
+        TimeUnit.MILLISECONDS.toMinutes(this) % 60,
+        TimeUnit.MILLISECONDS.toSeconds(this) % 60
+    )
 }

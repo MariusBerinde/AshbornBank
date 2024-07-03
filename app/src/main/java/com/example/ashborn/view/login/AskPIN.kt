@@ -17,6 +17,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -30,6 +33,7 @@ import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.ui.theme.SmallVerticalSpacing
 import com.example.ashborn.view.ErroreConnessione
 import com.example.ashborn.viewModel.AshbornViewModel
+import com.example.ashborn.viewModel.NavigationEvent
 
 @Composable
 fun AskPIN(
@@ -37,7 +41,9 @@ fun AskPIN(
     viewModel: AshbornViewModel,
     connectionStatus: ConnectivityObserver.Status
 ) {
+    Log.i("AskPIN", "renderizzo AskPIN")
     ErroreConnessione(connectionStatus = connectionStatus) {
+        val navigationState by viewModel.navigationState.observeAsState()
         Column(
             modifier = Modifier
                 .padding(MediumPadding)
@@ -86,29 +92,8 @@ fun AskPIN(
                 Button(
                     modifier = Modifier.size(70.dp, 40.dp),
                     onClick = {
-                        Log.i("AskPIN", (!viewModel.checkPin()).toString())
-                        //    val isPinValid= viewModel.validatePin(viewModel.pin).value?:false
-                        //   Log.i("AskPIN","validità pin $isPinValid" )
-                        /* runBlocking(Dispatchers.IO) {
-                             viewModel.validatePin(viewModel.pin).collect{
-
-                                     isPinValid -> Log.i("AskPin","valore di isPinValid $isPinValid")
-
-                             }*/
-                        if (viewModel.checkPin()) {
-
-                            viewModel.setStartdest("principale")
-                            navController.navigate("conti") //{popUpTo("principale")}
-                            //navController.navigate("conti")
-                        } else {
-                            viewModel.incrementWrongAttempts()
-                            Log.i(
-                                "AskPIN",
-                                " numero tentativi sbagliati=$viewModel.wrongAttempts.toString()"
-                            )
-                        }
-                        //}
-
+                        Log.i("AskPIN", (viewModel.checkPin()).toString())
+                        viewModel.validatePin()
                     }
                 ) {
                     Text(text = "OK")
@@ -134,6 +119,24 @@ fun AskPIN(
                         }
                     }) {
                     Icon(Icons.Filled.Clear, contentDescription = "icona cancellazione")
+                }
+                //FIXME: capire perché non mostra l'overlay
+                LaunchedEffect(navigationState) {
+                    Log.i("AskPIN","valore navigazione= ${navigationState.toString()}")
+                    when(navigationState){
+                        NavigationEvent.NavagateToConti ->{
+                            viewModel.resetWrongAttempts()
+                            navController.navigate("conti")
+                        }
+                        NavigationEvent.NavagateToError -> {
+                            Log.i("AskPIN", "errore e numero di tentativi ${viewModel.wrongAttempts}")
+                            if(viewModel.wrongAttempts > 3 ) {
+                                navController.popBackStack()
+                            }
+                        }
+                        else->{}
+                    }
+
                 }
             }
         }
