@@ -19,7 +19,7 @@ import com.example.ashborn.viewModel.OperationViewModel
 
 @Composable
 fun RiepilogoBonifico(navController : NavHostController, viewModel : OperationViewModel){
-    Log.i("RiepilogoBonifico", "Sono entrato")
+    Log.i("RiepilogoBonifico", "Scelta operazione con id")
     val modifier = Modifier.padding(LargePadding)
     Column(modifier = Modifier.padding(LargePadding)) {
         Text(text = stringResource(id = R.string.riepilogo_bonifico), fontSize = 40.sp)

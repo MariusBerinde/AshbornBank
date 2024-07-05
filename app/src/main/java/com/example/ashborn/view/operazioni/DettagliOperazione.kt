@@ -39,9 +39,9 @@ fun DettagliOperazione(
     navController: NavHostController,
     viewModel: AshbornViewModel
 ) {
-    Log.i("Dettagli operazione", "Oggetto $indexOperation")
-    var op=viewModel.arrayOperazioni.find { e->e.id==indexOperation}
-    Log.i("Dettagli operazione", "Oggetto $op")
+    Log.i("Dettagli operazione", "indice operazione $indexOperation")
+    var op=viewModel.operazioni.find { e->e.id==indexOperation}
+    Log.i("Dettagli operazione", "Oggetto corrispondente ${viewModel.arrayOperazioni}")
     Column(
         modifier = Modifier
             .fillMaxSize()
