@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -30,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.ashborn.MainActivity
 import com.example.ashborn.R
 import com.example.ashborn.data.Voice
 import com.example.ashborn.ui.theme.LargePadding
@@ -164,13 +167,33 @@ fun Impostazioni(
 ) {
     Text(text = stringResource(id = R.string.impostazioni))
 }
+
 @Composable
 fun Logout(
     navController: NavHostController,
     viewModel: AshbornViewModel
 ) {
-    Text(text = stringResource(id = R.string.logout))
+    Column(verticalArrangement = Arrangement.Center) {
+        Text(text = "Attenzione!!: proseguendo con questa operazione stai per cancellare i dati locali dell'applicazione e dovrai rifare il login")
+        Spacer(Modifier.padding(10.dp))
+        Row(
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Button(onClick = {
+
+                viewModel.cancellaPreferenzeLocali()
+                //   viewModel.set_StartDest("init")
+                //   navController.navigate("init")
+                MainActivity().finish()
+                MainActivity().startActivity(MainActivity().intent)
+
+            }) {
+                Text(text = "Esegui operazione")
+            }
+        }
+    }
 }
+
 /*
 @Preview(showBackground = true)
 @Composable

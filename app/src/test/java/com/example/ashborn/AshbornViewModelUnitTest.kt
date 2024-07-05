@@ -99,6 +99,7 @@ class AshbornViewModelUnitTest {
     fun  formatoCodiceClienteTest(){
         val formato1="123467890"
         val formato2="ab123cd00"
+        val formato3 = "12 33 44 55 9"
         val formato1Sbagliato="Ab123CD00"
         val formato2Sbagliato="AA123CD00"
         val formato3Sbagliato="#AA123CD00à"
@@ -106,6 +107,7 @@ class AshbornViewModelUnitTest {
         val formato5Sbagliato="aaaaaaaaaaaaa"
         assertTrue("formato1 codice cliente ", validatore.formatoCodiceCliente(formato1))
         assertTrue("formato2 codice cliente ", validatore.formatoCodiceCliente(formato2))
+        assertTrue("formato3 codice cliente ", validatore.formatoCodiceCliente(formato3))
         assertFalse("formato1Sbagliato codice cliente ", validatore.formatoCodiceCliente(formato1Sbagliato))
         assertFalse("formato2Sbagliato codice cliente ", validatore.formatoCodiceCliente(formato2Sbagliato))
         assertFalse("formato3Sbagliato codice cliente ", validatore.formatoCodiceCliente(formato3Sbagliato))

@@ -69,13 +69,9 @@ class OperationViewModel(application: Application): AndroidViewModel(application
         }
     }
 
-
     fun checkPin(): Boolean { return false }
 
     fun incrementWrongAttempts() { this.wrongAttempts++ }
-
-
-
 
     fun setErroreDataAccreditoX(b: Boolean) {
         this.erroreDataAccredito = if (b) {1} else {0}

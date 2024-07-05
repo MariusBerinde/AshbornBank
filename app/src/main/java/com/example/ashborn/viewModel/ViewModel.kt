@@ -1,5 +1,4 @@
 package com.example.ashborn.viewModel
-import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.os.CountDownTimer
@@ -28,6 +27,7 @@ import com.example.ashborn.data.UserState
 import com.example.ashborn.db.AshbornDb
 import com.example.ashborn.repository.OfflineUserRepository
 import com.example.ashborn.repository.OperationRepository
+import com.example.ashborn.view.login.StatoErrore
 import com.example.ashborn.viewModel.TimeFormatExt.timeFormat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -37,6 +37,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 open class AshbornViewModel(
@@ -61,7 +62,7 @@ open class AshbornViewModel(
                 userName = dataStoreManager.usernameFlow.first()
                 cognome = dataStoreManager.cognomeFlow.first()
                 codCliente = dataStoreManager.codClienteFlow.first()
-                //getOperations()
+                getOperations()
             }
         }
     }
@@ -91,9 +92,9 @@ open class AshbornViewModel(
             )
         }
         viewModelScope.launch(Dispatchers.IO) {
-            insertOperation(Operation( clientCode = "777777777", dateO = LocalDateTime.now(), dateV =  LocalDateTime.now(), description = "pagamento crimini di guerra", amount =  135.89, operationType = TransactionType.WITHDRAWAL))
-            insertOperation(Operation( clientCode ="777777777",dateO = LocalDateTime.now().minusDays(1),dateV = LocalDateTime.now().minusDays(1),description = "Pagamento Bolletta", amount =  92.00, operationType = TransactionType.WITHDRAWAL))
-            insertOperation(Operation( clientCode ="777777777",dateO = LocalDateTime.now().minusDays(1),dateV = LocalDateTime.now().minusDays(1),description ="Pagamento Bolletta", amount =  92.00, operationType = TransactionType.WITHDRAWAL))
+            insertOperation(Operation( clientCode ="777777777", dateO = LocalDateTime.now(), dateV = LocalDateTime.now(), description = "Pagamento crimini di guerra", amount =  135.89, operationType = TransactionType.WITHDRAWAL))
+            insertOperation(Operation( clientCode ="777777777", dateO = LocalDateTime.now().minusDays(1),dateV = LocalDateTime.now().minusDays(1),description = "Pagamento Bolletta Luce", amount =  92.00, operationType = TransactionType.WITHDRAWAL))
+            insertOperation(Operation( clientCode ="777777777", dateO = LocalDateTime.now().minusDays(1),dateV = LocalDateTime.now().minusDays(1),description ="Pagamento per Mutuo del male", amount =  92.00, operationType = TransactionType.WITHDRAWAL))
         }
     }
 
@@ -131,17 +132,18 @@ open class AshbornViewModel(
         result= CoroutineScope(Dispatchers.IO).async{
             return@async userRepository.getUserByClientCode(clientCode).first()
         }.await()
+        Log.d("ViewModel", "getUserByClientCode ${result}")
         return result
     }
 
     val tag: String = AshbornViewModel::class.java.simpleName
-    var erroreNome by mutableIntStateOf(0)
+    var erroreNome by mutableStateOf(StatoErrore.NESSUNO)
         private set
-    var erroreCognome by mutableIntStateOf(0)
+    var erroreCognome by mutableStateOf(StatoErrore.NESSUNO)
         private set
-    var erroreDataNascita by mutableIntStateOf(0)
+    var erroreDataNascita by mutableStateOf(StatoErrore.NESSUNO)
         private set
-    var erroreCodCliente by mutableIntStateOf(0)
+    var erroreCodCliente by mutableStateOf(StatoErrore.NESSUNO)
         private set
     val iban: String = "IT1234567890123456789012345"
     var saldo by mutableDoubleStateOf(0.0)
@@ -260,20 +262,20 @@ open class AshbornViewModel(
     fun resetWrongAttempts() {
         this.wrongAttempts = 0
     }
-    fun setErroreNomeX(b: Boolean) {
-        this.erroreNome = if (b) {1} else {0}
+    fun setErroreNomeX(stato:Boolean) {
+       this.erroreNome = if(stato)  StatoErrore.NESSUNO else StatoErrore.FORMATO
     }
 
-    fun setErroreCognomeX(b: Boolean) {
-        this.erroreCognome = if (b) {1} else {0}
+    fun setErroreCognomeX(stato: Boolean) {
+        this.erroreCognome = if(stato)  StatoErrore.NESSUNO else StatoErrore.FORMATO
     }
 
-    fun setErroreDataNX(b: Boolean) {
-        this.erroreDataNascita = if (b) {1} else {0}
+    fun setErroreDataNX(stato: Boolean) {
+        this.erroreDataNascita = if(stato)  StatoErrore.NESSUNO else StatoErrore.FORMATO
     }
 
-    fun setErroreCodClienteX(b:Boolean){
-        this.erroreCodCliente = if (b) {1} else {0}
+    fun setErroreCodClienteX(stato: Boolean){
+        this.erroreCodCliente = if(stato)  StatoErrore.NESSUNO else StatoErrore.FORMATO
     }
 
     fun writePreferences(){
@@ -314,26 +316,45 @@ open class AshbornViewModel(
             val validName = userFromDb?.name==userName
             val validSurname = userFromDb?.surname == cognome
             val validDate = userFromDb?.dateOfBirth == dataNascita
-            Log.i("ViewModel", "auth")
+            Log.d("ViewModel", "auth")
+            erroreCodCliente = if (userFromDb == null) StatoErrore.CONTENUTO else StatoErrore.NESSUNO
+            erroreNome = if (!validName) StatoErrore.CONTENUTO else StatoErrore.NESSUNO
+            erroreCognome = if (!validSurname) StatoErrore.CONTENUTO else StatoErrore.NESSUNO
+            erroreDataNascita = if(!validDate) StatoErrore.CONTENUTO else StatoErrore.NESSUNO
             if( validName && validSurname && validDate) {
-                Log.i("ViewModel", "auth2")
+                Log.d("ViewModel", "auth2")
                 _navigationEvent.value = NavigationEvent.NavagateToConti
-                Log.i("ViewModel", "auth3")
-
+                Log.d("ViewModel", "auth3")
             } else {
                 _navigationEvent.value = NavigationEvent.NavagateToError
+                Log.d("ViewModel", "auth4")
             }
         }
     }
 
-    /*fun getOperations() {
+    fun cancellaPreferenzeLocali(){
+        fistLogin = true
+        userName = ""
+        cognome = ""
+        dataNascita = ""
+        codCliente = ""
+
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStoreManager.writeUserPrefernces(User("","","","",""))
+        }
+
+
+    }
+
+    fun getOperations() {
         viewModelScope.launch(Dispatchers.IO) {
             val operazioniDb = viewModelScope.async(Dispatchers.IO) {
                 return@async operationRepository.getOperations(codCliente, LocalDateTime.now().minusDays(30), LocalDateTime.now(),0, 10)
             }.await()
-            operazioni = operazioniDb.first().toList()
+            operazioni = operazioniDb.first().toCollection(ArrayList<Operation>())
+            Log.d("ViewModel", "getOperations operazioni: $operazioni")
         }
-    }*/
+    }
 }
 
 sealed class NavigationEvent {
@@ -394,6 +415,7 @@ object TimeFormatExt {
     private const val FORMAT = "%02d:%02d:%02d"
 
     fun Long.timeFormat(): String = String.format(
+        Locale.getDefault(),
         FORMAT,
         TimeUnit.MILLISECONDS.toHours(this),
         TimeUnit.MILLISECONDS.toMinutes(this) % 60,

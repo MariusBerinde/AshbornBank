@@ -35,7 +35,6 @@ import com.example.ashborn.viewModel.AshbornViewModel
 fun Operazioni(
     navController: NavHostController,
     viewModel: AshbornViewModel
-    //connectionStatus: ConnectivityObserver.Status
 ) {
     Box(
         modifier = Modifier,

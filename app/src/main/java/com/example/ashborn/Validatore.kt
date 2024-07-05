@@ -51,9 +51,10 @@ class Validatore {
 
     fun formatoCodiceCliente(codCliente: String): Boolean {
         var ris:Boolean = false
-        if( codCliente.length == 9){
+        val codClienteL = codCliente.replace(" ", "")
+        if( codClienteL.length == 9){
             val regex = Regex("[^a-z0-9]")
-            ris = !regex.containsMatchIn(codCliente)
+            ris = !regex.containsMatchIn(codClienteL)
         }
         return ris
     }

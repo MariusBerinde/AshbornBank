@@ -87,6 +87,7 @@ fun AppNavigazione(
                 route = "dettagli-operazione/{index_op}",
                 arguments = listOf(navArgument("index_op") { type = NavType.LongType })
             ) { argomenti ->
+                Log.d("AppNavigazione", "index " + argomenti.arguments!!.getLong("index_op").toString())
                 DettagliOperazione(
                     indexOperation = argomenti.arguments!!.getLong("index_op"),
                     navController = navController, viewModel = viewModel

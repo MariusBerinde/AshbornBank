@@ -72,8 +72,8 @@ fun Registrazione(
                 onValueChange = { viewModel.setUserNameX(it) },
                 label = { Text(stringResource(id = R.string.inserisci_nome)) },
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = if (viewModel.erroreNome == 1) Color.Red else Color.Black,
-                    unfocusedBorderColor = if (viewModel.erroreNome == 1) Color.Red else Color.Black
+                    focusedBorderColor = if (viewModel.erroreNome != StatoErrore.NESSUNO) Color.Red else Color.Black,
+                    unfocusedBorderColor = if (viewModel.erroreNome != StatoErrore.NESSUNO) Color.Red else Color.Black
                 ),
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                 keyboardActions = KeyboardActions(
@@ -89,12 +89,12 @@ fun Registrazione(
                 onValueChange = { viewModel.setCognomeX(it) },
                 label = { Text(stringResource(R.string.inserisci_cognome)) },
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = if (viewModel.erroreCognome == 1) {
+                    focusedBorderColor = if (viewModel.erroreCognome != StatoErrore.NESSUNO) {
                         Color.Red
                     } else {
                         Color.Black
                     },
-                    unfocusedBorderColor = if (viewModel.erroreCognome == 1) {
+                    unfocusedBorderColor = if (viewModel.erroreCognome != StatoErrore.NESSUNO) {
                         Color.Red
                     } else {
                         Color.Black
@@ -115,12 +115,12 @@ fun Registrazione(
                 onValueChange = { viewModel.setDataNascitaX(it) },
                 label = { Text(stringResource(id = R.string.ins_data_nascita)) },
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = if (viewModel.erroreDataNascita == 1) {
+                    focusedBorderColor = if (viewModel.erroreDataNascita != StatoErrore.NESSUNO) {
                         Color.Red
                     } else {
                         Color.Black
                     },
-                    unfocusedBorderColor = if (viewModel.erroreDataNascita == 1) {
+                    unfocusedBorderColor = if (viewModel.erroreDataNascita != StatoErrore.NESSUNO) {
                         Color.Red
                     } else {
                         Color.Black
@@ -141,12 +141,12 @@ fun Registrazione(
                 onValueChange = { viewModel.setCodClienteX(it) },
                 label = { Text(stringResource(R.string.inserisci_codice_cliente)) },
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = if (viewModel.erroreCodCliente == 1) {
+                    focusedBorderColor = if (viewModel.erroreCodCliente != StatoErrore.NESSUNO) {
                         Color.Red
                     } else {
                         Color.Black
                     },
-                    unfocusedBorderColor = if (viewModel.erroreCodCliente == 1) {
+                    unfocusedBorderColor = if (viewModel.erroreCodCliente != StatoErrore.NESSUNO) {
                         Color.Red
                     } else {
                         Color.Black

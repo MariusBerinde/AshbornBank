@@ -1,7 +1,9 @@
 package com.example.ashborn.dao
+import androidx.compose.ui.text.style.LineBreak
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
@@ -29,7 +31,7 @@ interface AshbornDao {
    @Query ("SELECT EXISTS(SELECT * from users where clientCode = :aCodCliente AND pin = :aPin ) ")
    fun isPinCorrect(aCodCliente:String,aPin:String):Flow<Boolean>
 
-   @Insert
+   @Insert(onConflict = OnConflictStrategy.REPLACE)
    suspend fun insertOperation(operation: Operation)
 
    @Delete

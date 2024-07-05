@@ -6,6 +6,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import com.example.ashborn.Validatore
 import com.example.ashborn.viewModel.AshbornViewModel
 
+enum class StatoErrore{ CONTENUTO, FORMATO, NESSUNO }
+
 fun gestisciErrori(
     viewModel: AshbornViewModel
 ) {
@@ -14,6 +16,7 @@ fun gestisciErrori(
     viewModel.setErroreCognomeX(!Validatore().formatoCognomeValido(viewModel.cognome))
     viewModel.setErroreCodClienteX(!Validatore().formatoCodiceCliente(viewModel.codCliente))
     viewModel.setErroreDataNX(!Validatore().formatoDataNascitaValida(viewModel.dataNascita))
+
 }
 /*@Preview(showBackground = true)
 @Composable
