@@ -1,10 +1,10 @@
 package com.example.ashborn.view
 
+//import androidx.compose.foundation.layout.BoxScopeInstance.align
 import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-//import androidx.compose.foundation.layout.BoxScopeInstance.align
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
@@ -35,10 +36,7 @@ import com.example.ashborn.data.TransactionType
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.viewModel.AshbornViewModel
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
+
 @Composable
 fun Conti(
     navController: NavHostController,
@@ -51,14 +49,14 @@ fun Conti(
                     Column {
                         Row(modifier = Modifier.padding(MediumPadding)) {
                             Text(
-                                text = stringResource(id = R.string.conto) + ": " + viewModel.codConto,
+                                text = stringResource(id = R.string.conto) + ": " + viewModel.contoMostrato.codConto,
                                 modifier = Modifier
                             )
                         }
                         Row(modifier = Modifier.padding(MediumPadding)) {
                             Column(modifier = Modifier.align(Alignment.CenterVertically)) {
                                 Text(
-                                    text = stringResource(id = R.string.saldo) + ": " + viewModel.saldo,
+                                    text = stringResource(id = R.string.saldo) + ": " + viewModel.contoMostrato.saldo,
                                     fontSize = 20.sp
                                 )
                             }
@@ -73,7 +71,7 @@ fun Conti(
                         Row(modifier = Modifier.padding(MediumPadding)) {
                             Column(modifier = Modifier.align(Alignment.CenterVertically)) {
                                 Text(
-                                    text = "IBAN: " + viewModel.iban,
+                                    text = "IBAN: " + viewModel.contoMostrato.iban,
                                     fontSize = 12.sp,
                                     modifier = Modifier
                                 )
@@ -107,7 +105,7 @@ fun ListaOperazioniFatte(
     navController: NavHostController,
     viewModel: AshbornViewModel
 ) {
-    var voci = viewModel.operazioni
+    var voci = viewModel.operazioniConto
 
     var ordineInversoData = true
     var ordineInversoDescrizione = true
@@ -123,10 +121,10 @@ fun ListaOperazioniFatte(
                 Button(
                     onClick = { /*TODO*/
                         if (ordineInversoData){
-                            viewModel.operazioni = ArrayList(voci.sortedByDescending {it.dateO})
+                            viewModel.operazioniConto = ArrayList(voci.sortedByDescending {it.dateO})
                             ordineInversoData=!ordineInversoData
                         } else {
-                            viewModel.operazioni = ArrayList(voci.sortedBy {it.dateO})
+                            viewModel.operazioniConto = ArrayList(voci.sortedBy {it.dateO})
                             ordineInversoData=!ordineInversoData
                         }
                     }
@@ -141,10 +139,10 @@ fun ListaOperazioniFatte(
                 }
                 Button(onClick = { /*TODO*/
                     if (ordineInversoDescrizione){
-                        viewModel.operazioni = ArrayList(voci.sortedByDescending {it.description})
+                        viewModel.operazioniConto = ArrayList(voci.sortedByDescending {it.description})
                         ordineInversoData=!ordineInversoData
                     } else {
-                        viewModel.operazioni = ArrayList(voci.sortedBy {it.description})
+                        viewModel.operazioniConto = ArrayList(voci.sortedBy {it.description})
                         ordineInversoDescrizione=!ordineInversoDescrizione
                     }
                 }) {
@@ -153,10 +151,10 @@ fun ListaOperazioniFatte(
                 Button(
                     onClick = { /*TODO*/
                         if (ordineInversoImporto){
-                            viewModel.operazioni = ArrayList(voci.sortedByDescending {it.amount})
+                            viewModel.operazioniConto = ArrayList(voci.sortedByDescending {it.amount})
                             ordineInversoImporto=!ordineInversoImporto
                         } else {
-                            viewModel.operazioni = ArrayList(voci.sortedBy {it.amount})
+                            viewModel.operazioniConto = ArrayList(voci.sortedBy {it.amount})
                             ordineInversoImporto=!ordineInversoImporto
                         }
                     }

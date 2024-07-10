@@ -12,6 +12,7 @@ class AshbornViewModelUnitTest {
     fun formatoDataNascitaValidaTest() {
         val formato1 = "01-01-2000"
         val formato2 = "01/01/2000"
+        val formato3 = "1/01/2000"
         val formato1Sbagliato = "01_01_2000"
         val formato2Sbagliato = "01 33 2000"
         val formato3Sbagliato = "45 01 2000"
@@ -25,6 +26,7 @@ class AshbornViewModelUnitTest {
         val formato11Sbagliato = ""
         assertTrue("formato data di nascita valido", validatore.formatoDataNascitaValida(formato1))
         assertTrue("formato data di nascita valido", validatore.formatoDataNascitaValida(formato2))
+        assertTrue("formato data di nascita valido", validatore.formatoDataNascitaValida(formato3))
         assertFalse("formato1Sbagliato ", validatore.formatoDataNascitaValida(formato1Sbagliato))
         assertFalse("formato2Sbagliato ", validatore.formatoDataNascitaValida(formato2Sbagliato))
         assertFalse("formato3Sbagliato ", validatore.formatoDataNascitaValida(formato3Sbagliato))

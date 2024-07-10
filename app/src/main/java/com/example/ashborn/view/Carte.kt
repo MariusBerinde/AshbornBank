@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.ashborn.R
+import com.example.ashborn.data.Carta
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.viewModel.AshbornViewModel
@@ -44,12 +45,12 @@ fun RigaMagnetica(){
         .background(Color.Black), color=Color.Black, content = { Text("") })
 }
 @Composable
-fun FronteCarta() {
-    val nrCarta="1234 5678 9101 1121"
-    val utente="Mariolone Bubbarello"
-    val scadenza="06/06/06"
-    val cvc="avadv"
-    val codUtente="21435444325555324"
+fun FronteCarta(carta: Carta,utente:String) {
+    val nrCarta= carta.nrCarta.toString()
+    val utente= utente
+    val scadenza= carta.dataScadenza.toLocalDate().toString()
+    val cvc= carta.cvc
+    val codUtente= carta.codUtente
     var isFront by remember { mutableStateOf(true) }
   Card {
       Column(
@@ -95,7 +96,7 @@ fun Carte(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        FronteCarta()
+        FronteCarta(viewModel.cartaMostrata,viewModel.userName+" "+viewModel.cognome)
         Spacer(modifier = Modifier.height(16.dp))
         Row {
             Column (modifier = Modifier.padding(SmallPadding)){

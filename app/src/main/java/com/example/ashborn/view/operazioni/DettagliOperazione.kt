@@ -40,8 +40,8 @@ fun DettagliOperazione(
     viewModel: AshbornViewModel
 ) {
     Log.i("Dettagli operazione", "indice operazione $indexOperation")
-    var op=viewModel.operazioni.find { e->e.id==indexOperation}
-    Log.i("Dettagli operazione", "Oggetto corrispondente ${viewModel.arrayOperazioni}")
+    var op=viewModel.operazioniConto.find { e->e.id==indexOperation}
+    Log.i("Dettagli operazione", "Oggetto corrispondente ${op}")
     Column(
         modifier = Modifier
             .fillMaxSize()

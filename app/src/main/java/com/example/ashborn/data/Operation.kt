@@ -27,7 +27,10 @@ data class Operation(
     val description:String,
     //val amount: CurrencyAmount,
     val amount: Double,
-    val operationType:TransactionType
+    val operationType:TransactionType,
+    val bankAccount:String,
+    // se nullo è un bonifico altrimenti è un moviento della carta
+    val cardCode:String?
 )/*{
    open fun getValue(){}
 

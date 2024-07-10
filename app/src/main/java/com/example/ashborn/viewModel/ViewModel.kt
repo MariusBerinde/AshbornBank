@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.CountDownTimer
 import android.util.Log
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -19,12 +18,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.ashborn.dao.AshbornDao
+import com.example.ashborn.data.Carta
+import com.example.ashborn.data.Conto
 import com.example.ashborn.data.ErroreUiRegistrazioneStato
 import com.example.ashborn.data.Operation
+import com.example.ashborn.data.Stato
 import com.example.ashborn.data.TransactionType
 import com.example.ashborn.data.User
 import com.example.ashborn.data.UserState
 import com.example.ashborn.db.AshbornDb
+import com.example.ashborn.repository.CardRepository
+import com.example.ashborn.repository.ContoRepository
 import com.example.ashborn.repository.OfflineUserRepository
 import com.example.ashborn.repository.OperationRepository
 import com.example.ashborn.view.login.StatoErrore
@@ -44,6 +48,8 @@ open class AshbornViewModel(
     application: Application
 ): AndroidViewModel(application) {
     private val userRepository: OfflineUserRepository
+    private val cartaRepositori: CardRepository
+    private val contoRepository: ContoRepository
     private val _navigationEvent = MutableLiveData<NavigationEvent>()
     val navigationState: LiveData<NavigationEvent> = _navigationEvent
     val dataStoreManager:DataStoreManager
@@ -52,7 +58,9 @@ open class AshbornViewModel(
     init {
         ashbornDao = AshbornDb.getDatabase(application).ashbornDao()
         dataStoreManager = DataStoreManager(application)
+        cartaRepositori = CardRepository(ashbornDao)
         userRepository = OfflineUserRepository(ashbornDao)
+        contoRepository = ContoRepository(ashbornDao)
         initDb()
         viewModelScope.launch{
             if(dataStoreManager.usernameFlow.first().isEmpty() ){
@@ -62,7 +70,12 @@ open class AshbornViewModel(
                 userName = dataStoreManager.usernameFlow.first()
                 cognome = dataStoreManager.cognomeFlow.first()
                 codCliente = dataStoreManager.codClienteFlow.first()
-                getOperations()
+
+                getConti()
+                getCarte()
+               // getOperationsCarta()
+               // getOperationsConto()
+
             }
         }
     }
@@ -91,10 +104,28 @@ open class AshbornViewModel(
                 )
             )
         }
+
+
         viewModelScope.launch(Dispatchers.IO) {
-            insertOperation(Operation( clientCode ="777777777", dateO = LocalDateTime.now(), dateV = LocalDateTime.now(), description = "Pagamento crimini di guerra", amount =  135.89, operationType = TransactionType.WITHDRAWAL))
-            insertOperation(Operation( clientCode ="777777777", dateO = LocalDateTime.now().minusDays(1),dateV = LocalDateTime.now().minusDays(1),description = "Pagamento Bolletta Luce", amount =  92.00, operationType = TransactionType.WITHDRAWAL))
-            insertOperation(Operation( clientCode ="777777777", dateO = LocalDateTime.now().minusDays(1),dateV = LocalDateTime.now().minusDays(1),description ="Pagamento per Mutuo del male", amount =  92.00, operationType = TransactionType.WITHDRAWAL))
+            insertConto(Conto(codConto = "42",codCliente ="777777777", stato = Stato.ATTIVO, iban = "IT1234567890123456789012345",saldo = 190000.00 ))
+            insertConto(Conto(codConto = "43",codCliente ="666666666", stato = Stato.ATTIVO , iban = "IT1234567890123456789012345",saldo = 200000.000))
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            insertCarta(Carta(
+                nrCarta = 1111222233334444,
+                dataScadenza = LocalDateTime.of(2030,7,25,0,0), //"25/07/2300",
+                codUtente = "777777777",
+                statoCarta = Stato.ATTIVO,
+                codConto = "42",
+                cvc = "732",
+                saldo = 190000.00
+            ))
+        }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            insertOperation(Operation( clientCode ="777777777", dateO = LocalDateTime.now(), dateV = LocalDateTime.now(), description = "Pagamento crimini di guerra", amount =  135.89, operationType = TransactionType.WITHDRAWAL, bankAccount = "42", cardCode = null))
+            insertOperation(Operation( clientCode ="777777777", dateO = LocalDateTime.now().minusDays(1),dateV = LocalDateTime.now().minusDays(1),description = "Pagamento Bolletta Luce", amount =  92.00, operationType = TransactionType.WITHDRAWAL, bankAccount = "42", cardCode = "1111222233334444" ))
+            insertOperation(Operation( clientCode ="777777777", dateO = LocalDateTime.now().minusDays(1),dateV = LocalDateTime.now().minusDays(1),description ="Pagamento per Mutuo del male", amount =  92.00, operationType = TransactionType.WITHDRAWAL,bankAccount = "42", cardCode = "1111222233334444" ))
         }
     }
 
@@ -108,12 +139,23 @@ open class AshbornViewModel(
         private set
 
     fun upsertUser(utente: User) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             userRepository.upsertUser(utente)
         }
     }
+    fun insertCarta(carta: Carta){
+        viewModelScope.launch(Dispatchers.IO) {
+           cartaRepositori.insertCarta(carta)
+        }
+    }
+
+    fun insertConto(conto: Conto){
+        viewModelScope.launch(Dispatchers.IO) {
+           contoRepository.inserisciConto(conto)
+        }
+    }
     fun deleteUser(utente: User) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             userRepository.deleteUser(utente)
         }
     }
@@ -145,11 +187,7 @@ open class AshbornViewModel(
         private set
     var erroreCodCliente by mutableStateOf(StatoErrore.NESSUNO)
         private set
-    val iban: String = "IT1234567890123456789012345"
-    var saldo by mutableDoubleStateOf(0.0)
-        private set
-    var codConto: String = "0987654321"
-        private set
+
     var fistLogin: Boolean = true
     var startDest: String = "init"
         private set
@@ -165,7 +203,23 @@ open class AshbornViewModel(
         private set // Optional: restrict external modification
     var dataNascita by mutableStateOf("")
         private set
-    var arrayOperazioni: ArrayList<Operation>
+    var listaCarte by mutableStateOf(
+        arrayListOf<Carta>(Carta(
+            nrCarta = 1111222233334444,
+            dataScadenza = LocalDateTime.of(2030,7,25,0,0),// "20/04/2300",
+            codUtente = "777777777",
+            statoCarta = Stato.ATTIVO,
+            codConto = "42",
+            saldo = 0.0,
+            cvc = "777"
+        ))
+    )
+    var listaConti by mutableStateOf(
+        arrayListOf<Conto>(
+            Conto("777777777777","777 777 777",0.0, "IT1234567890123456789012345", Stato.ATTIVO)
+        )
+    )
+    var arrayOperazioniCarte: ArrayList<Operation>
         get() = arrayListOf(
             Operation(
                 0,
@@ -175,31 +229,42 @@ open class AshbornViewModel(
                 "Pagamento Bolletta",
                 //CurrencyAmount(167.00, Currency.getInstance("EUR")),
                 167.00,
-                TransactionType.WITHDRAWAL
-            ),
-            Operation(
-                1,
-                "1",
-                LocalDateTime.now().minusDays(1),
-                LocalDateTime.now().minusDays(1),
-                "Pagamento Bolletta",
-                //CurrencyAmount(92.00, Currency.getInstance("EUR")),
-                92.00,
-                TransactionType.WITHDRAWAL
-            ),
-            Operation(
-                3,
-                "1",
-                LocalDateTime.now().minusDays(3),
-                LocalDateTime.now().minusDays(3),
-                "Pagamento Bolletta",
-                147.00,
-                TransactionType.WITHDRAWAL
-            ),
+                TransactionType.WITHDRAWAL,
+                bankAccount = "42", cardCode = "1111222233334444"
+            )
+
         )
         set(value) = TODO()
+    var arrayOperazioniConto: ArrayList<Operation>
+        get() = arrayListOf(
+            Operation(
+                0,
+                "1",
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                "Pagamento Bolletta",
+                //CurrencyAmount(167.00, Currency.getInstance("EUR")),
+                167.00,
+                TransactionType.WITHDRAWAL,
+                bankAccount = "42", cardCode = null
+            )
 
-    var operazioni by mutableStateOf(arrayOperazioni/*listOf<Operation>()*/)
+            )
+        set(value) = TODO()
+    var operazioniCarta by mutableStateOf(arrayOperazioniCarte) //TODO da ren
+    var operazioniConto by mutableStateOf(arrayOperazioniConto)
+    var contoMostrato by mutableStateOf(
+        Conto("xxxx xxx xxx","XXX XXX XXX",0.0, "fdagfkldnaògad",Stato.ATTIVO)
+)
+    var cartaMostrata by mutableStateOf(Carta(
+                        nrCarta = 1234123412341234,
+                        dataScadenza = LocalDateTime.of(2030,7,25,0,0),//"20/04/2300",
+                        codUtente = "0000000000000",
+                        statoCarta = Stato.ATTIVO,
+                        codConto = "420",
+                        saldo = 0.0,
+                        cvc = "777asd")
+    )
 
     val ore = TimeUnit.HOURS.toMillis(0)
     val minuti = TimeUnit.HOURS.toMillis(0)
@@ -312,6 +377,7 @@ open class AshbornViewModel(
 
     fun auth(){
         viewModelScope.launch{
+            codCliente=codCliente.replace(" ","")
             val userFromDb = getUserByClientCode(codCliente)
             val validName = userFromDb?.name==userName
             val validSurname = userFromDb?.surname == cognome
@@ -342,19 +408,59 @@ open class AshbornViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             dataStoreManager.writeUserPrefernces(User("","","","",""))
         }
-
-
     }
 
-    fun getOperations() {
+    //todo: da testare e inserire in init
+    fun getConti(){
+
         viewModelScope.launch(Dispatchers.IO) {
-            val operazioniDb = viewModelScope.async(Dispatchers.IO) {
-                return@async operationRepository.getOperations(codCliente, LocalDateTime.now().minusDays(30), LocalDateTime.now(),0, 10)
+            var datiDb=viewModelScope.async(Dispatchers.IO) {
+                return@async    contoRepository.getConti(codCliente)
             }.await()
-            operazioni = operazioniDb.first().toCollection(ArrayList<Operation>())
-            Log.d("ViewModel", "getOperations operazioni: $operazioni")
+
+            listaConti = datiDb.first().toCollection(ArrayList<Conto>())
+            contoMostrato = listaConti.get(0)
+            getOperationsConto()
+        }
+
+    }
+    //todo: da testare e inserire in init
+    fun getCarte(){
+        viewModelScope.launch(Dispatchers.IO) {
+            var datiDb=viewModelScope.async(Dispatchers.IO) {
+                return@async    cartaRepositori.getCarte(codCliente)
+            }.await()
+
+            listaCarte = datiDb.first().toCollection(ArrayList<Carta>())
+            cartaMostrata = listaCarte.get(0)
+            getOperationsCarta()
         }
     }
+
+    //todo: da testare e inserire in init
+    fun getOperationsConto() {
+        Log.d("viewModel","getOpConto nrCarta=${contoMostrato.codConto}, from= ${LocalDateTime.now().minusDays(30)}, upTo=${LocalDateTime.now()}")
+        viewModelScope.launch(Dispatchers.IO) {
+            val operazioniDb = viewModelScope.async(Dispatchers.IO) {
+                return@async operationRepository.getOperazioniConto(contoMostrato.codConto, LocalDateTime.now().minusDays(30), LocalDateTime.now(),0, 10)
+            }.await()
+            operazioniConto = operazioniDb.first().toCollection(ArrayList<Operation>())
+            Log.d("ViewModel", "getOperationConto : $operazioniConto")
+        }
+    }
+//todo: da testare e inserire in init
+    fun getOperationsCarta() {
+       Log.d("viewModel","getOpConto nrCarta=${cartaMostrata.nrCarta}, from= ${LocalDateTime.now().minusDays(30)}, upTo=${LocalDateTime.now()}")
+        viewModelScope.launch(Dispatchers.IO) {
+            val operazioniDb = viewModelScope.async(Dispatchers.IO) {
+                return@async operationRepository.getOperazioniCarte(cartaMostrata.nrCarta, LocalDateTime.now().minusDays(30), LocalDateTime.now(),0, 10)
+            }.await()
+            //operazioniCarta = operazioniDb.first().toCollection(ArrayList<Operation>())
+            operazioniCarta = operazioniDb.first().toCollection(ArrayList<Operation>())
+            Log.d("ViewModel", "getOperationCarta: $operazioniCarta")
+        }
+    }
+
 }
 
 sealed class NavigationEvent {
