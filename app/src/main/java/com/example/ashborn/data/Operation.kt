@@ -1,6 +1,7 @@
 package com.example.ashborn.data
 
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
@@ -13,7 +14,21 @@ enum class TransactionType {
 }
 @Entity(
     tableName = "operations",
-    indices = [Index(value = ["clientCode"])]
+    indices = [Index(value = ["clientCode"])],
+    foreignKeys = [
+        ForeignKey(
+            entity = User::class,
+            parentColumns = ["clientCode"],
+            childColumns = ["clientCode"],
+            onUpdate = ForeignKey.CASCADE
+        ),
+    ForeignKey(
+        entity = Conto::class,
+        parentColumns = ["codConto"],
+        childColumns = ["bankAccount"],
+        onUpdate = ForeignKey.CASCADE,
+    )
+    ]
 )
 
 data class Operation(
