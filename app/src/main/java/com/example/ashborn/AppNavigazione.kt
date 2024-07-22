@@ -9,21 +9,21 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.ashborn.view.Archivio
-import com.example.ashborn.view.login.AskPIN
 import com.example.ashborn.view.Avvisi
-import com.example.ashborn.view.operazioni.Bonifico
-import com.example.ashborn.view.operazioni.DettagliOperazione
 import com.example.ashborn.view.Impostazioni
 import com.example.ashborn.view.Logout
+import com.example.ashborn.view.Pagine
+import com.example.ashborn.view.Sicurezza
+import com.example.ashborn.view.Utente
+import com.example.ashborn.view.login.AskPIN
+import com.example.ashborn.view.login.Registrazione
+import com.example.ashborn.view.login.Welcome
+import com.example.ashborn.view.operazioni.Bonifico
+import com.example.ashborn.view.operazioni.DettagliOperazione
 import com.example.ashborn.view.operazioni.Mav
 import com.example.ashborn.view.operazioni.OperazioneConfermata
 import com.example.ashborn.view.operazioni.PINOperazione
-import com.example.ashborn.view.Pagine
-import com.example.ashborn.view.login.Registrazione
 import com.example.ashborn.view.operazioni.RiepilogoBonifico
-import com.example.ashborn.view.Sicurezza
-import com.example.ashborn.view.Utente
-import com.example.ashborn.view.login.Welcome
 import com.example.ashborn.viewModel.AshbornViewModel
 import com.example.ashborn.viewModel.OperationViewModel
 
@@ -71,9 +71,12 @@ fun AppNavigazione(
             route = "principale"
         ) {
             composable("utente") {
+
+               // val viewModel: PreviewAshbornViewModel = PreviewAshbornViewModel(PrevievApp())
                 Utente(
                     navController = navController,
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    viewModelp = null
                 )
             }
             composable("conti") {

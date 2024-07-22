@@ -71,14 +71,16 @@ open class AshbornViewModel(
                 cognome = dataStoreManager.cognomeFlow.first()
                 codCliente = dataStoreManager.codClienteFlow.first()
 
+
+                //getDataNascita()
                 getConti()
                 getCarte()
-               // getOperationsCarta()
-               // getOperationsConto()
 
             }
         }
     }
+
+
 
     fun initDb(){
         viewModelScope.launch(Dispatchers.IO) {
@@ -177,6 +179,7 @@ open class AshbornViewModel(
         Log.d("ViewModel", "getUserByClientCode ${result}")
         return result
     }
+
 
     val tag: String = AshbornViewModel::class.java.simpleName
     var erroreNome by mutableStateOf(StatoErrore.NESSUNO)
@@ -391,6 +394,7 @@ open class AshbornViewModel(
                 Log.d("ViewModel", "auth2")
                 _navigationEvent.value = NavigationEvent.NavagateToConti
                 Log.d("ViewModel", "auth3")
+             //   dataNascita=dataNascita
             } else {
                 _navigationEvent.value = NavigationEvent.NavagateToError
                 Log.d("ViewModel", "auth4")
@@ -527,4 +531,115 @@ object TimeFormatExt {
         TimeUnit.MILLISECONDS.toMinutes(this) % 60,
         TimeUnit.MILLISECONDS.toSeconds(this) % 60
     )
+}
+
+
+class PreviewAshbornViewModel(application: Application):AndroidViewModel(application){
+
+
+
+    var statoUtente by mutableStateOf(UserState())
+    private set
+
+    var statoUtenteUi by mutableStateOf(UserState())
+    private set
+
+    var erroreUiRegistrazioneStato by mutableStateOf(ErroreUiRegistrazioneStato())
+    private set
+
+
+    //TODO: da togliere
+
+    val tag: String = AshbornViewModel::class.java.simpleName
+    var erroreNome by mutableStateOf(StatoErrore.NESSUNO)
+    private set
+    var erroreCognome by mutableStateOf(StatoErrore.NESSUNO)
+    private set
+    var erroreDataNascita by mutableStateOf(StatoErrore.NESSUNO)
+    private set
+    var erroreCodCliente by mutableStateOf(StatoErrore.NESSUNO)
+    private set
+
+    var fistLogin: Boolean = true
+    var startDest: String = "init"
+    private set
+    var wrongAttempts by mutableIntStateOf(0)
+    private set // Optional: restrict external modification
+    var pin by mutableStateOf((""))
+    private set // Optional: restrict external modification
+    var codCliente by mutableStateOf("")
+    private set
+    var userName by mutableStateOf("NomeD")
+    private set // Optional: restrict external modification
+    var cognome by mutableStateOf("CognomeD")
+    private set // Optional: restrict external modification
+    var dataNascita by mutableStateOf("1-666-1")
+    private set
+    var listaCarte by mutableStateOf(
+        arrayListOf<Carta>(Carta(
+            nrCarta = 1111222233334444,
+            dataScadenza = LocalDateTime.of(2030,7,25,0,0),// "20/04/2300",
+            codUtente = "777777777",
+            statoCarta = Stato.ATTIVO,
+            codConto = "42",
+            saldo = 0.0,
+            cvc = "777"
+        ))
+    )
+    var listaConti by mutableStateOf(
+        arrayListOf<Conto>(
+            Conto("777777777777","777 777 777",0.0, "IT1234567890123456789012345", Stato.ATTIVO)
+        )
+    )
+    var arrayOperazioniCarte: ArrayList<Operation>
+    get() = arrayListOf(
+        Operation(
+            0,
+            "1",
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            "Pagamento Bolletta",
+            //CurrencyAmount(167.00, Currency.getInstance("EUR")),
+            167.00,
+            TransactionType.WITHDRAWAL,
+            bankAccount = "42", cardCode = "1111222233334444"
+        )
+
+    )
+    set(value) = TODO()
+    var arrayOperazioniConto: ArrayList<Operation>
+    get() = arrayListOf(
+        Operation(
+            0,
+            "1",
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            "Pagamento Bolletta",
+            //CurrencyAmount(167.00, Currency.getInstance("EUR")),
+            167.00,
+            TransactionType.WITHDRAWAL,
+            bankAccount = "42", cardCode = null
+        )
+
+    )
+    set(value) = TODO()
+    var operazioniCarta by mutableStateOf(arrayOperazioniCarte) //TODO da ren
+    var operazioniConto by mutableStateOf(arrayOperazioniConto)
+    var contoMostrato by mutableStateOf(
+        Conto("xxxx xxx xxx","XXX XXX XXX",0.0, "fdagfkldnaògad",Stato.ATTIVO)
+    )
+    var cartaMostrata by mutableStateOf(Carta(
+        nrCarta = 1234123412341234,
+        dataScadenza = LocalDateTime.of(2030,7,25,0,0),//"20/04/2300",
+        codUtente = "0000000000000",
+        statoCarta = Stato.ATTIVO,
+        codConto = "420",
+        saldo = 0.0,
+        cvc = "777asd")
+    )
+
+
+
+
+
 }

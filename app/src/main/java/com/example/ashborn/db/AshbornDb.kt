@@ -37,3 +37,35 @@ abstract class AshbornDb:RoomDatabase() {
    }
 
 }
+
+/*
+addCallback(object : RoomDatabase.Callback(){
+                   override fun onCreate(db: SupportSQLiteDatabase) {
+                       super.onCreate(db)
+                       db.execSQL(
+                           """
+                            CREATE TRIGGER aggiorna_saldo_carte
+                            AFTER UPDATE ON conti
+                            FOR EACH ROW
+                            BEGIN
+                                UPDATE carta
+                                SET saldo = NEW.saldo
+                                WHERE codConto = NEW.codConto;
+                            END;
+                        """.trimIndent()
+                       )
+                       db.execSQL(
+                           """
+                            CREATE TRIGGER aggiorna_saldo_conto
+                            AFTER UPDATE ON carte
+                            FOR EACH ROW
+                            BEGIN
+                                UPDATE conti
+                                SET saldo = NEW.saldo
+                                WHERE codConto = NEW.codConto;
+                            END;
+                        """.trimIndent()
+                       )
+                   }
+               }).
+ */

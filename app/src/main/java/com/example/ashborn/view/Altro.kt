@@ -81,7 +81,9 @@ fun Altro(
                     }
                     Column(modifier = Modifier
                         .padding(horizontal = SmallPadding, vertical = 50.dp)
-                        .clickable { }) {
+                        .clickable {
+                            navController.navigate("utente")
+                        }) {
                         Text("Dettagli", fontWeight = FontWeight.Bold)
                     }
                 }
