@@ -124,16 +124,17 @@ fun AskPIN(
                 LaunchedEffect(navigationState) {
                     Log.i("AskPIN","valore navigazione= ${navigationState.toString()}")
                     when(navigationState){
-                        NavigationEvent.NavagateToConti ->{
+                        NavigationEvent.NavigateToConti ->{
                             viewModel.resetWrongAttempts()
                             navController.navigate("conti")
                         }
-                        NavigationEvent.NavagateToError -> {
+                        NavigationEvent.NavigateToError -> {
                             Log.i("AskPIN", "errore e numero di tentativi ${viewModel.wrongAttempts}")
                             if(viewModel.wrongAttempts > 3 ) {
                                 navController.popBackStack()
                             }
                         }
+
                         else->{}
                     }
 

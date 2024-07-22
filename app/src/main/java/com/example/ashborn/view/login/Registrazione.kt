@@ -18,13 +18,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -172,13 +170,13 @@ fun Registrazione(
         }
         LaunchedEffect(navigationState) {
             when(navigationState){
-                NavigationEvent.NavagateToConti ->{
+                NavigationEvent.NavigateToPin ->{
                     Log.i("Registrazione","sono in Launced effect con navState.toConti")
                     viewModel.fistLogin = false
                     viewModel.writePreferences()
                     navController.navigate("welcome")
                 }
-                NavigationEvent.NavagateToError -> gestisciErrori(viewModel)
+                NavigationEvent.NavigateToError -> gestisciErrori(viewModel)
                 else->{}
 
             }

@@ -361,7 +361,7 @@ open class AshbornViewModel(
     fun validatePin(){
         if(!checkPin()) {
             Log.i("ViewModel","formato pin sbagliato")
-            _navigationEvent.value = NavigationEvent.NavagateToError
+            _navigationEvent.value = NavigationEvent.NavigateToError
             wrongAttempts++
         } else {
             viewModelScope.launch {
@@ -369,10 +369,10 @@ open class AshbornViewModel(
 
                     Log.i("ViewModel"," pin sbagliato")
 
-                    _navigationEvent.value = NavigationEvent.NavagateToError
+                    _navigationEvent.value = NavigationEvent.NavigateToError
                     wrongAttempts++
                 } else {
-                    _navigationEvent.value = NavigationEvent.NavagateToConti
+                    _navigationEvent.value = NavigationEvent.NavigateToConti
                 }
             }
         }
@@ -392,11 +392,11 @@ open class AshbornViewModel(
             erroreDataNascita = if(!validDate) StatoErrore.CONTENUTO else StatoErrore.NESSUNO
             if( validName && validSurname && validDate) {
                 Log.d("ViewModel", "auth2")
-                _navigationEvent.value = NavigationEvent.NavagateToConti
+                _navigationEvent.value = NavigationEvent.NavigateToPin
                 Log.d("ViewModel", "auth3")
              //   dataNascita=dataNascita
             } else {
-                _navigationEvent.value = NavigationEvent.NavagateToError
+                _navigationEvent.value = NavigationEvent.NavigateToError
                 Log.d("ViewModel", "auth4")
             }
         }
@@ -468,8 +468,9 @@ open class AshbornViewModel(
 }
 
 sealed class NavigationEvent {
-    object NavagateToConti:NavigationEvent()
-    object NavagateToError:NavigationEvent()
+    object NavigateToConti:NavigationEvent()
+    object NavigateToError:NavigationEvent()
+    object NavigateToPin:NavigationEvent()
 
 }
 

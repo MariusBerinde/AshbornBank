@@ -49,4 +49,8 @@
     <string name="conferma">Conferma</string>
     <string name="connessione_persa">Connessione Persa : Riconnettiti a internet per usare l\'app</string>
     <string name="tempo_rimanente">"Tempo rimanente da aspettare: "</string>
+    <string name="nome">"nome: "</string>
+    <string name="cognome">"cognome: "</string>
+    <string name="data_nascita">"data di nascita: "</string>
+    <string name="codice_cliente">"codice cliente: "</string>
 </resources>
