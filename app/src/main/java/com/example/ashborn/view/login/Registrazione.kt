@@ -34,6 +34,7 @@ import com.example.ashborn.R
 import com.example.ashborn.ui.theme.LargePadding
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
+import com.example.ashborn.view.CustomDatePicker
 import com.example.ashborn.view.ErroreConnessione
 import com.example.ashborn.viewModel.AshbornViewModel
 import com.example.ashborn.viewModel.NavigationEvent
@@ -108,7 +109,7 @@ fun Registrazione(
             )
 
             Spacer(modifier = Modifier.height(LargePadding))
-            OutlinedTextField(
+           /* OutlinedTextField(
                 value = viewModel.dataNascita,
                 onValueChange = { viewModel.setDataNascitaX(it) },
                 label = { Text(stringResource(id = R.string.ins_data_nascita)) },
@@ -131,7 +132,8 @@ fun Registrazione(
                 modifier = Modifier
                     .focusRequester(focusRequester3)
                     .fillMaxWidth()
-            )
+            )*/
+            CustomDatePicker()
 
             Spacer(modifier = Modifier.height(LargePadding))
             OutlinedTextField(
@@ -160,19 +162,21 @@ fun Registrazione(
                     .focusRequester(focusRequester4)
                     .fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(LargePadding))
+
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { viewModel.auth() }
             ) {
                 Text(text = stringResource(id = R.string.conferma))
             }
+
+
         }
         LaunchedEffect(navigationState) {
             when(navigationState){
                 NavigationEvent.NavigateToPin ->{
                     Log.i("Registrazione","sono in Launced effect con navState.toConti")
-                    viewModel.fistLogin = false
+                    viewModel.fistLogin= false
                     viewModel.writePreferences()
                     navController.navigate("welcome")
                 }

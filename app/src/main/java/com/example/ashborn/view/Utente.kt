@@ -33,7 +33,9 @@ fun Utente(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxSize().padding(LargePadding)
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(LargePadding)
     ){
         val modifier = Modifier
             .fillMaxWidth()
@@ -60,6 +62,7 @@ fun Utente(
 
 }
 
+
 class PrevievApp: Application()
 @Preview(showBackground = true)
 @Composable
@@ -69,7 +72,8 @@ fun AshbornPreview() {
         val viewModel: PreviewAshbornViewModel = PreviewAshbornViewModel(PrevievApp())
 
         val navController = rememberNavController()
-        Utente(viewModel = AshbornViewModel(PrevievApp()), viewModelp = viewModel, navController = navController)
+        //Utente(viewModel = AshbornViewModel(PrevievApp()), viewModelp = viewModel, navController = navController)
+        CustomDatePicker()
     }
 }
 

@@ -57,6 +57,7 @@ fun Welcome(
                     .padding(SmallPadding),
                     //TODO:aggiungere controllo per verifica primo login
                     onClick = {
+                        Log.d("Welcome","valore di first login = ${viewModel.fistLogin}")
                         if (viewModel.fistLogin) {
                             navController.navigate("primo-login")
                         } else {
