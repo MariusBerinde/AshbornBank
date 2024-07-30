@@ -35,9 +35,11 @@ import com.example.ashborn.ui.theme.LargePadding
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.view.CustomDatePicker
+import com.example.ashborn.view.DateUseCase
 import com.example.ashborn.view.ErroreConnessione
 import com.example.ashborn.viewModel.AshbornViewModel
 import com.example.ashborn.viewModel.NavigationEvent
+import java.time.LocalDate
 
 @Composable
 fun Registrazione(
@@ -133,8 +135,7 @@ fun Registrazione(
                     .focusRequester(focusRequester3)
                     .fillMaxWidth()
             )*/
-            CustomDatePicker()
-
+            CustomDatePicker(useCase = DateUseCase.NASCITA, yearRange = LocalDate.now().minusYears(100).year..LocalDate.now().year)
             Spacer(modifier = Modifier.height(LargePadding))
             OutlinedTextField(
                 value = viewModel.codCliente,

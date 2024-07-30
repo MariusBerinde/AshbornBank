@@ -21,6 +21,7 @@ import com.example.ashborn.ui.theme.AshbornTheme
 import com.example.ashborn.ui.theme.LargePadding
 import com.example.ashborn.viewModel.AshbornViewModel
 import com.example.ashborn.viewModel.PreviewAshbornViewModel
+import java.time.LocalDate
 
 @Composable
 fun Utente(
@@ -73,7 +74,7 @@ fun AshbornPreview() {
 
         val navController = rememberNavController()
         //Utente(viewModel = AshbornViewModel(PrevievApp()), viewModelp = viewModel, navController = navController)
-        CustomDatePicker()
+        CustomDatePicker(useCase = DateUseCase.NASCITA, yearRange = LocalDate.now().minusYears(100).year..LocalDate.now().year)
     }
 }
 

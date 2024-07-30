@@ -53,4 +53,6 @@
     <string name="cognome">"cognome: "</string>
     <string name="data_nascita">"data di nascita: "</string>
     <string name="codice_cliente">"codice cliente: "</string>
+    <string name="mav">Mav</string>
+    <string name="codice_mav">Codice Mav</string>
 </resources>

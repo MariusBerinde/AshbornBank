@@ -15,6 +15,16 @@ import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 class OperationViewModel(application: Application): AndroidViewModel(application) {
+    var ordinanteMav by mutableStateOf("")
+        private set
+    var codiceMav by mutableStateOf("")
+        private set
+    var importoMav by mutableStateOf("")
+        private set
+    var descrizioneMav by mutableStateOf("")
+        private set
+    var dataAccreditoMav by mutableStateOf("")
+        private set
     var erroreCausale by mutableIntStateOf(0)
         private set
     var erroreBeneficiario by mutableIntStateOf(0)
@@ -98,5 +108,25 @@ class OperationViewModel(application: Application): AndroidViewModel(application
 
     fun bloccaUtente() {
         TODO("Not yet implemented")
+    }
+
+    fun setDataAccreditoMavX(dataAccreditoMav: String) {
+        this.dataAccreditoMav = dataAccreditoMav
+    }
+
+    fun setDescrizioneMavX(descrizioneMav: String) {
+        this.descrizioneMav = descrizioneMav
+    }
+
+    fun setImportoMavX(importoMav: String) {
+        this.importoMav = importoMav
+    }
+
+    fun setCodiceMavX(codiceMav: String) {
+        this.codiceMav = codiceMav
+    }
+
+    fun setOrdinanteMavX(ordinanteMav: String) {
+        this.ordinanteMav = ordinanteMav
     }
 }
