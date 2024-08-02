@@ -27,6 +27,7 @@ import com.example.ashborn.data.TransactionType
 import com.example.ashborn.data.User
 import com.example.ashborn.data.UserState
 import com.example.ashborn.db.AshbornDb
+import com.example.ashborn.model.DataStoreManager
 import com.example.ashborn.repository.CardRepository
 import com.example.ashborn.repository.ContoRepository
 import com.example.ashborn.repository.OfflineUserRepository
@@ -52,7 +53,7 @@ open class AshbornViewModel(
     private val contoRepository: ContoRepository
     private val _navigationEvent = MutableLiveData<NavigationEvent>()
     val navigationState: LiveData<NavigationEvent> = _navigationEvent
-    val dataStoreManager:DataStoreManager
+    val dataStoreManager: DataStoreManager
     val ashbornDao: AshbornDao
 
     init {
@@ -474,53 +475,7 @@ sealed class NavigationEvent {
 
 }
 
-class DataStoreManager(val context: Context){
 
-    // per datastore
-    val Context.dataStore: DataStore<Preferences> by preferencesDataStore("settings")
-    // implementazione lettura preferenze
-    private val USERNAME_KEY = stringPreferencesKey("username_key")
-    private val COGNOME_KEY = stringPreferencesKey("cognome_key")
-    private val COD_CLIENTE_KEY= stringPreferencesKey("cod_cliente_key")
-
-
-    val usernameFlow: Flow<String> = context.dataStore
-        .data.map{
-                preferences -> preferences[USERNAME_KEY]?:""
-        }
-    val cognomeFlow: Flow<String> = context.dataStore
-        .data.map{
-                preferences -> preferences[COGNOME_KEY]?:""
-        }
-
-    val codClienteFlow: Flow<String> = context.dataStore
-        .data.map{
-                preferences -> preferences[COD_CLIENTE_KEY]?:""
-        }
-
-    suspend fun writeUsername(userName: String){
-        context.dataStore.edit {
-                settings -> settings[USERNAME_KEY]=userName
-        }
-    }
-
-    suspend fun writeCognome(cognome:  String){
-        context.dataStore.edit {
-                settings -> settings[COGNOME_KEY]=cognome
-        }
-    }
-    suspend fun writeCodCliente(codCliente: String){
-        context.dataStore.edit {
-                settings -> settings[COD_CLIENTE_KEY]=codCliente
-        }
-    }
-
-    suspend fun writeUserPrefernces(user: User){
-        writeCognome(user.surname)
-        writeUsername(user.name)
-        writeCodCliente(user.clientCode)
-    }
-}
 
 object TimeFormatExt {
     private const val FORMAT = "%02d:%02d:%02d"

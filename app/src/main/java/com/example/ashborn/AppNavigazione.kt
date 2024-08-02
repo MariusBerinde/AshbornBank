@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.ashborn.model.DataStoreManager
 import com.example.ashborn.view.Archivio
 import com.example.ashborn.view.Avvisi
 import com.example.ashborn.view.Impostazioni
@@ -26,10 +27,38 @@ import com.example.ashborn.view.operazioni.PINOperazione
 import com.example.ashborn.view.operazioni.RiepilogoBonifico
 import com.example.ashborn.viewModel.AshbornViewModel
 import com.example.ashborn.viewModel.OperationViewModel
+import com.example.ashborn.viewModel.WelcomeViewModel
 
+@Composable
+fun AppNavigazione2(
+    startDest:String,
+    viewModel: WelcomeViewModel
+){
+
+    val navController = rememberNavController()
+    val startDest = startDest
+
+    NavHost(
+        navController = navController,
+        startDestination = startDest
+    ){
+        navigation(
+            startDestination = "welcome",
+            route = "init"
+        ) {
+            val viewModel2 = WelcomeViewModel(DataStoreManager(context = navController.context))
+            composable("welcome") {
+                Welcome(viewModel = viewModel2)
+            }
+    }
+}
+}
+
+    /*
 @Composable
 fun AppNavigazione(
     viewModel: AshbornViewModel,
+    viewModel2: WelcomeViewModel,
     operationViewModel: OperationViewModel,
     connectionStatus: ConnectivityObserver.Status
 ){
@@ -46,9 +75,9 @@ fun AppNavigazione(
         ) {
             composable("welcome") {
                 Welcome(
-                    navController = navController,
-                    viewModel = viewModel,
-                    connectionStatus = connectionStatus
+                    //navController = navController,
+                    viewModel = viewModel2,
+                   // connectionStatus = connectionStatus
                 )
             }
             composable("login") {
@@ -135,7 +164,7 @@ fun AppNavigazione(
             composable("mav") {
                 Mav(
                     navController = navController,
-                    viewModel = viewModel
+                    viewModel = operationViewModel
                 )
             }
             composable("riepilogo-bonifico") {
@@ -167,3 +196,5 @@ fun AppNavigazione(
         }
     }
 }
+}
+     */
