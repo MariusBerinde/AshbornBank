@@ -29,20 +29,18 @@ class MainActivity : ComponentActivity() {
         connectivityObserver = NetworkConnectivityObserver(applicationContext)
         setContent {
             AshbornTheme {
-                val dataStoreManager = DataStoreManager(application)
-           /*     runBlocking (Dispatchers.IO){
+                //val dataStoreManager = DataStoreManager.getInstance(applicationContext)
 
-                    dataStoreManager.writeUserPrefernces(User("Tom","Riddle","","",""))
-                }*/
-               val viewModel = WelcomeViewModel(dataStoreManager)
+//               val viewModel = WelcomeViewModel(appl)
                 //val viewModel2 = WelcomeViewModel(user=null)
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
 
-                //    Welcome(viewModel = viewModel)
-                  AppNavigazione2(startDest = "init", viewModel =viewModel )
+                AppNavigazione2(startDest = "init",// viewModel = viewModel,
+                     //connectivityObserver = NetworkConnectivityObserver(applicationContext)
+                )
 
                 }
             }

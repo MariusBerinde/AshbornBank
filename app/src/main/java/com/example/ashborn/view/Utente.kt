@@ -74,7 +74,7 @@ fun AshbornPreview() {
 
         val navController = rememberNavController()
         //Utente(viewModel = AshbornViewModel(PrevievApp()), viewModelp = viewModel, navController = navController)
-        CustomDatePicker(useCase = DateUseCase.NASCITA, yearRange = LocalDate.now().minusYears(100).year..LocalDate.now().year)
+        //CustomDatePicker(useCase = DateUseCase.NASCITA, yearRange = LocalDate.now().minusYears(100).year..LocalDate.now().year)
     }
 }
 

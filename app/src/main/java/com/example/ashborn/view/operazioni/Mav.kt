@@ -129,7 +129,7 @@ fun Mav(
                 onValueChange = { viewModel.setDataAccreditoMavX(it) },
                 //trailingIcon =
             )*/
-            CustomDatePicker(useCase = DateUseCase.MAV, yearRange = LocalDate.now().year..LocalDate.now().plusYears(2).year)
+           // CustomDatePicker(useCase = DateUseCase.MAV, yearRange = LocalDate.now().year..LocalDate.now().plusYears(2).year)
         }
         Spacer(modifier = Modifier.padding(LargePadding))
         Button(

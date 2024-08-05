@@ -1,5 +1,6 @@
 package com.example.ashborn.view.login
 
+import android.app.Application
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,28 +11,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.ashborn.ConnectivityObserver
 import com.example.ashborn.R
-import com.example.ashborn.data.User
-import com.example.ashborn.ui.theme.AshbornTheme
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.ui.theme.SmallVerticalSpacing
-import com.example.ashborn.view.BloccoPIN
-import com.example.ashborn.view.ErroreConnessione
-import com.example.ashborn.viewModel.AshbornViewModel
 import com.example.ashborn.viewModel.WelcomeViewModel
 
 @Composable
 fun Welcome(
-    viewModel: WelcomeViewModel ,
+    viewModel: WelcomeViewModel,
+    navController: NavHostController,
 ) {
   //  viewModel.leggiDatiUtente()
 //    ErroreConnessione(connectionStatus = connectionStatus) {
@@ -57,22 +51,14 @@ fun Welcome(
                     .padding(SmallPadding),
                     //TODO:aggiungere controllo per verifica primo login
                     onClick = {
-                      /*  if (
-                            viewModel.userName != ""
-                        ){
-                            Log.d("Welcome","verso conti")
-                        }
-                        else{
-
+                        if (viewModel.getUsername().isBlank()) {
                             Log.d("Welcome","verso registrazione")
-                        }*/
-                       /*
-                        if (viewModel.fistLogin) {
                             navController.navigate("primo-login")
                         } else {
-                            navController.navigate("login")
-
-                        }*/
+                            Log.d("Welcome","verso pin")
+                            //navController.navigate("login")
+                            Log.d("welcome", viewModel.getUsername())
+                        }
                     }
                 ) {
                     Text(stringResource(id = R.string.entra))
@@ -82,10 +68,11 @@ fun Welcome(
 /*
 @Preview(showBackground = true)
 @Composable
-fun PrevWelcome(){
-   // val viewModel = WelcomeViewModel(user = User("test","","","",""))
+fun WelcomePreview() {
+    // Creiamo una versione mock del ViewModel per la preview
+    val mockApplication = Application() // Se hai bisogno di un contesto puoi usarlo qui
+    val mockViewModel = WelcomeViewModel(mockApplication)
 
-    AshbornTheme {
-      Welcome(null )
-    }
+    // Richiamiamo il composable con il viewModel mock
+    Welcome(viewModel = mockViewModel)
 }*/

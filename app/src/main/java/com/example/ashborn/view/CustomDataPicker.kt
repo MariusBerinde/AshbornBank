@@ -31,14 +31,14 @@ import java.util.TimeZone
 
 
 @Composable
-fun CustomDatePicker(useCase: DateUseCase, yearRange: IntRange) {
-    val date = remember { mutableStateOf(LocalDate.now())}
+fun CustomDatePicker(date: String, useCase: DateUseCase, yearRange: IntRange) {
+    val daten = remember { mutableStateOf(LocalDate.parse(date, DateTimeFormatter.ofPattern("dd/MM/yyyy")))}
     val isOpen = remember { mutableStateOf(false)}
 
         OutlinedTextField(
             readOnly = true,
             modifier = Modifier.fillMaxWidth(),
-            value = date.value.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+            value = daten.value.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
             label = { Text("Date") },
             onValueChange = {},
             trailingIcon = {
@@ -60,7 +60,7 @@ fun CustomDatePicker(useCase: DateUseCase, yearRange: IntRange) {
                 isOpen.value = false // close dialog
 
                 if (it != null) { // Set the date
-                    date.value = Instant
+                    daten.value = Instant
                         .ofEpochMilli(it)
                         .atZone(ZoneId.of("UTC"))
                         .toLocalDate()

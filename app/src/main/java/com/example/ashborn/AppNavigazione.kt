@@ -1,38 +1,26 @@
 package com.example.ashborn
 
-import android.util.Log
+import android.app.Application
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavType
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.example.ashborn.model.DataStoreManager
-import com.example.ashborn.view.Archivio
-import com.example.ashborn.view.Avvisi
-import com.example.ashborn.view.Impostazioni
-import com.example.ashborn.view.Logout
-import com.example.ashborn.view.Pagine
-import com.example.ashborn.view.Sicurezza
-import com.example.ashborn.view.Utente
+import com.example.ashborn.repository.OfflineUserRepository
 import com.example.ashborn.view.login.AskPIN
 import com.example.ashborn.view.login.Registrazione
 import com.example.ashborn.view.login.Welcome
-import com.example.ashborn.view.operazioni.Bonifico
-import com.example.ashborn.view.operazioni.DettagliOperazione
-import com.example.ashborn.view.operazioni.Mav
-import com.example.ashborn.view.operazioni.OperazioneConfermata
-import com.example.ashborn.view.operazioni.PINOperazione
-import com.example.ashborn.view.operazioni.RiepilogoBonifico
 import com.example.ashborn.viewModel.AshbornViewModel
-import com.example.ashborn.viewModel.OperationViewModel
 import com.example.ashborn.viewModel.WelcomeViewModel
+import com.example.ashborn.viewModel.WelcomeViewModelFactory
 
 @Composable
 fun AppNavigazione2(
     startDest:String,
-    viewModel: WelcomeViewModel
+    //connectionStatus: ConnectivityObserver.Status
 ){
 
     val navController = rememberNavController()
@@ -46,9 +34,29 @@ fun AppNavigazione2(
             startDestination = "welcome",
             route = "init"
         ) {
-            val viewModel2 = WelcomeViewModel(DataStoreManager(context = navController.context))
             composable("welcome") {
-                Welcome(viewModel = viewModel2)
+                val viewModel: WelcomeViewModel = viewModel(
+                    factory = WelcomeViewModelFactory(LocalContext.current.applicationContext as Application)
+                )
+                //  Welcome(viewModel = viewModel)
+                Welcome(navController = navController, viewModel = viewModel)
+            }
+            /*composable("login") {
+                AskPIN(
+                    navController = navController,
+                    viewModel = AskPinViewModel(),
+                    //connectionStatus = connectionStatus
+                )
+            }*/
+            composable("primo-login") {
+                val viewModel: RegistrazioneViewModel = viewModel(
+                    factory = RegistrazioneViewModelFactory(LocalContext.current.applicationContext as Application)
+                )
+                Registrazione(
+                    navController = navController,
+                    viewModel = viewModel,
+                    //connectionStatus = connectionStatus
+                )
             }
     }
 }
@@ -164,7 +172,10 @@ fun AppNavigazione(
             composable("mav") {
                 Mav(
                     navController = navController,
-                    viewModel = operationViewModel
+                    viewMorunBlocking (Dispatchers.IO){
+
+                    dataStoreManager.writeUserPrefernces(User("Tom","Riddle","","",""))
+                }del = operationViewModel
                 )
             }
             composable("riepilogo-bonifico") {

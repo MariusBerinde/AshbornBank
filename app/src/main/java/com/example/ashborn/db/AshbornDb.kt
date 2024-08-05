@@ -16,7 +16,8 @@ import com.example.ashborn.data.User
 @Database(
     entities = [User::class, Operation::class, Conto::class, Carta::class],
     version = 1,
-    exportSchema = false
+    exportSchema = false,
+
 )
 @TypeConverters(Converters::class)
 abstract class AshbornDb:RoomDatabase() {
@@ -31,7 +32,11 @@ abstract class AshbornDb:RoomDatabase() {
                    context,
                    AshbornDb::class.java,
                    "Ashborn_db"
-               ).build().also { Instance = it }
+               )
+                   .fallbackToDestructiveMigration()
+                   .createFromAsset("Ashborn_db.db")
+                   .build()
+                   .also { Instance = it }
            }
        }
    }

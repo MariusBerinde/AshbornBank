@@ -9,7 +9,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -17,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,28 +36,33 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.ashborn.ConnectivityObserver
 import com.example.ashborn.R
+import com.example.ashborn.RegistrazioneViewModel
 import com.example.ashborn.ui.theme.LargePadding
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.view.CustomDatePicker
+import com.example.ashborn.view.CustomDatePickerDialog
 import com.example.ashborn.view.DateUseCase
 import com.example.ashborn.view.ErroreConnessione
-import com.example.ashborn.viewModel.AshbornViewModel
 import com.example.ashborn.viewModel.NavigationEvent
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun Registrazione(
     navController: NavHostController,
-    viewModel: AshbornViewModel,
-    connectionStatus: ConnectivityObserver.Status
+    viewModel: RegistrazioneViewModel,//AshbornViewModel,
+    //connectionStatus: ConnectivityObserver.Status
 ) {
     val focusRequester1 = remember { FocusRequester() }
     val focusRequester2 = remember { FocusRequester() }
     val focusRequester3 = remember { FocusRequester() }
     val focusRequester4 = remember { FocusRequester() }
     val navigationState by viewModel.navigationState.observeAsState()
-    ErroreConnessione(connectionStatus = connectionStatus) {
+    val isOpen = remember { mutableStateOf(false) }
+    //ErroreConnessione(connectionStatus = connectionStatus) {
         Column(
             modifier = Modifier
                 .padding(MediumPadding)
@@ -135,7 +145,43 @@ fun Registrazione(
                     .focusRequester(focusRequester3)
                     .fillMaxWidth()
             )*/
-            CustomDatePicker(useCase = DateUseCase.NASCITA, yearRange = LocalDate.now().minusYears(100).year..LocalDate.now().year)
+            //CustomDatePicker(date = viewModel.dataNascita, useCase = DateUseCase.NASCITA, yearRange = LocalDate.now().minusYears(100).year..LocalDate.now().year)
+            OutlinedTextField(
+                readOnly = true,
+                modifier = Modifier.fillMaxWidth(),
+                value = viewModel.dataNascita,
+                label = { Text("Date") },
+                onValueChange = {viewModel.setDataNascitaX(it)},
+                trailingIcon = {
+                    IconButton(
+                        onClick = { isOpen.value = true } // show de dialog
+                    ) {
+                        Icon(imageVector = Icons.Default.DateRange, contentDescription = "Calendar")
+                    }
+                }
+            )
+            if (isOpen.value) {
+                CustomDatePickerDialog(
+                    yearRange = LocalDate.now().minusYears(100).year..LocalDate.now().year,
+                    onAccept = {
+                        isOpen.value = false // close dialog
+
+                        if (it != null) { // Set the date
+                            viewModel.setDataNascitaX(
+                                Instant
+                                    .ofEpochMilli(it)
+                                    .atZone(ZoneId.of("UTC"))
+                                    .toLocalDate()
+                                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                            )
+                        }
+                    },
+                    onCancel = {
+                        isOpen.value = false //close dialog
+                    },
+                    useCase = DateUseCase.NASCITA
+                )
+            }
             Spacer(modifier = Modifier.height(LargePadding))
             OutlinedTextField(
                 value = viewModel.codCliente,
@@ -187,6 +233,6 @@ fun Registrazione(
             }
 
         }
-    }
+    //}
 }
 

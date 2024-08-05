@@ -58,7 +58,7 @@ open class AshbornViewModel(
 
     init {
         ashbornDao = AshbornDb.getDatabase(application).ashbornDao()
-        dataStoreManager = DataStoreManager(application)
+        dataStoreManager = DataStoreManager.getInstance(application)
         cartaRepositori = CardRepository(ashbornDao)
         userRepository = OfflineUserRepository(ashbornDao)
         contoRepository = ContoRepository(ashbornDao)
@@ -349,7 +349,7 @@ open class AshbornViewModel(
 
     fun writePreferences(){
         viewModelScope.launch(Dispatchers.IO){
-            dataStoreManager.writeUserPrefernces(User(
+            dataStoreManager.writeUserPreferences(User(
                 name = userName,
                 surname = cognome,
                 clientCode = codCliente,
@@ -411,7 +411,7 @@ open class AshbornViewModel(
         codCliente = ""
 
         viewModelScope.launch(Dispatchers.IO) {
-            dataStoreManager.writeUserPrefernces(User("","","","",""))
+            dataStoreManager.writeUserPreferences(User("","","","",""))
         }
     }
 
