@@ -26,23 +26,24 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.ashborn.AskPinViewModel
 import com.example.ashborn.ConnectivityObserver
+import com.example.ashborn.NavigationEvent
 import com.example.ashborn.R
+import com.example.ashborn.data.Operation
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.ui.theme.SmallVerticalSpacing
-import com.example.ashborn.view.ErroreConnessione
-import com.example.ashborn.viewModel.AshbornViewModel
-import com.example.ashborn.viewModel.NavigationEvent
 
 @Composable
 fun AskPIN(
     navController: NavHostController,
-    viewModel: AshbornViewModel,
-    connectionStatus: ConnectivityObserver.Status
+    viewModel: AskPinViewModel,
+    operation: Operation?,
+    //connectionStatus: ConnectivityObserver.Status
 ) {
     Log.i("AskPIN", "renderizzo AskPIN")
-    ErroreConnessione(connectionStatus = connectionStatus) {
+    //ErroreConnessione(connectionStatus = connectionStatus) {
         val navigationState by viewModel.navigationState.observeAsState()
         Column(
             modifier = Modifier
@@ -124,22 +125,32 @@ fun AskPIN(
                 LaunchedEffect(navigationState) {
                     Log.i("AskPIN","valore navigazione= ${navigationState.toString()}")
                     when(navigationState){
-                        NavigationEvent.NavigateToConti ->{
+                        NavigationEvent.NavigateToNext -> {
                             viewModel.resetWrongAttempts()
-                            navController.navigate("conti")
+                            if (operation == null) {
+                                navController.navigate("conti")
+                            } else {
+                                viewModel.saveOperation(operation)
+                                navController.navigate("operazioneConfermata")
+                            }
+
                         }
                         NavigationEvent.NavigateToError -> {
                             Log.i("AskPIN", "errore e numero di tentativi ${viewModel.wrongAttempts}")
                             if(viewModel.wrongAttempts > 3 ) {
-                                navController.popBackStack()
+                                if (operation == null) {
+                                    navController.popBackStack()
+                                } else {
+                                    navController.navigate("operazioneRifiutata")
+                                }
+
                             }
                         }
-
                         else->{}
                     }
 
                 }
             }
         }
-    }
+    //}
 }

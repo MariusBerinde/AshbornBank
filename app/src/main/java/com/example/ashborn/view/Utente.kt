@@ -19,15 +19,13 @@ import androidx.navigation.compose.rememberNavController
 import com.example.ashborn.R
 import com.example.ashborn.ui.theme.AshbornTheme
 import com.example.ashborn.ui.theme.LargePadding
+import com.example.ashborn.viewModel.AltroViewModel
 import com.example.ashborn.viewModel.AshbornViewModel
-import com.example.ashborn.viewModel.PreviewAshbornViewModel
 import java.time.LocalDate
 
 @Composable
 fun Utente(
-    viewModel: AshbornViewModel,
-    viewModelp: PreviewAshbornViewModel?,
-
+    viewModel: AltroViewModel,
     navController: NavHostController
 ) {
 //todo:Migliorare la grafica della pagina
@@ -44,19 +42,19 @@ fun Utente(
             .align(Alignment.CenterHorizontally)
         Row(modifier = modifier) {
             Text(fontWeight = FontWeight.Bold, text = stringResource(id = R.string.nome))
-            Text(text = viewModelp?.userName ?: viewModel.userName)
+            //Text(text = viewModel.userName)
         }
         Row (modifier = modifier){
             Text(fontWeight = FontWeight.Bold, text = stringResource(id = R.string.cognome))
-            Text(text = viewModelp?.cognome ?: viewModel.cognome)
+            //Text(text = viewModel.cognome)
         }
         Row(modifier = modifier) {
             Text(fontWeight = FontWeight.Bold, text = stringResource(id = R.string.data_nascita))
-            Text(text = viewModelp?.dataNascita ?: viewModel.dataNascita)
+            //Text(text = viewModel.dataNascita)
         }
         Row(modifier = modifier){
             Text(fontWeight = FontWeight.Bold, text = stringResource(id = R.string.codice_cliente))
-            Text(text = viewModelp?.codCliente ?: viewModel.codCliente)
+            //Text(text = viewModel.codCliente)
         }
     }
 
@@ -64,17 +62,4 @@ fun Utente(
 }
 
 
-class PrevievApp: Application()
-@Preview(showBackground = true)
-@Composable
-fun AshbornPreview() {
-    AshbornTheme {
-
-        val viewModel: PreviewAshbornViewModel = PreviewAshbornViewModel(PrevievApp())
-
-        val navController = rememberNavController()
-        //Utente(viewModel = AshbornViewModel(PrevievApp()), viewModelp = viewModel, navController = navController)
-        //CustomDatePicker(useCase = DateUseCase.NASCITA, yearRange = LocalDate.now().minusYears(100).year..LocalDate.now().year)
-    }
-}
 

@@ -35,7 +35,7 @@ import com.example.ashborn.R
 import com.example.ashborn.data.Carta
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
-import com.example.ashborn.viewModel.AshbornViewModel
+import com.example.ashborn.viewModel.CarteViewModel
 
 @Composable
 fun RigaMagnetica(){
@@ -89,18 +89,18 @@ fun FronteCarta(carta: Carta,utente:String) {
 @Composable
 fun Carte(
     navController: NavHostController,
-    viewModel: AshbornViewModel
+    viewModel: CarteViewModel
 ) {
     Column (
         modifier = Modifier.padding(MediumPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        FronteCarta(viewModel.cartaMostrata,viewModel.userName+" "+viewModel.cognome)
+        //FronteCarta(viewModel.cartaMostrata,viewModel.userName+" "+viewModel.cognome)
         Spacer(modifier = Modifier.height(16.dp))
         Row {
             Column (modifier = Modifier.padding(SmallPadding)){
-                ListaOperazioniFatte(navController, viewModel)
+                //ListaOperazioniFatte(navController, viewModel)
             }
         }
     }

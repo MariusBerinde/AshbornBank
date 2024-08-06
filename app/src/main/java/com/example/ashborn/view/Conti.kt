@@ -36,18 +36,19 @@ import com.example.ashborn.data.TransactionType
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.viewModel.AshbornViewModel
+import com.example.ashborn.viewModel.ContiViewModel
 
 @Composable
 fun Conti(
     navController: NavHostController,
-    viewModel: AshbornViewModel
+    viewModel: ContiViewModel
 ) {
     Column (modifier = Modifier) {
         Row(modifier = Modifier) {
             Box(modifier = Modifier.padding(MediumPadding)) {
                 Card(modifier = Modifier.padding(MediumPadding)) {
                     Column {
-                        Row(modifier = Modifier.padding(MediumPadding)) {
+                        /*Row(modifier = Modifier.padding(MediumPadding)) {
                             Text(
                                 text = stringResource(id = R.string.conto) + ": " + viewModel.contoMostrato.codConto,
                                 modifier = Modifier
@@ -62,7 +63,7 @@ fun Conti(
                             }
                             Spacer(modifier = Modifier.padding(start = 160.dp))
                             Column {
-                                IconButton(onClick = { /*TODO*/ }, modifier = Modifier) {
+                                IconButton(onClick = { *//*TODO*//* }, modifier = Modifier) {
                                     Icon(Icons.Filled.Info, contentDescription = "mostra saldo")
 
                                 }
@@ -78,7 +79,7 @@ fun Conti(
                             }
                             Spacer(modifier = Modifier.padding(start = 20.dp))
                             Column {
-                                IconButton(onClick = { /*TODO*/ }, modifier = Modifier) {
+                                IconButton(onClick = { *//*TODO*//* }, modifier = Modifier) {
                                     Icon(
                                         Icons.Filled.Share,
                                         contentDescription = "share IBAN",
@@ -86,7 +87,7 @@ fun Conti(
                                     )
                                 }
                             }
-                        }
+                        }*/
                     }
                 }
             }
@@ -103,9 +104,9 @@ fun Conti(
 @Composable
 fun ListaOperazioniFatte(
     navController: NavHostController,
-    viewModel: AshbornViewModel
+    viewModel: ContiViewModel
 ) {
-    var voci = viewModel.operazioniConto
+    /*var voci = viewModel.operazioniConto
 
     var ordineInversoData = true
     var ordineInversoDescrizione = true
@@ -119,7 +120,7 @@ fun ListaOperazioniFatte(
         item {
             Row (modifier = Modifier.padding(SmallPadding)){
                 Button(
-                    onClick = { /*TODO*/
+                    onClick = { *//*TODO*//*
                         if (ordineInversoData){
                             viewModel.operazioniConto = ArrayList(voci.sortedByDescending {it.dateO})
                             ordineInversoData=!ordineInversoData
@@ -137,7 +138,7 @@ fun ListaOperazioniFatte(
                     )
 
                 }
-                Button(onClick = { /*TODO*/
+                Button(onClick = { *//*TODO*//*
                     if (ordineInversoDescrizione){
                         viewModel.operazioniConto = ArrayList(voci.sortedByDescending {it.description})
                         ordineInversoData=!ordineInversoData
@@ -149,7 +150,7 @@ fun ListaOperazioniFatte(
                     Text(text = stringResource(id = R.string.descrizione))
                 }
                 Button(
-                    onClick = { /*TODO*/
+                    onClick = { *//*TODO*//*
                         if (ordineInversoImporto){
                             viewModel.operazioniConto = ArrayList(voci.sortedByDescending {it.amount})
                             ordineInversoImporto=!ordineInversoImporto
@@ -203,7 +204,7 @@ fun ListaOperazioniFatte(
                 }
             }
         }
-    }
+    }*/
 }
 /*
 @Preview(showBackground = true)

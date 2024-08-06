@@ -35,6 +35,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.ashborn.ConnectivityObserver
+import com.example.ashborn.NavigationEvent
 import com.example.ashborn.R
 import com.example.ashborn.RegistrazioneViewModel
 import com.example.ashborn.ui.theme.LargePadding
@@ -44,7 +45,6 @@ import com.example.ashborn.view.CustomDatePicker
 import com.example.ashborn.view.CustomDatePickerDialog
 import com.example.ashborn.view.DateUseCase
 import com.example.ashborn.view.ErroreConnessione
-import com.example.ashborn.viewModel.NavigationEvent
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId

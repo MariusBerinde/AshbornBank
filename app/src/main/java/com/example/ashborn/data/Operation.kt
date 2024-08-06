@@ -6,12 +6,15 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.example.ashborn.Converters
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 
 // todo: scrivere trafila per memorizzare in db
 enum class TransactionType {
     DEPOSIT, WITHDRAWAL
 }
+
 @Entity(
     tableName = "operations",
     indices = [Index(value = ["clientCode"])],
@@ -30,21 +33,25 @@ enum class TransactionType {
     )
     ]
 )
-
+@Serializable
 data class Operation(
     @PrimaryKey (autoGenerate = true)
     val id: Long = 0,
     val clientCode:String,
     @TypeConverters(Converters::class)
+    @Contextual
     val dateO: LocalDateTime,
     @TypeConverters(Converters::class)
+    @Contextual
     val dateV: LocalDateTime,
     val description:String,
+    val recipient:String,
     //val amount: CurrencyAmount,
     val amount: Double,
     val operationType:TransactionType,
     val bankAccount:String,
-    // se nullo è un bonifico altrimenti è un moviento della carta
+    val iban:String,
+    // se nullo è un bonifico altrimenti è un movimento della carta
     val cardCode:String?
 )/*{
    open fun getValue(){}

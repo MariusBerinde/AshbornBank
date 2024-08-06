@@ -38,12 +38,13 @@ import com.example.ashborn.data.Voice
 import com.example.ashborn.ui.theme.LargePadding
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
+import com.example.ashborn.viewModel.AltroViewModel
 import com.example.ashborn.viewModel.AshbornViewModel
 
 @Composable
 fun Altro(
     navController: NavHostController,
-    viewModel: AshbornViewModel
+    viewModel: AltroViewModel
 ) {
     Column {
         Row(modifier = Modifier.fillMaxWidth()) {
@@ -62,9 +63,9 @@ fun Altro(
                                 .background(Color.Blue)
                                 .padding(MediumPadding)
                         ) {
-                            val text = if(viewModel.userName.isEmpty()) "" else viewModel.userName[0].toString() + if(viewModel.cognome.isEmpty()  ) "" else viewModel.cognome[0].toString()
+                            //val text = if(viewModel.userName.isEmpty()) "" else viewModel.userName[0].toString() + if(viewModel.cognome.isEmpty()  ) "" else viewModel.cognome[0].toString()
                             Text(
-                                text = text,
+                                text = "",//text,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.padding(20.dp),
                                 color = Color.LightGray,
@@ -75,7 +76,7 @@ fun Altro(
 
                     Column {
                         Text(stringResource(id = R.string.profilo))
-                        Text(viewModel.userName)
+                        //Text(viewModel.userName)
                         Text(stringResource(id = R.string.app_name))
 
                     }
@@ -141,7 +142,7 @@ fun ListaAzioni(navController: NavHostController) {
 @Composable
 fun Avvisi(
     navController: NavHostController,
-    viewModel: AshbornViewModel
+    //viewModel: AshbornViewModel
 ) {
     Text(text = stringResource(id = R.string.avvisi))
 }
@@ -149,7 +150,7 @@ fun Avvisi(
 @Composable
 fun Archivio(
     navController: NavHostController,
-    viewModel: AshbornViewModel
+    //viewModel: AshbornViewModel
 ) {
     Text(text = stringResource(id = R.string.archivio))
     Spacer(modifier = Modifier.padding(LargePadding))
@@ -157,7 +158,7 @@ fun Archivio(
 @Composable
 fun Sicurezza(
     navController: NavHostController,
-    viewModel: AshbornViewModel
+    //viewModel: AshbornViewModel
 ) {
     Text(text = stringResource(id = R.string.sicurezza))
 
@@ -165,7 +166,7 @@ fun Sicurezza(
 @Composable
 fun Impostazioni(
     navController: NavHostController,
-    viewModel: AshbornViewModel
+    //viewModel: AshbornViewModel
 ) {
     Text(text = stringResource(id = R.string.impostazioni))
 }
@@ -173,7 +174,7 @@ fun Impostazioni(
 @Composable
 fun Logout(
     navController: NavHostController,
-    viewModel: AshbornViewModel
+    //viewModel: AshbornViewModel
 ) {
     Column(verticalArrangement = Arrangement.Center) {
         Text(text = "Attenzione!!: proseguendo con questa operazione stai per cancellare i dati locali dell'applicazione e dovrai rifare il login")
@@ -183,7 +184,7 @@ fun Logout(
         ) {
             Button(onClick = {
 
-                viewModel.cancellaPreferenzeLocali()
+                //viewModel.cancellaPreferenzeLocali()
                 //   viewModel.set_StartDest("init")
                 //   navController.navigate("init")
                 MainActivity().finish()

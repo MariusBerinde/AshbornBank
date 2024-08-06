@@ -14,36 +14,43 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.ashborn.R
+import com.example.ashborn.data.Operation
 import com.example.ashborn.ui.theme.LargePadding
 import com.example.ashborn.viewModel.OperationViewModel
+import kotlinx.serialization.json.Json
+import java.time.format.DateTimeFormatter
 
 @Composable
-fun RiepilogoBonifico(navController : NavHostController, viewModel : OperationViewModel){
+fun RiepilogoBonifico(navController : NavHostController, operation: Operation){
     Log.i("RiepilogoBonifico", "Scelta operazione con id")
     val modifier = Modifier.padding(LargePadding)
     Column(modifier = Modifier.padding(LargePadding)) {
         Text(text = stringResource(id = R.string.riepilogo_bonifico), fontSize = 40.sp)
         Spacer(modifier = modifier)
         Text(text = stringResource(id = R.string.ordinante), fontWeight = FontWeight.Bold)
-        Text(text = viewModel.codConto)
+        Text(text = operation.bankAccount)
         Spacer(modifier = modifier)
         Text(text = stringResource(id = R.string.beneficiario), fontWeight = FontWeight.Bold)
-        Text(text = viewModel.beneficiario)
+        Text(text = operation.recipient)
         Spacer(modifier = modifier)
         Text(text = stringResource(id = R.string.iban), fontWeight = FontWeight.Bold)
-        Text(text = viewModel.iban)
+        Text(text = operation.iban)
         Spacer(modifier = modifier)
         Text(text = stringResource(id = R.string.importo), fontWeight = FontWeight.Bold)
-        Text(text = viewModel.importo)
+        Text(text = operation.amount.toString())
         Spacer(modifier = modifier)
         Text(text = stringResource(id = R.string.causale), fontWeight = FontWeight.Bold)
-        Text(text = viewModel.causale)
+        Text(text = operation.description)
         Spacer(modifier = modifier)
         Text(text = stringResource(id = R.string.dataAccredito), fontWeight = FontWeight.Bold)
-        Text(text = viewModel.dataAccredito)
+        Text(text = operation.dateO.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
         Spacer(modifier = modifier)
         Button(
-            onClick = { navController.navigate("pin") },
+            onClick = {
+                val json = Json{prettyPrint=true}
+                val data = json.encodeToString(Operation.serializer(), operation)
+                navController.navigate("pin/$data")
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = stringResource(id = R.string.continua))

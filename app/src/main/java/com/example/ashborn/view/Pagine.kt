@@ -19,16 +19,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavHostController
-import com.example.ashborn.ConnectivityObserver
 import com.example.ashborn.R
 import com.example.ashborn.view.operazioni.Operazioni
-import com.example.ashborn.viewModel.AshbornViewModel
+import com.example.ashborn.viewModel.AltroViewModel
+import com.example.ashborn.viewModel.CarteViewModel
+import com.example.ashborn.viewModel.ContiViewModel
+import com.example.ashborn.viewModel.OperationViewModel
 
 @Composable
 fun Pagine(
     navController: NavHostController,
-    viewModel: AshbornViewModel,
-    connectionStatus: ConnectivityObserver.Status
+    viewModelConti: ContiViewModel,
+    viewModelCarte: CarteViewModel,
+    viewModelAltro: AltroViewModel,
+    viewModelOperazioni: OperationViewModel,
+    //viewModel: AshbornViewModel,
+    //connectionStatus: ConnectivityObserver.Status
 ) {
     val tabList: ArrayList<String> = arrayListOf("conti", "carte", "operazioni", "parla con noi", "altro")
     var selectedItem by remember { mutableIntStateOf(0) }
@@ -54,7 +60,7 @@ fun Pagine(
             }
         }
     ) { innerPadding ->
-        ErroreConnessione(connectionStatus = connectionStatus) {
+        //ErroreConnessione(connectionStatus = connectionStatus) {
             Column(
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())
@@ -63,25 +69,25 @@ fun Pagine(
                 when (selectedItem) {
                     0 -> Conti(
                         navController = navController,
-                        viewModel = viewModel
+                        viewModel = viewModelConti
                     )
                     1 -> Carte(
                         navController = navController,
-                        viewModel = viewModel
+                        viewModel = viewModelCarte
                     )
                     2 -> Operazioni(
                         navController = navController,
-                        viewModel = viewModel
+                        viewModel = viewModelOperazioni
                        // connectionStatus = connectionStatus
                     )
                     3 -> ParlaConNoi()
                     4 -> Altro(
                         navController = navController,
-                        viewModel = viewModel
+                        viewModel = viewModelAltro
                     )
                 }
             }
-        }
+        //}
     }
 }
 

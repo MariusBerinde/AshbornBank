@@ -56,7 +56,7 @@ fun Welcome(
                             navController.navigate("primo-login")
                         } else {
                             Log.d("Welcome","verso pin")
-                            //navController.navigate("login")
+                            navController.navigate("login")
                             Log.d("welcome", viewModel.getUsername())
                         }
                     }
