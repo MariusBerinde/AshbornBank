@@ -8,7 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
-class  WelcomeViewModel( application: Application): AndroidViewModel(application){
+class  WelcomeViewModel(application: Application): AndroidViewModel(application){
     var dt= DataStoreManager.getInstance(application)
     // val userNameFlow: Flow<String> = dataStoreManager.usernameFlow
 

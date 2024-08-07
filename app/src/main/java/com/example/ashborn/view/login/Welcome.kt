@@ -16,11 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.ashborn.R
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.ui.theme.SmallVerticalSpacing
 import com.example.ashborn.viewModel.WelcomeViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
 fun Welcome(
@@ -65,6 +67,8 @@ fun Welcome(
                 }
             }
 }
+
+
 /*
 @Preview(showBackground = true)
 @Composable

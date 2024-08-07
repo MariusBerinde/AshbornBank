@@ -65,6 +65,8 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.junit.ktx)
+    implementation(libs.androidx.ui.test.junit4.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -77,6 +79,13 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+    implementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.navigation.compose) // Aggiungi questa riga
+
+
 
     val room_version = "2.6.1"
 
@@ -106,6 +115,15 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation("androidx.datastore:datastore-rxjava2:1.1.1")
     implementation("androidx.datastore:datastore-rxjava3:1.1.1")
+
+    // per mock
+   val mockkVersion="1.13.12"
+    testImplementation("io.mockk:mockk:${mockkVersion}")
+    testImplementation ("io.mockk:mockk-android:${mockkVersion}")
+    testImplementation ("io.mockk:mockk-agent:${mockkVersion}")
+    androidTestImplementation ("io.mockk:mockk-android:${mockkVersion}")
+    androidTestImplementation ("io.mockk:mockk-agent:${mockkVersion}")
+
 
 
 }
