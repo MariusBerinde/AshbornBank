@@ -40,13 +40,12 @@ data class Operation(
     @TypeConverters(Converters::class)
     val dateV: LocalDateTime,
     val description:String,
+    val recipient:String,
     //val amount: CurrencyAmount,
     val amount: Double,
     val operationType:TransactionType,
     val bankAccount:String,
-    // se nullo è un bonifico altrimenti è un moviento della carta
+    val iban:String,
+    // se nullo è un bonifico altrimenti è un movimento della carta
     val cardCode:String?
-)/*{
-   open fun getValue(){}
-
-}*/
+)

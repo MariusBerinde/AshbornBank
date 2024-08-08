@@ -133,10 +133,10 @@ fun AppNavigazione(
                 )
             }
             composable("mav") {
-                Mav(
+               /*3 Mav(
                     navController = navController,
                     viewModel = viewModel
-                )
+                )*/
             }
             composable("riepilogo-bonifico") {
                 RiepilogoBonifico(

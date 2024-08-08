@@ -109,7 +109,7 @@ open class AshbornViewModel(
 
 
         viewModelScope.launch(Dispatchers.IO) {
-            insertConto(Conto(codConto = "42",codCliente ="777777777", stato = Stato.ATTIVO, iban = "IT1234567890123456789012345",saldo = 190000.00 ))
+            insertConto(Conto(codConto = "42",codCliente ="777777777", stato = Stato.ATTIVO, iban = "IT1234567890123456789012347",saldo = 190000.00 ))
             insertConto(Conto(codConto = "43",codCliente ="666666666", stato = Stato.ATTIVO , iban = "IT1234567890123456789012345",saldo = 200000.000))
         }
         viewModelScope.launch(Dispatchers.IO) {
@@ -125,9 +125,9 @@ open class AshbornViewModel(
         }
 
         viewModelScope.launch(Dispatchers.IO) {
-            insertOperation(Operation( clientCode ="777777777", dateO = LocalDateTime.now(), dateV = LocalDateTime.now(), description = "Pagamento crimini di guerra", amount =  135.89, operationType = TransactionType.WITHDRAWAL, bankAccount = "42", cardCode = null))
-            insertOperation(Operation( clientCode ="777777777", dateO = LocalDateTime.now().minusDays(1),dateV = LocalDateTime.now().minusDays(1),description = "Pagamento Bolletta Luce", amount =  92.00, operationType = TransactionType.WITHDRAWAL, bankAccount = "42", cardCode = "1111222233334444" ))
-            insertOperation(Operation( clientCode ="777777777", dateO = LocalDateTime.now().minusDays(1),dateV = LocalDateTime.now().minusDays(1),description ="Pagamento per Mutuo del male", amount =  92.00, operationType = TransactionType.WITHDRAWAL,bankAccount = "42", cardCode = "1111222233334444" ))
+            insertOperation(Operation( clientCode ="777777777", dateO = LocalDateTime.now(), dateV = LocalDateTime.now(), description = "Pagamento crimini di guerra", amount =  135.89, operationType = TransactionType.WITHDRAWAL, bankAccount = "42", cardCode = null, recipient="Sauron Lo oscuro", iban = "" + "IT1234567890123456789012345 "))
+            insertOperation(Operation( clientCode ="777777777", dateO = LocalDateTime.now().minusDays(1),dateV = LocalDateTime.now().minusDays(1),description = "Pagamento Bolletta Luce", amount =  92.00, operationType = TransactionType.WITHDRAWAL, bankAccount = "42", cardCode = "1111222233334444", recipient="Surtr", iban = "IT1234567890123456789012385 " ))
+            insertOperation(Operation( clientCode ="777777777", dateO = LocalDateTime.now().minusDays(1),dateV = LocalDateTime.now().minusDays(1),description ="Pagamento per Mutuo del male", amount =  92.00, operationType = TransactionType.WITHDRAWAL,bankAccount = "42", cardCode = "1111222233334444", recipient="Ashborn bank", iban = "IT1234567890123456789012333 " ))
         }
     }
 
@@ -225,33 +225,37 @@ open class AshbornViewModel(
     var arrayOperazioniCarte: ArrayList<Operation>
         get() = arrayListOf(
             Operation(
-                0,
-                "1",
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                "Pagamento Bolletta",
+                id=0,
+                clientCode = "1",
+                dateO = LocalDateTime.now(),
+                dateV = LocalDateTime.now(),
+                description = "Pagamento Bolletta",
                 //CurrencyAmount(167.00, Currency.getInstance("EUR")),
-                167.00,
-                TransactionType.WITHDRAWAL,
-                bankAccount = "42", cardCode = "1111222233334444"
+                amount = 167.00,
+                operationType = TransactionType.WITHDRAWAL,
+                bankAccount = "42",
+                cardCode = "1111222233334444",
+                iban = "",
+                recipient = ""
             )
-
         )
         set(value) = TODO()
     var arrayOperazioniConto: ArrayList<Operation>
         get() = arrayListOf(
             Operation(
-                0,
-                "1",
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                "Pagamento Bolletta",
+                id = 0,
+                clientCode = "1",
+                dateO = LocalDateTime.now(),
+                dateV = LocalDateTime.now(),
+                description = "Pagamento Bolletta",
                 //CurrencyAmount(167.00, Currency.getInstance("EUR")),
-                167.00,
-                TransactionType.WITHDRAWAL,
-                bankAccount = "42", cardCode = null
-            )
-
+                amount = 167.00,
+                operationType = TransactionType.WITHDRAWAL,
+                bankAccount = "42",
+                cardCode = null,
+                iban = "",
+                recipient = "",
+                )
             )
         set(value) = TODO()
     var operazioniCarta by mutableStateOf(arrayOperazioniCarte) //TODO da ren
@@ -593,36 +597,40 @@ class PreviewAshbornViewModel(application: Application):AndroidViewModel(applica
         )
     )
     var arrayOperazioniCarte: ArrayList<Operation>
-    get() = arrayListOf(
-        Operation(
-            0,
-            "1",
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            "Pagamento Bolletta",
-            //CurrencyAmount(167.00, Currency.getInstance("EUR")),
-            167.00,
-            TransactionType.WITHDRAWAL,
-            bankAccount = "42", cardCode = "1111222233334444"
+        get() = arrayListOf(
+            Operation(
+                id=0,
+                clientCode = "1",
+                dateO = LocalDateTime.now(),
+                dateV = LocalDateTime.now(),
+                description = "Pagamento Bolletta",
+                //CurrencyAmount(167.00, Currency.getInstance("EUR")),
+                amount = 167.00,
+                operationType = TransactionType.WITHDRAWAL,
+                bankAccount = "42",
+                cardCode = "1111222233334444",
+                iban = "",
+                recipient = ""
+            )
         )
-
-    )
     set(value) = TODO()
-    var arrayOperazioniConto: ArrayList<Operation>
-    get() = arrayListOf(
-        Operation(
-            0,
-            "1",
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            "Pagamento Bolletta",
-            //CurrencyAmount(167.00, Currency.getInstance("EUR")),
-            167.00,
-            TransactionType.WITHDRAWAL,
-            bankAccount = "42", cardCode = null
-        )
-
-    )
+   var arrayOperazioniConto: ArrayList<Operation>
+        get() = arrayListOf(
+            Operation(
+                id = 0,
+                clientCode = "1",
+                dateO = LocalDateTime.now(),
+                dateV = LocalDateTime.now(),
+                description = "Pagamento Bolletta",
+                //CurrencyAmount(167.00, Currency.getInstance("EUR")),
+                amount = 167.00,
+                operationType = TransactionType.WITHDRAWAL,
+                bankAccount = "42",
+                cardCode = null,
+                iban = "",
+                recipient = "",
+                )
+            )
     set(value) = TODO()
     var operazioniCarta by mutableStateOf(arrayOperazioniCarte) //TODO da ren
     var operazioniConto by mutableStateOf(arrayOperazioniConto)
