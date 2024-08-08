@@ -88,7 +88,7 @@ open class AshbornViewModel(
                 User(
                     "Tom",
                     "Riddle",
-                    "1/01/1990",
+                    "01/01/1990",
                     "87654321".hashCode().toString(),
                     "777777777"
                 )
@@ -100,7 +100,7 @@ open class AshbornViewModel(
                 User(
                     "Sauron",
                     "Lo oscuro",
-                    "1/01/1990",
+                    "01/01/1990",
                     "12345678".hashCode().toString(),
                     "666666666"
                 )
