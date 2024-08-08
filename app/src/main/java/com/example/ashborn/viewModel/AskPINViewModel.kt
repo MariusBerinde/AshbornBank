@@ -26,6 +26,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class AskPinViewModel( application: Application): AndroidViewModel(application) {
+    val nameClass = AskPinViewModel::class.simpleName
     var wrongAttempts by mutableIntStateOf(0)
         private set
     private val _navigationEvent = MutableLiveData<NavigationEvent>()
@@ -39,6 +40,7 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
         runBlocking(Dispatchers.IO) {
             dsm.codClienteFlow.first().also { ris = it }
         }
+        Log.d(nameClass,"valore di codCliente = $ris")
         ris.toString()
     }
 
@@ -73,6 +75,7 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
 
         suspend fun getUserByClientCode(clientCode: String): User? {
             var result: User? = null
+            Log.d(nameClass,"getUserbyClient valore di client code : $clientCode")
             result = CoroutineScope(Dispatchers.IO).async {
                 return@async userRepository.getUserByClientCode(clientCode).first()
             }.await()

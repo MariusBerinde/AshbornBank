@@ -59,7 +59,6 @@ fun Registrazione(
     val focusRequester1 = remember { FocusRequester() }
     val focusRequester2 = remember { FocusRequester() }
     val focusRequester3 = remember { FocusRequester() }
-    val focusRequester4 = remember { FocusRequester() }
     val navigationState by viewModel.navigationState.observeAsState()
     val isOpen = remember { mutableStateOf(false) }
     //ErroreConnessione(connectionStatus = connectionStatus) {
@@ -77,7 +76,43 @@ fun Registrazione(
                 fontStyle = FontStyle.Italic,
                 fontSize = 40.sp
             )
-            Spacer(modifier = Modifier.height(SmallPadding))
+            OutlinedTextField(
+                readOnly = true,
+                modifier = Modifier.fillMaxWidth(),
+                value = viewModel.dataNascita,
+                label = { Text("Date") },
+                onValueChange = {viewModel.setDataNascitaX(it)},
+                trailingIcon = {
+                    IconButton(
+                        onClick = { isOpen.value = true } // show de dialog
+                    ) {
+                        Icon(imageVector = Icons.Default.DateRange, contentDescription = "Calendar")
+                    }
+                }
+            )
+            if (isOpen.value) {
+                CustomDatePickerDialog(
+                    yearRange = LocalDate.now().minusYears(100).year..LocalDate.now().year,
+                    onAccept = {
+                        isOpen.value = false // close dialog
+
+                        if (it != null) { // Set the date
+                            viewModel.setDataNascitaX(
+                                Instant
+                                    .ofEpochMilli(it)
+                                    .atZone(ZoneId.of("UTC"))
+                                    .toLocalDate()
+                                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                            )
+                        }
+                    },
+                    onCancel = {
+                        isOpen.value = false //close dialog
+                    },
+                    useCase = DateUseCase.NASCITA
+                )
+            }
+            Spacer(modifier = Modifier.height(LargePadding))
             OutlinedTextField(
                 value = viewModel.userName,
                 onValueChange = { viewModel.setUserNameX(it) },
@@ -121,68 +156,6 @@ fun Registrazione(
             )
 
             Spacer(modifier = Modifier.height(LargePadding))
-           /* OutlinedTextField(
-                value = viewModel.dataNascita,
-                onValueChange = { viewModel.setDataNascitaX(it) },
-                label = { Text(stringResource(id = R.string.ins_data_nascita)) },
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = if (viewModel.erroreDataNascita != StatoErrore.NESSUNO) {
-                        Color.Red
-                    } else {
-                        Color.Black
-                    },
-                    unfocusedBorderColor = if (viewModel.erroreDataNascita != StatoErrore.NESSUNO) {
-                        Color.Red
-                    } else {
-                        Color.Black
-                    }
-                ),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusRequester4.requestFocus() }
-                ),
-                modifier = Modifier
-                    .focusRequester(focusRequester3)
-                    .fillMaxWidth()
-            )*/
-            //CustomDatePicker(date = viewModel.dataNascita, useCase = DateUseCase.NASCITA, yearRange = LocalDate.now().minusYears(100).year..LocalDate.now().year)
-            OutlinedTextField(
-                readOnly = true,
-                modifier = Modifier.fillMaxWidth(),
-                value = viewModel.dataNascita,
-                label = { Text("Date") },
-                onValueChange = {viewModel.setDataNascitaX(it)},
-                trailingIcon = {
-                    IconButton(
-                        onClick = { isOpen.value = true } // show de dialog
-                    ) {
-                        Icon(imageVector = Icons.Default.DateRange, contentDescription = "Calendar")
-                    }
-                }
-            )
-            if (isOpen.value) {
-                CustomDatePickerDialog(
-                    yearRange = LocalDate.now().minusYears(100).year..LocalDate.now().year,
-                    onAccept = {
-                        isOpen.value = false // close dialog
-
-                        if (it != null) { // Set the date
-                            viewModel.setDataNascitaX(
-                                Instant
-                                    .ofEpochMilli(it)
-                                    .atZone(ZoneId.of("UTC"))
-                                    .toLocalDate()
-                                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-                            )
-                        }
-                    },
-                    onCancel = {
-                        isOpen.value = false //close dialog
-                    },
-                    useCase = DateUseCase.NASCITA
-                )
-            }
-            Spacer(modifier = Modifier.height(LargePadding))
             OutlinedTextField(
                 value = viewModel.codCliente,
                 onValueChange = { viewModel.setCodClienteX(it) },
@@ -206,10 +179,10 @@ fun Registrazione(
                     }
                 ),
                 modifier = Modifier
-                    .focusRequester(focusRequester4)
+                    .focusRequester(focusRequester3)
                     .fillMaxWidth()
             )
-
+            Spacer(modifier = Modifier.height(SmallPadding))
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { viewModel.auth() }

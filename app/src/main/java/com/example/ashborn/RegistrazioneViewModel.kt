@@ -25,6 +25,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class RegistrazioneViewModel( application: Application): AndroidViewModel(application) {
+    val nameClass = AskPinViewModel::class.simpleName
     private val _navigationEvent = MutableLiveData<NavigationEvent>()
     val navigationState: LiveData<NavigationEvent> = _navigationEvent
     val dsm = DataStoreManager.getInstance(application)
@@ -97,11 +98,14 @@ class RegistrazioneViewModel( application: Application): AndroidViewModel(applic
     }
 
     suspend fun getUserByClientCode(clientCode:String): User? {
+         val nameFun = object {}.javaClass.enclosingMethod.name
         var  result:User? = null
+
+        Log.d(nameClass+","+nameFun, "codice cliente attuale = $clientCode")
         result= CoroutineScope(Dispatchers.IO).async{
             return@async userRepository.getUserByClientCode(clientCode).first()
         }.await()
-        Log.d("ViewModel", "getUserByClientCode ${result}")
+        Log.d(nameClass+","+nameFun, "getUserByClientCode ${result}")
         return result
     }
 

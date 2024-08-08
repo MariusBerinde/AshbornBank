@@ -1,6 +1,5 @@
 package com.example.ashborn.viewModel
 import android.app.Application
-import android.content.Context
 import android.os.CountDownTimer
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -8,11 +7,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.text.isDigitsOnly
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -38,9 +32,8 @@ import com.example.ashborn.viewModel.TimeFormatExt.timeFormat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.util.Locale
@@ -73,9 +66,6 @@ open class AshbornViewModel(
                 userName = dataStoreManager.usernameFlow.first()
                 cognome = dataStoreManager.cognomeFlow.first()
                 codCliente = dataStoreManager.codClienteFlow.first()
-
-
-                //getDataNascita()
                 getConti()
                 getCarte()
 
@@ -96,9 +86,6 @@ open class AshbornViewModel(
                     "777777777"
                 )
             )
-        }
-
-        viewModelScope.launch(Dispatchers.IO) {
             upsertUser(
                 User(
                     "Sauron",
@@ -109,13 +96,9 @@ open class AshbornViewModel(
                 )
             )
         }
-
-
         viewModelScope.launch(Dispatchers.IO) {
-            insertConto(Conto(codConto = "42",codCliente ="777777777", stato = Stato.ATTIVO, iban = "IT1234567890123456789012345",saldo = 190000.00 ))
+        insertConto(Conto(codConto = "42",codCliente ="777777777", stato = Stato.ATTIVO, iban = "IT1234567890123456789012345",saldo = 190000.00 ))
             insertConto(Conto(codConto = "43",codCliente ="666666666", stato = Stato.ATTIVO , iban = "IT1234567890123456789012345",saldo = 200000.000))
-        }
-        viewModelScope.launch(Dispatchers.IO) {
             insertCarta(Carta(
                 nrCarta = 1111222233334444,
                 dataScadenza = LocalDateTime.of(2030,7,25,0,0), //"25/07/2300",
@@ -125,13 +108,13 @@ open class AshbornViewModel(
                 cvc = "732",
                 saldo = 190000.00
             ))
-        }
-
+            }
+/*
         viewModelScope.launch(Dispatchers.IO) {
             insertOperation(Operation( clientCode ="777777777", dateO = LocalDateTime.now(), dateV = LocalDateTime.now(), description = "Pagamento crimini di guerra", amount =  135.89, operationType = TransactionType.WITHDRAWAL, bankAccount = "42", cardCode = null, recipient="", iban = ""))
             insertOperation(Operation( clientCode ="777777777", dateO = LocalDateTime.now().minusDays(1),dateV = LocalDateTime.now().minusDays(1),description = "Pagamento Bolletta Luce", amount =  92.00, operationType = TransactionType.WITHDRAWAL, bankAccount = "42", cardCode = "1111222233334444", recipient="", iban = "" ))
             insertOperation(Operation( clientCode ="777777777", dateO = LocalDateTime.now().minusDays(1),dateV = LocalDateTime.now().minusDays(1),description ="Pagamento per Mutuo del male", amount =  92.00, operationType = TransactionType.WITHDRAWAL,bankAccount = "42", cardCode = "1111222233334444", recipient="", iban = "" ))
-        }
+        }*/
     }
 
     var statoUtente by mutableStateOf(UserState())

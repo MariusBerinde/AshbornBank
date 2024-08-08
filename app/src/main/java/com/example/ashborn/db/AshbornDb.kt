@@ -33,8 +33,9 @@ abstract class AshbornDb:RoomDatabase() {
                    AshbornDb::class.java,
                    "Ashborn_db"
                )
-                   .fallbackToDestructiveMigration()
+                  // .fallbackToDestructiveMigration()
                    .createFromAsset("Ashborn_db.db")
+                 //  .createFromAsset("sqlite.db")
                    .build()
                    .also { Instance = it }
            }

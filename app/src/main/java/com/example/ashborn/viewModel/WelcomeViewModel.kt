@@ -10,13 +10,6 @@ import kotlinx.coroutines.runBlocking
 
 class  WelcomeViewModel(application: Application): AndroidViewModel(application){
     var dt= DataStoreManager.getInstance(application)
-    // val userNameFlow: Flow<String> = dataStoreManager.usernameFlow
-
-
-    // private val _user = MutableStateFlow<User?>(null)
-    // val user: StateFlow<User?> = _user
-
-    //  private val userNameR:Deferred<String> = viewModelScope.async { return@async dataStoreManager.usernameFlow.first() }
     var userName = ""
     fun getUsername():String{
         var ris = ""
