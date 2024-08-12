@@ -1,6 +1,8 @@
 package com.example.ashborn.viewModel
 
 import android.app.Application
+import android.graphics.Path.Op
+import android.media.VolumeShaper
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,7 +16,6 @@ import com.example.ashborn.data.Operation
 import com.example.ashborn.data.Stato
 import com.example.ashborn.db.AshbornDb
 import com.example.ashborn.model.DataStoreManager
-import com.example.ashborn.repository.CardRepository
 import com.example.ashborn.repository.ContoRepository
 import com.example.ashborn.repository.OfflineUserRepository
 import com.example.ashborn.repository.OperationRepository
@@ -26,10 +27,11 @@ import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
 
 class ContiViewModel(application: Application): AndroidViewModel(application) {
-    val nameClass = AskPinViewModel::class.simpleName
+    val nameClass = ContiViewModel::class.simpleName
     val dsm = DataStoreManager.getInstance(application)
     val ashbornDao = AshbornDb.getDatabase(application).ashbornDao()
-    val codCliente = run {
+    val codCliente = runBlocking {
+
         var ris = ""
         runBlocking(Dispatchers.IO) {
             dsm.codClienteFlow.first().also { ris = it }
@@ -40,39 +42,60 @@ class ContiViewModel(application: Application): AndroidViewModel(application) {
     private val contoRepository: ContoRepository = ContoRepository(ashbornDao)
 
     private val operationRepository: OperationRepository = OperationRepository(ashbornDao)
-    var operazioniConto by mutableStateOf(arrayListOf<Operation>())
-    var contoMostrato by mutableStateOf(
-        Conto("xxxx xxx xxx","XXX XXX XXX",0.0, "fdagfkldnaògad", Stato.ATTIVO)
-    )
-
+    private var _listaConti = runBlocking{
+        getConti()
+    }
     var listaConti by mutableStateOf(
-        arrayListOf<Conto>(
-            Conto("777777777777","777 777 777",0.0, "IT1234567890123456789012345", Stato.ATTIVO)
-        )
+       _listaConti
     )
-    fun getOperationsConto() {
-        Log.d("viewModel","getOpConto nrCarta=${contoMostrato.codConto}, from= ${LocalDateTime.now().minusDays(30)}, upTo=${LocalDateTime.now()}")
-        viewModelScope.launch(Dispatchers.IO) {
-            val operazioniDb = viewModelScope.async(Dispatchers.IO) {
-                return@async operationRepository.getOperazioniConto(contoMostrato.codConto, LocalDateTime.now().minusDays(30), LocalDateTime.now(),0, 10)
-            }.await()
-            operazioniConto = operazioniDb.first().toCollection(ArrayList<Operation>())
-            Log.d("ViewModel", "getOperationConto : $operazioniConto")
-        }
-    }
-    fun getConti(){
 
-        viewModelScope.launch(Dispatchers.IO) {
-            var datiDb=viewModelScope.async(Dispatchers.IO) {
-                return@async    contoRepository.getConti(codCliente)
-            }.await()
-
-            listaConti = datiDb.first().toCollection(ArrayList<Conto>())
-            contoMostrato = listaConti.get(0)
-            getOperationsConto()
-        }
+    var contoMostrato by mutableStateOf(
+        if(_listaConti.isEmpty()) null  else _listaConti.get(0)
+    )
+    private var _operazioniConto = runBlocking{
+        //arrayListOf<Operation>()
+        contoMostrato?.let {  getOperationsConto(contoMostrato!!)}
 
     }
+    var operazioniConto by mutableStateOf(
+        _operazioniConto
+    )
+    fun getOperationsConto(cm:Conto= //Conto(codConto = "42",codCliente ="777777777", stato = Stato.ATTIVO, iban = "IT1234567890123456789012345",saldo = 190000.00 )
+                               Conto("xxxx xxx xxx","XXX XXX XXX",0.0, "fdagfkldnaògad",Stato.ATTIVO)
+    ): ArrayList<Operation> {
+        val nameFun = nameClass+","+object {}.javaClass.enclosingMethod.name
+        var dati = arrayListOf<Operation>();
+            Log.d(nameFun,"Conto mostato ${cm?.codConto}")
+            runBlocking (Dispatchers.IO) {
+                val operazioniDb = viewModelScope.async(Dispatchers.IO) {
+                    return@async operationRepository.getOperazioniConto(
+                        cm.codConto,
+                        LocalDateTime.now().minusDays(30),
+                        LocalDateTime.now(),
+                        0,
+                        10
+                    )
+                }.await()
+                dati = operazioniDb.first().toCollection(ArrayList<Operation>())
+           //     Log.d(nameFun, "getOperationConto : $operazioniConto")
+            }
+
+        return dati
+    }
+
+        fun getConti():ArrayList<Conto>{
+            var dati = arrayListOf<Conto>();
+            runBlocking (Dispatchers.IO) {
+                var datiDb=viewModelScope.async(Dispatchers.IO) {
+                    return@async    contoRepository.getConti(codCliente)
+                }.await()
+
+                dati=datiDb.first().toCollection(ArrayList<Conto>())
+
+            }
+            return dati
+        }
+
 }
 
 @Suppress("UNCHECKED_CAST")
