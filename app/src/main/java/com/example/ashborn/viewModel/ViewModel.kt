@@ -449,7 +449,7 @@ open class AshbornViewModel(
        Log.d("viewModel","getOpConto nrCarta=${cartaMostrata.nrCarta}, from= ${LocalDateTime.now().minusDays(30)}, upTo=${LocalDateTime.now()}")
         viewModelScope.launch(Dispatchers.IO) {
             val operazioniDb = viewModelScope.async(Dispatchers.IO) {
-                return@async operationRepository.getOperazioniCarte(cartaMostrata.nrCarta, LocalDateTime.now().minusDays(30), LocalDateTime.now(),0, 10)
+                return@async operationRepository.getOperazioniCarta(cartaMostrata.nrCarta, LocalDateTime.now().minusDays(30), LocalDateTime.now(),0, 10)
             }.await()
             //operazioniCarta = operazioniDb.first().toCollection(ArrayList<Operation>())
             operazioniCarta = operazioniDb.first().toCollection(ArrayList<Operation>())

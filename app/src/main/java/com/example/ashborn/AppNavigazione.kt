@@ -1,6 +1,7 @@
 package com.example.ashborn
 
 import android.app.Application
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -26,15 +27,17 @@ import com.example.ashborn.view.Sicurezza
 import com.example.ashborn.view.login.AskPIN
 import com.example.ashborn.view.login.Registrazione
 import com.example.ashborn.view.login.Welcome
+import com.example.ashborn.view.operazioni.DettagliOperazione
 import com.example.ashborn.view.operazioni.OperazioneConfermata
 import com.example.ashborn.view.operazioni.RiepilogoBonifico
 import com.example.ashborn.viewModel.AltroViewModel
 import com.example.ashborn.viewModel.AltroViewModelFactory
-import com.example.ashborn.viewModel.AshbornViewModel
 import com.example.ashborn.viewModel.CarteViewModel
 import com.example.ashborn.viewModel.CarteViewModelFactory
 import com.example.ashborn.viewModel.ContiViewModel
 import com.example.ashborn.viewModel.ContiViewModelFactory
+import com.example.ashborn.viewModel.DettagliOperazioneViewModel
+import com.example.ashborn.viewModel.DettagliOperazioneViewModelFactory
 import com.example.ashborn.viewModel.OperationViewModel
 import com.example.ashborn.viewModel.OperationViewModelFactory
 import com.example.ashborn.viewModel.WelcomeViewModel
@@ -53,6 +56,7 @@ fun AppNavigazione2(
     startDest:String,
     //connectionStatus: ConnectivityObserver.Status
 ){
+    val nameFun = object {}.javaClass.enclosingMethod?.name
 
     val navController = rememberNavController()
     //val startDest = startDest
@@ -154,16 +158,19 @@ fun AppNavigazione2(
                         //connectionStatus = connectionStatus
                     )
                 }
-                /*composable(
-                    route = "dettagli-operazione/{index_op}",
-                    arguments = listOf(navArgument("index_op") { type = NavType.LongType })
-                ) { argomenti ->
-                    Log.d("AppNavigazione", "index " + argomenti.arguments!!.getLong("index_op").toString())
-                    DettagliOperazione(
-                        indexOperation = argomenti.arguments!!.getLong("index_op"),
-                        navController = navController, viewModel = viewModel
+                composable(
+                    route = "dettagli-operazione/{operazione}",
+                    ) {
+                    val jsonData = it.arguments?.getString("operazione") ?: "No Data"
+                    val operation: Operation = Json{ prettyPrint = true }.decodeFromString(Operation.serializer(), jsonData)
+                    val dettagliOperazioneViewModel : DettagliOperazioneViewModel = viewModel(
+                        factory = DettagliOperazioneViewModelFactory(LocalContext.current.applicationContext as Application)
                     )
-                }*/
+                    DettagliOperazione(
+                        operation = operation,
+                        navController = navController, viewModel = dettagliOperazioneViewModel
+                    )
+                }
                 composable("avvisi") {
                     Avvisi(
                         navController = navController,

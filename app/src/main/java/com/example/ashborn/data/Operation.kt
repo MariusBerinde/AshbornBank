@@ -7,8 +7,16 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.example.ashborn.Converters
 import kotlinx.serialization.Contextual
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Serializer
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 // todo: scrivere trafila per memorizzare in db
 enum class TransactionType {
@@ -38,9 +46,11 @@ data class Operation(
     @PrimaryKey (autoGenerate = true)
     val id: Long = 0,
     val clientCode:String,
+    @Serializable(with = LocalDateTimeSerializer::class)
     @TypeConverters(Converters::class)
     @Contextual
     val dateO: LocalDateTime,
+    @Serializable(with = LocalDateTimeSerializer::class)
     @TypeConverters(Converters::class)
     @Contextual
     val dateV: LocalDateTime,
@@ -57,3 +67,21 @@ data class Operation(
    open fun getValue(){}
 
 }*/
+
+@Serializer(forClass = LocalDateTime::class)
+object LocalDateTimeSerializer : KSerializer<LocalDateTime> {
+    private val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+
+    override val descriptor: SerialDescriptor =
+        PrimitiveSerialDescriptor("LocalDateTime", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: LocalDateTime) {
+        val string = value.format(formatter)
+        encoder.encodeString(string)
+    }
+
+    override fun deserialize(decoder: Decoder): LocalDateTime {
+        val string = decoder.decodeString()
+        return LocalDateTime.parse(string, formatter)
+    }
+}

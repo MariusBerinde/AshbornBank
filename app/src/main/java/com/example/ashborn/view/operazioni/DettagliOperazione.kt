@@ -31,17 +31,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.ashborn.R
-import com.example.ashborn.viewModel.AshbornViewModel
+import com.example.ashborn.data.Operation
+import com.example.ashborn.viewModel.DettagliOperazioneViewModel
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun DettagliOperazione(
-    indexOperation: Long,
+    operation: Operation,
     navController: NavHostController,
-    viewModel: AshbornViewModel
+    viewModel: DettagliOperazioneViewModel,
 ) {
-    Log.i("Dettagli operazione", "indice operazione $indexOperation")
+    /*Log.i("Dettagli operazione", "indice operazione $indexOperation")
     var op=viewModel.operazioniConto.find { e->e.id==indexOperation}
-    Log.i("Dettagli operazione", "Oggetto corrispondente ${op}")
+    Log.i("Dettagli operazione", "Oggetto corrispondente ${op}")*/
+    val nameFun = object {}.javaClass.enclosingMethod?.name
+    Log.d(nameFun, "operazione arrivata: $operation")
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -93,10 +99,11 @@ fun DettagliOperazione(
                             .padding(8.dp)
                             .background(Color.LightGray) // Optional: background color
                     ) {
-                        Text(text = "Tipo di Operazione: ${op!!.operationType}", fontSize = 20.sp)
+                        //Text(text = "Tipo di Operazione: ${op!!.operationType}", fontSize = 20.sp)
+                        Text(text = "Tipo di Operazione: ${operation.operationType}", fontSize = 20.sp)
                     }
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "Ammontare: ${op!!.amount}", fontSize = 24.sp)
+                    //Text(text = "Ammontare: ${op!!.amount}", fontSize = 24.sp)
                 }
             }
             // Riquadro B: Contiene Data operazione, descrizione e pulsanti share e delete
@@ -108,14 +115,17 @@ fun DettagliOperazione(
                     .padding(16.dp)
             ) {
                 Column {
+                    //TODO: mettere voci in grassetto sistemare tipo operazione implementare pulsanti correttamente
                     Text(
-                        text = stringResource(id = R.string.dataO) + op!!.dateO.toLocalDate()
-                            .toString(),
+                        //text = stringResource(id = R.string.dataO) + op!!.dateO.toLocalDate().toString(),
+                        text = stringResource(id = R.string.dataO) + ": \n"+ operation.dateO.toLocalDate().format(
+                            DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                         fontSize = 18.sp,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     Text(
-                        text = stringResource(id = R.string.descrizione) + op.description,
+                        //text = stringResource(id = R.string.descrizione) + op.description,
+                        text = stringResource(id = R.string.descrizione) + "\n" + operation.description,
                         fontSize = 18.sp,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
@@ -131,17 +141,32 @@ fun DettagliOperazione(
                                 tint = Color.Gray
                             )
                         }
-                        Button(
-                            colors = ButtonDefaults.buttonColors(Color.Red),
-                            onClick = { /* Azione delete */ }) {
-                            Text(
-                                //TODO true se non ancora eseguita false altrimenti
-                                if (true) {
-                                    stringResource(id = R.string.revoca)
-                                } else {
-                                    stringResource(id = R.string.disconosci)
-                                }
-                            )
+
+                        if (operation.dateO <= LocalDateTime.of(
+                                LocalDate.now().year,
+                                LocalDate.now().month,
+                                LocalDate.now().dayOfMonth,
+                                17,
+                                0,
+                                0)
+                        ) {
+                            Button(
+                                colors = ButtonDefaults.buttonColors(Color.Red),
+                                onClick = { viewModel.revocaOperazione(operation) }
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.revoca)
+                                )
+                            }
+                        } else {
+                            Button(
+                                colors = ButtonDefaults.buttonColors(Color.Red),
+                                onClick = { viewModel.disconosciOperazione(operation) }
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.disconosci)
+                                )
+                            }
                         }
                     }
                 }

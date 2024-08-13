@@ -28,7 +28,7 @@ interface AshbornDao {
 
    @Query ("Select * from users where clientCode= :clientCode " )
    fun getUserByClientCode(clientCode:String): Flow<User>
-  //  fun getUserByClientCode(clientCode:String): LiveData<User?>
+   //  fun getUserByClientCode(clientCode:String): LiveData<User?>
 
    @Query ("SELECT EXISTS(SELECT * from users where clientCode = :aCodCliente AND pin = :aPin ) ")
    fun isPinCorrect(aCodCliente:String,aPin:String):Flow<Boolean>
@@ -39,7 +39,7 @@ interface AshbornDao {
    @Delete
    suspend fun deleteOperation(operation: Operation)
 
-  // @Query("SELECT * FROM operations WHERE clientCode = :clientCode AND dateO >= :from AND dateO <= :upTo LIMIT :limit OFFSET :offset")
+   // @Query("SELECT * FROM operations WHERE clientCode = :clientCode AND dateO >= :from AND dateO <= :upTo LIMIT :limit OFFSET :offset")
    //fun getOperations(clientCode: String, from: LocalDateTime, upTo: LocalDateTime, offset: Int, limit: Int): Flow<MutableList<Operation>>
 
 
@@ -61,8 +61,8 @@ interface AshbornDao {
 
 
    @Query("select * from operations where cardCode=:idCarta AND dateO >= :from AND dateO <= :upTo LIMIT :limit OFFSET :offset")
-  // @Query("select * from operations where cardCode=:idCarta  LIMIT :limit OFFSET :offset")
-   fun getOperazioniCarte(idCarta:Long,from: LocalDateTime, upTo: LocalDateTime, offset: Int, limit: Int) : Flow<MutableList<Operation>>
+   // @Query("select * from operations where cardCode=:idCarta  LIMIT :limit OFFSET :offset")
+   fun getOperazioniCarta(idCarta:Long,from: LocalDateTime, upTo: LocalDateTime, offset: Int, limit: Int) : Flow<MutableList<Operation>>
    //fun getOperazioniCarte(idCarta:Long,from: LocalDateTime, upTo: LocalDateTime, offset: Int, limit: Int) : Flow<MutableList<Operation>>
 
    @Query("SELECT * FROM operations WHERE bankAccount = :codConto AND dateO >= :from AND dateO <= :upTo LIMIT :limit OFFSET :offset")
@@ -75,4 +75,13 @@ interface AshbornDao {
    @Query("select * from conti where codCliente = :codCliente")
    fun getConti(codCliente:String) : Flow<MutableList<Conto>>
 
+   @Query("select * from conti where codConto = :codConto")
+   fun getContoByCodConto(codConto: String): Flow<Conto>
+
+   @Query("update conti set saldo = saldo + :amount where codConto = :bankAccount and codCliente = :clientCode")
+   suspend fun aggiornaSaldo(
+      clientCode: String,
+      bankAccount: String,
+      amount: Double,
+   )
 }

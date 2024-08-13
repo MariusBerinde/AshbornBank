@@ -57,14 +57,14 @@ class ContiViewModel(application: Application): AndroidViewModel(application) {
         contoMostrato?.let {  getOperationsConto(contoMostrato!!)}
 
     }
-    var operazioniConto by mutableStateOf(
+    var operazioni by mutableStateOf(
         _operazioniConto
     )
     fun getOperationsConto(cm:Conto= //Conto(codConto = "42",codCliente ="777777777", stato = Stato.ATTIVO, iban = "IT1234567890123456789012345",saldo = 190000.00 )
                                Conto("xxxx xxx xxx","XXX XXX XXX",0.0, "fdagfkldnaògad",Stato.ATTIVO)
     ): ArrayList<Operation> {
-        val nameFun = nameClass+","+object {}.javaClass.enclosingMethod.name
-        var dati = arrayListOf<Operation>();
+        val nameFun = nameClass+","+ (object {}.javaClass.enclosingMethod?.name ?: "")
+        var dati = arrayListOf<Operation>()
             Log.d(nameFun,"Conto mostato ${cm?.codConto}")
             runBlocking (Dispatchers.IO) {
                 val operazioniDb = viewModelScope.async(Dispatchers.IO) {

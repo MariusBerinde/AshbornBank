@@ -29,23 +29,6 @@ class MainActivity : ComponentActivity() {
         connectivityObserver = NetworkConnectivityObserver(applicationContext)
         setContent {
             AshbornTheme {
-                val dataStoreManager = DataStoreManager.getInstance(applicationContext)
-                val vm = AshbornViewModel(application)
-/*
-                runBlocking (Dispatchers.IO){
-                    dataStoreManager.writeUserPreferences(
-                        User(
-                            name = "Tom",
-                            surname = "Riddle",
-                            clientCode = "777777777",
-                            dateOfBirth =  "",
-                            pin = ""
-                        ))
-                }
- */
-
-//               val viewModel = WelcomeViewModel(appl)
-                //val viewModel2 = WelcomeViewModel(user=null)
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
