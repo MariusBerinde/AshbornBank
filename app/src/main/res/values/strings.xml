@@ -56,4 +56,5 @@
     <string name="tipoO">tipoO</string>
     <string name="welcome">Benvenuto</string>
     <string name="utente">Utente</string>
+    <string name="no_avvisi">Non sono presenti avvisi al momento</string>
 </resources>
