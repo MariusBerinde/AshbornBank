@@ -14,24 +14,24 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.example.ashborn.data.Operation
-import com.example.ashborn.model.DataStoreManager
-import com.example.ashborn.repository.OfflineUserRepository
-import com.example.ashborn.view.Archivio
 import com.example.ashborn.view.Avvisi
 import com.example.ashborn.view.Impostazioni
 import com.example.ashborn.view.Logout
 import com.example.ashborn.view.Pagine
 import com.example.ashborn.view.Sicurezza
+import com.example.ashborn.view.Utente
 import com.example.ashborn.view.login.AskPIN
 import com.example.ashborn.view.login.Registrazione
 import com.example.ashborn.view.login.Welcome
+import com.example.ashborn.view.operazioni.Archivio
 import com.example.ashborn.view.operazioni.DettagliOperazione
 import com.example.ashborn.view.operazioni.OperazioneConfermata
 import com.example.ashborn.view.operazioni.RiepilogoBonifico
 import com.example.ashborn.viewModel.AltroViewModel
 import com.example.ashborn.viewModel.AltroViewModelFactory
+import com.example.ashborn.viewModel.AvvisiViewModel
+import com.example.ashborn.viewModel.AvvisiViewModelFactory
 import com.example.ashborn.viewModel.CarteViewModel
 import com.example.ashborn.viewModel.CarteViewModelFactory
 import com.example.ashborn.viewModel.ContiViewModel
@@ -40,6 +40,8 @@ import com.example.ashborn.viewModel.DettagliOperazioneViewModel
 import com.example.ashborn.viewModel.DettagliOperazioneViewModelFactory
 import com.example.ashborn.viewModel.OperationViewModel
 import com.example.ashborn.viewModel.OperationViewModelFactory
+import com.example.ashborn.viewModel.UtenteViewModel
+import com.example.ashborn.viewModel.UtenteViewModelFactory
 import com.example.ashborn.viewModel.WelcomeViewModel
 import com.example.ashborn.viewModel.WelcomeViewModelFactory
 import kotlinx.serialization.json.Json
@@ -127,15 +129,16 @@ fun AppNavigazione2(
                 startDestination = "conti",
                 route = "principale"
             ) {
-                /*composable("utente") {
-
+                composable("utente") {
+                    val utenteViewModel: UtenteViewModel = viewModel(
+                        factory = UtenteViewModelFactory(LocalContext.current.applicationContext as Application)
+                    )
                     // val viewModel: PreviewAshbornViewModel = PreviewAshbornViewModel(PrevievApp())
                     Utente(
                         navController = navController,
-                        viewModel = viewModel,
-                        viewModelp = null
+                        viewModel = utenteViewModel
                     )
-                }*/
+                }
                 composable("conti") {
                     val contiViewmodel: ContiViewModel = viewModel(
                         factory = ContiViewModelFactory(LocalContext.current.applicationContext as Application)
@@ -172,9 +175,12 @@ fun AppNavigazione2(
                     )
                 }
                 composable("avvisi") {
+                    val avvisiOperazioneViewModel : AvvisiViewModel = viewModel(
+                        factory = AvvisiViewModelFactory(LocalContext.current.applicationContext as Application)
+                    )
                     Avvisi(
                         navController = navController,
-                        //viewModel = viewModel
+                        viewModel = avvisiOperazioneViewModel
                     )
                 }
                 composable("archivio") {

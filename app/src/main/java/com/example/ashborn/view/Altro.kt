@@ -63,9 +63,9 @@ fun Altro(
                                 .background(Color.Blue)
                                 .padding(MediumPadding)
                         ) {
-                            //val text = if(viewModel.userName.isEmpty()) "" else viewModel.userName[0].toString() + if(viewModel.cognome.isEmpty()  ) "" else viewModel.cognome[0].toString()
+                            val text = if(viewModel.userName.isEmpty()) "" else viewModel.userName[0].toString() + if(viewModel.cognome.isEmpty()  ) "" else viewModel.cognome[0].toString()
                             Text(
-                                text = "",//text,
+                                text = text,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.padding(20.dp),
                                 color = Color.LightGray,
@@ -139,37 +139,11 @@ fun ListaAzioni(navController: NavHostController) {
     }
 }
 //todo: quando saranno implementate le funzionalità dovremmo creare file singoli
-@Composable
-fun Avvisi(
-    navController: NavHostController,
-    //viewModel: AshbornViewModel
-) {
-    Text(text = stringResource(id = R.string.avvisi))
-}
 
-@Composable
-fun Archivio(
-    navController: NavHostController,
-    //viewModel: AshbornViewModel
-) {
-    Text(text = stringResource(id = R.string.archivio))
-    Spacer(modifier = Modifier.padding(LargePadding))
-}
-@Composable
-fun Sicurezza(
-    navController: NavHostController,
-    //viewModel: AshbornViewModel
-) {
-    Text(text = stringResource(id = R.string.sicurezza))
 
-}
-@Composable
-fun Impostazioni(
-    navController: NavHostController,
-    //viewModel: AshbornViewModel
-) {
-    Text(text = stringResource(id = R.string.impostazioni))
-}
+
+
+
 
 @Composable
 fun Logout(

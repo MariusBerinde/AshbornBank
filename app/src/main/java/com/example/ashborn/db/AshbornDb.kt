@@ -8,13 +8,14 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.ashborn.Converters
 import com.example.ashborn.dao.AshbornDao
+import com.example.ashborn.data.Avviso
 import com.example.ashborn.data.Carta
 import com.example.ashborn.data.Conto
 import com.example.ashborn.data.Operation
 import com.example.ashborn.data.User
 
 @Database(
-    entities = [User::class, Operation::class, Conto::class, Carta::class],
+    entities = [User::class, Operation::class, Conto::class, Carta::class, Avviso::class],
     version = 1,
     exportSchema = false,
 

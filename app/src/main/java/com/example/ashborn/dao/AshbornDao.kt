@@ -6,10 +6,12 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
+import com.example.ashborn.data.Avviso
 import com.example.ashborn.data.Carta
 import com.example.ashborn.data.Conto
 import com.example.ashborn.data.Operation
 import com.example.ashborn.data.Stato
+import com.example.ashborn.data.StatoAvviso
 import com.example.ashborn.data.User
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
@@ -84,4 +86,12 @@ interface AshbornDao {
       bankAccount: String,
       amount: Double,
    )
+
+   @Query("select * from avvisi where destinatario= :codCliente")
+   fun getAvvisi(codCliente: String): Flow<MutableList<Avviso>>
+
+   @Query("update avvisi set stato = :nuovoStato where id = :id")
+   fun aggiornaStatoAvviso(id: Long, nuovoStato: StatoAvviso)
+
+
 }
