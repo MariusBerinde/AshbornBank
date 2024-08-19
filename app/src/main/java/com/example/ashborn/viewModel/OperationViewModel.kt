@@ -6,11 +6,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.ashborn.NetworkConnectivityObserver
 import com.example.ashborn.dao.AshbornDao
 import com.example.ashborn.db.AshbornDb
 import com.example.ashborn.repository.OperationRepository
 
 class OperationViewModel(application: Application): AndroidViewModel(application) {
+    val networkConnectivityObserver = NetworkConnectivityObserver.getInstance(application)
     var ordinanteMav by mutableStateOf("")
         private set
     var codiceMav by mutableStateOf("")

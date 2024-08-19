@@ -18,6 +18,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -34,6 +35,7 @@ import com.example.ashborn.data.Operation
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.ui.theme.SmallVerticalSpacing
+import com.example.ashborn.view.ErroreConnessione
 
 @Composable
 fun AskPIN(
@@ -43,7 +45,8 @@ fun AskPIN(
     //connectionStatus: ConnectivityObserver.Status
 ) {
     Log.i("AskPIN", "renderizzo AskPIN")
-    //ErroreConnessione(connectionStatus = connectionStatus) {
+    val connectionStatus by viewModel.networkConnectivityObserver.observe().collectAsState(initial =ConnectivityObserver.Status.Unavailable)
+    ErroreConnessione(connectionStatus = connectionStatus) {
         val navigationState by viewModel.navigationState.observeAsState()
         Column(
             modifier = Modifier
@@ -152,5 +155,5 @@ fun AskPIN(
                 }
             }
         }
-    //}
+    }
 }

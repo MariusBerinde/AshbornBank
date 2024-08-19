@@ -26,6 +26,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class AskPinViewModel( application: Application): AndroidViewModel(application) {
+    val networkConnectivityObserver = NetworkConnectivityObserver.getInstance(application)
     val nameClass = AskPinViewModel::class.simpleName
     var wrongAttempts by mutableIntStateOf(0)
         private set

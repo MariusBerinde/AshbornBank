@@ -25,6 +25,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class RegistrazioneViewModel( application: Application): AndroidViewModel(application) {
+    val networkConnectivityObserver = NetworkConnectivityObserver.getInstance(application)
     val nameClass = AskPinViewModel::class.simpleName
     private val _navigationEvent = MutableLiveData<NavigationEvent>()
     val navigationState: LiveData<NavigationEvent> = _navigationEvent

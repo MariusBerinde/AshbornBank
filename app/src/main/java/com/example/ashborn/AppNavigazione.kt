@@ -14,8 +14,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.example.ashborn.data.Avviso
 import com.example.ashborn.data.Operation
 import com.example.ashborn.view.Avvisi
+import com.example.ashborn.view.DettagliAvviso
 import com.example.ashborn.view.Impostazioni
 import com.example.ashborn.view.Logout
 import com.example.ashborn.view.Pagine
@@ -181,6 +183,14 @@ fun AppNavigazione2(
                     Avvisi(
                         navController = navController,
                         viewModel = avvisiOperazioneViewModel
+                    )
+                }
+                composable("dettagli-avviso/{avviso}") {
+                    val jsonData = it.arguments?.getString("avviso") ?: "No Data"
+                    val avviso = Json{ prettyPrint = true }.decodeFromString(Avviso.serializer(), jsonData)
+                    DettagliAvviso(
+                        navController =  navController,
+                        avviso = avviso
                     )
                 }
                 composable("archivio") {

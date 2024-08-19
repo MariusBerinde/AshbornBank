@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.ashborn.NetworkConnectivityObserver
 import com.example.ashborn.data.Carta
 import com.example.ashborn.data.Operation
 import com.example.ashborn.db.AshbornDb
@@ -22,6 +23,7 @@ import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
 
 class CarteViewModel(application: Application): AndroidViewModel(application) {
+    val networkConnectivityObserver = NetworkConnectivityObserver.getInstance(application)
     val nameClass = CarteViewModel::class.simpleName
     val dsm = DataStoreManager.getInstance(application)
     val ashbornDao = AshbornDb.getDatabase(application).ashbornDao()

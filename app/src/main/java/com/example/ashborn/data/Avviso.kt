@@ -34,6 +34,6 @@ data class Avviso(
     val data:LocalDateTime,
     // deve essere un codice cliente
     val destinatario:String,
-    val stato:StatoAvviso = StatoAvviso.DA_LEGGERE
+    var stato:StatoAvviso = StatoAvviso.DA_LEGGERE
 )
 enum class StatoAvviso{ LETTO,DA_LEGGERE,CANCELLATO}

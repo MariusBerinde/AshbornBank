@@ -93,5 +93,8 @@ interface AshbornDao {
    @Query("update avvisi set stato = :nuovoStato where id = :id")
    fun aggiornaStatoAvviso(id: Long, nuovoStato: StatoAvviso)
 
+   @Insert(onConflict = OnConflictStrategy.REPLACE)
+   fun aggiungiAvviso(avviso:Avviso)
+
 
 }

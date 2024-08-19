@@ -19,6 +19,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -61,7 +62,8 @@ fun Registrazione(
     val focusRequester3 = remember { FocusRequester() }
     val navigationState by viewModel.navigationState.observeAsState()
     val isOpen = remember { mutableStateOf(false) }
-    //ErroreConnessione(connectionStatus = connectionStatus) {
+    val connectionStatus by viewModel.networkConnectivityObserver.observe().collectAsState(initial =ConnectivityObserver.Status.Unavailable)
+    ErroreConnessione(connectionStatus = connectionStatus) {
         Column(
             modifier = Modifier
                 .padding(MediumPadding)
@@ -206,6 +208,6 @@ fun Registrazione(
             }
 
         }
-    //}
+    }
 }
 

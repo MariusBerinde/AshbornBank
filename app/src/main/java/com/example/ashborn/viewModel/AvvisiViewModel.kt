@@ -8,13 +8,16 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.ashborn.data.Avviso
+import com.example.ashborn.data.StatoAvviso
 import com.example.ashborn.db.AshbornDb
 import com.example.ashborn.model.DataStoreManager
 import com.example.ashborn.repository.AvvisiRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.time.LocalDateTime
 
 class AvvisiViewModel(application: Application): AndroidViewModel(application) {
     val nameClass = AvvisiViewModel::class.simpleName
@@ -36,22 +39,22 @@ class AvvisiViewModel(application: Application): AndroidViewModel(application) {
        _listaAvvisi
     )
 
+    fun getAvvisi():ArrayList<Avviso>{
+        var dati = arrayListOf<Avviso>();
+        runBlocking (Dispatchers.IO) {
+            var datiDb=viewModelScope.async(Dispatchers.IO) {
+                return@async    avvisiRepository.getAvvisi(codCliente)
+            }.await()
 
+            dati=datiDb.first().toCollection(ArrayList<Avviso>())
 
-
-        fun getAvvisi():ArrayList<Avviso>{
-            var dati = arrayListOf<Avviso>();
-            runBlocking (Dispatchers.IO) {
-                var datiDb=viewModelScope.async(Dispatchers.IO) {
-                    return@async    avvisiRepository.getAvvisi(codCliente)
-                }.await()
-
-                dati=datiDb.first().toCollection(ArrayList<Avviso>())
-
-            }
-            return dati
         }
+        return dati
+    }
 
+    fun aggiornaStatoAvviso(id:Long, nuovoStato:StatoAvviso) {
+        viewModelScope.launch(Dispatchers.IO) { avvisiRepository.aggiornaStatoAvviso(id, nuovoStato) }
+    }
 }
 
 @Suppress("UNCHECKED_CAST")

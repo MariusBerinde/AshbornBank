@@ -11,6 +11,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -19,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavHostController
+import com.example.ashborn.ConnectivityObserver
 import com.example.ashborn.R
 import com.example.ashborn.view.operazioni.Operazioni
 import com.example.ashborn.viewModel.AltroViewModel
@@ -67,24 +69,43 @@ fun Pagine(
                     .padding(innerPadding)
             ) {
                 when (selectedItem) {
-                    0 -> Conti(
-                        navController = navController,
-                        viewModel = viewModelConti
-                    )
-                    1 -> Carte(
-                        navController = navController,
-                        viewModel = viewModelCarte
-                    )
-                    2 -> Operazioni(
-                        navController = navController,
-                        viewModel = viewModelOperazioni
-                       // connectionStatus = connectionStatus
-                    )
+                    0 -> {
+                        val connectionStatus by viewModelConti.networkConnectivityObserver.observe().collectAsState(initial = ConnectivityObserver.Status.Unavailable)
+                        ErroreConnessione(connectionStatus = connectionStatus) {
+                            Conti(
+                                navController = navController,
+                                viewModel = viewModelConti
+                            )
+                        }
+                    }
+                    1 -> {
+                        val connectionStatus by viewModelCarte.networkConnectivityObserver.observe().collectAsState(initial = ConnectivityObserver.Status.Unavailable)
+                        ErroreConnessione(connectionStatus = connectionStatus) {
+                            Carte(
+                                navController = navController,
+                                viewModel = viewModelCarte
+                            )
+                        }
+                    }
+                    2 -> {
+                        val connectionStatus by viewModelOperazioni.networkConnectivityObserver.observe().collectAsState(initial = ConnectivityObserver.Status.Unavailable)
+                        ErroreConnessione(connectionStatus = connectionStatus) {
+                            Operazioni(
+                                navController = navController,
+                                viewModel = viewModelOperazioni
+                            )
+                        }
+                    }
                     3 -> ParlaConNoi()
-                    4 -> Altro(
-                        navController = navController,
-                        viewModel = viewModelAltro
-                    )
+                    4 -> {
+                        val connectionStatus by viewModelAltro.networkConnectivityObserver.observe().collectAsState(initial = ConnectivityObserver.Status.Unavailable)
+                        ErroreConnessione(connectionStatus = connectionStatus) {
+                            Altro(
+                                navController = navController,
+                                viewModel = viewModelAltro
+                            )
+                        }
+                    }
                 }
             }
         //}

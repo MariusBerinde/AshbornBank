@@ -11,6 +11,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.ashborn.AskPinViewModel
+import com.example.ashborn.NetworkConnectivityObserver
 import com.example.ashborn.data.Conto
 import com.example.ashborn.data.Operation
 import com.example.ashborn.data.Stato
@@ -27,6 +28,7 @@ import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
 
 class ContiViewModel(application: Application): AndroidViewModel(application) {
+    val networkConnectivityObserver = NetworkConnectivityObserver.getInstance(application)
     val nameClass = ContiViewModel::class.simpleName
     val dsm = DataStoreManager.getInstance(application)
     val ashbornDao = AshbornDb.getDatabase(application).ashbornDao()

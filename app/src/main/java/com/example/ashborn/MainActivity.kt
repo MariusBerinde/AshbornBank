@@ -22,28 +22,20 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 
 class MainActivity : ComponentActivity() {
-
     private lateinit var connectivityObserver: ConnectivityObserver
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        connectivityObserver = NetworkConnectivityObserver(applicationContext)
         setContent {
             AshbornTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.background,
                 ) {
-
-                AppNavigazione2(startDest = "init",// viewModel = viewModel,
-                     //connectivityObserver = NetworkConnectivityObserver(applicationContext)
-                )
-
+                    AppNavigazione2(startDest = "init")
                 }
             }
         }
     }
-
-
 }
 
 
