@@ -16,29 +16,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.example.ashborn.ConnectivityObserver
-import com.example.ashborn.NetworkConnectivityObserver
 import com.example.ashborn.R
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.ui.theme.SmallVerticalSpacing
-import com.example.ashborn.view.ErroreConnessione
 import com.example.ashborn.viewModel.WelcomeViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
 fun Welcome(
     viewModel: WelcomeViewModel,
     navController: NavHostController,
 ) {
-  //  viewModel.leggiDatiUtente()
-    val connectionStatus by viewModel.networkConnectivityObserver.observe().collectAsState(initial = ConnectivityObserver.Status.Unavailable)
-
-    ErroreConnessione(connectionStatus = connectionStatus) {
-        //BloccoPIN(viewModel = viewModel) {
+     //BloccoPIN(viewModel = viewModel) {
             Column(
                 modifier = Modifier
                     .padding(MediumPadding)
@@ -46,12 +36,8 @@ fun Welcome(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
-
-
                 Text(
-                    //text = stringResource(id = R.string.app_name)+"\n"+stringResource(id = R.string.welcome)+"\n"+viewModel.userName,
-                   // text = stringResource(id = R.string.app_name) + "\n" + stringResource(id = R.string.welcome) + "\n" + viewModel.dataStoreManager.usernameFlow.collectAsState(
-                        text = stringResource(id = R.string.app_name) + "\n" + stringResource(id = R.string.welcome) + "\n" + viewModel.getUsername(),
+                    text = stringResource(id = R.string.app_name) + "\n" + stringResource(id = R.string.welcome) + "\n" + viewModel.getUsername(),
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
                 Spacer(modifier = Modifier.height(SmallVerticalSpacing))
@@ -73,7 +59,7 @@ fun Welcome(
                     Text(stringResource(id = R.string.entra))
                 }
             }
-    }
+    //}
 }
 
 

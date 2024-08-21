@@ -1,7 +1,5 @@
 package com.example.ashborn.view
 
-//import androidx.compose.foundation.layout.BoxScopeInstance.align
-
 import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable

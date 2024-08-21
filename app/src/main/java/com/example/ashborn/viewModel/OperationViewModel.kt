@@ -12,7 +12,6 @@ import com.example.ashborn.db.AshbornDb
 import com.example.ashborn.repository.OperationRepository
 
 class OperationViewModel(application: Application): AndroidViewModel(application) {
-    val networkConnectivityObserver = NetworkConnectivityObserver.getInstance(application)
     var ordinanteMav by mutableStateOf("")
         private set
     var codiceMav by mutableStateOf("")

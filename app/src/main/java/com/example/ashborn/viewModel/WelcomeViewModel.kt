@@ -15,8 +15,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
 class  WelcomeViewModel(application: Application): AndroidViewModel(application){
-    val networkConnectivityObserver = NetworkConnectivityObserver.getInstance(application)
-
     var dt= DataStoreManager.getInstance(application)
     var userName = ""
     fun getUsername():String{

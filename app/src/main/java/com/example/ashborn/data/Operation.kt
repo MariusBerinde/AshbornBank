@@ -49,20 +49,19 @@ data class Operation(
     @Serializable(with = LocalDateTimeSerializer::class)
     @TypeConverters(Converters::class)
     @Contextual
-    val dateO: LocalDateTime,
+    val dateO: LocalDateTime, //data ordinante (effettuazione operazione)
     @Serializable(with = LocalDateTimeSerializer::class)
     @TypeConverters(Converters::class)
     @Contextual
-    val dateV: LocalDateTime,
+    val dateV: LocalDateTime, // data valuta
     val description:String,
     val recipient:String,
     //val amount: CurrencyAmount,
     val amount: Double,
     val operationType:TransactionType,
     val bankAccount:String,
-    val iban:String,
-    // se nullo è un bonifico altrimenti è un movimento della carta
-    val cardCode:String?
+    val iban:String, //iban del destinatario
+    val cardCode:String?, // se nullo è un bonifico altrimenti è un movimento della carta
 )/*{
    open fun getValue(){}
 

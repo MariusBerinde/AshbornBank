@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
 class AltroViewModel(application: Application): AndroidViewModel(application) {
-    val networkConnectivityObserver = NetworkConnectivityObserver.getInstance(application)
     val nameClass = ContiViewModel::class.simpleName
     val dsm = DataStoreManager.getInstance(application)
     val userName = runBlocking {

@@ -18,9 +18,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavHostController
 import com.example.ashborn.ConnectivityObserver
+import com.example.ashborn.NetworkConnectivityObserver
 import com.example.ashborn.R
 import com.example.ashborn.view.operazioni.Operazioni
 import com.example.ashborn.viewModel.AltroViewModel
@@ -47,6 +49,9 @@ fun Pagine(
         ImageVector.vectorResource(R.drawable.chat_outline),
         ImageVector.vectorResource(R.drawable.dots_horizontal)
     )
+    val networkConnectivityObserver = NetworkConnectivityObserver.getInstance(LocalContext.current.applicationContext)
+    val connectionStatus by networkConnectivityObserver.observe().collectAsState(initial = ConnectivityObserver.Status.Unavailable)
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
@@ -62,53 +67,41 @@ fun Pagine(
             }
         }
     ) { innerPadding ->
-        //ErroreConnessione(connectionStatus = connectionStatus) {
-            Column(
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-                    .padding(innerPadding)
-            ) {
-                when (selectedItem) {
-                    0 -> {
-                        val connectionStatus by viewModelConti.networkConnectivityObserver.observe().collectAsState(initial = ConnectivityObserver.Status.Unavailable)
-                        ErroreConnessione(connectionStatus = connectionStatus) {
-                            Conti(
-                                navController = navController,
-                                viewModel = viewModelConti
-                            )
-                        }
-                    }
-                    1 -> {
-                        val connectionStatus by viewModelCarte.networkConnectivityObserver.observe().collectAsState(initial = ConnectivityObserver.Status.Unavailable)
-                        ErroreConnessione(connectionStatus = connectionStatus) {
-                            Carte(
-                                navController = navController,
-                                viewModel = viewModelCarte
-                            )
-                        }
-                    }
-                    2 -> {
-                        val connectionStatus by viewModelOperazioni.networkConnectivityObserver.observe().collectAsState(initial = ConnectivityObserver.Status.Unavailable)
-                        ErroreConnessione(connectionStatus = connectionStatus) {
-                            Operazioni(
-                                navController = navController,
-                                viewModel = viewModelOperazioni
-                            )
-                        }
-                    }
-                    3 -> ParlaConNoi()
-                    4 -> {
-                        val connectionStatus by viewModelAltro.networkConnectivityObserver.observe().collectAsState(initial = ConnectivityObserver.Status.Unavailable)
-                        ErroreConnessione(connectionStatus = connectionStatus) {
-                            Altro(
-                                navController = navController,
-                                viewModel = viewModelAltro
-                            )
-                        }
-                    }
+
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(innerPadding)
+        ) {
+
+            when (selectedItem) {
+                0 -> {
+                    Conti(
+                        navController = navController,
+                        viewModel = viewModelConti
+                    )
+                }
+                1 -> {
+                    Carte(
+                        navController = navController,
+                        viewModel = viewModelCarte
+                    )
+                }
+                2 -> {
+                    Operazioni(
+                        navController = navController,
+                        viewModel = viewModelOperazioni
+                    )
+                }
+                3 -> ParlaConNoi()
+                4 -> {
+                    Altro(
+                        navController = navController,
+                        viewModel = viewModelAltro
+                    )
                 }
             }
-        //}
+        }
     }
 }
 

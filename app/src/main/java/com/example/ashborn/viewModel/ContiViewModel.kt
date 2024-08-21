@@ -28,7 +28,6 @@ import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
 
 class ContiViewModel(application: Application): AndroidViewModel(application) {
-    val networkConnectivityObserver = NetworkConnectivityObserver.getInstance(application)
     val nameClass = ContiViewModel::class.simpleName
     val dsm = DataStoreManager.getInstance(application)
     val ashbornDao = AshbornDb.getDatabase(application).ashbornDao()

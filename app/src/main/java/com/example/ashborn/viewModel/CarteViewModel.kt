@@ -23,7 +23,6 @@ import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
 
 class CarteViewModel(application: Application): AndroidViewModel(application) {
-    val networkConnectivityObserver = NetworkConnectivityObserver.getInstance(application)
     val nameClass = CarteViewModel::class.simpleName
     val dsm = DataStoreManager.getInstance(application)
     val ashbornDao = AshbornDb.getDatabase(application).ashbornDao()

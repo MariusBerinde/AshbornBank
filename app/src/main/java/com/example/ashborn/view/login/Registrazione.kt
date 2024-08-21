@@ -19,7 +19,6 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -35,17 +34,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.ashborn.ConnectivityObserver
 import com.example.ashborn.NavigationEvent
 import com.example.ashborn.R
 import com.example.ashborn.RegistrazioneViewModel
 import com.example.ashborn.ui.theme.LargePadding
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
-import com.example.ashborn.view.CustomDatePicker
 import com.example.ashborn.view.CustomDatePickerDialog
 import com.example.ashborn.view.DateUseCase
-import com.example.ashborn.view.ErroreConnessione
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -62,152 +58,149 @@ fun Registrazione(
     val focusRequester3 = remember { FocusRequester() }
     val navigationState by viewModel.navigationState.observeAsState()
     val isOpen = remember { mutableStateOf(false) }
-    val connectionStatus by viewModel.networkConnectivityObserver.observe().collectAsState(initial =ConnectivityObserver.Status.Unavailable)
-    ErroreConnessione(connectionStatus = connectionStatus) {
-        Column(
+    Column(
+        modifier = Modifier
+            .padding(MediumPadding)
+            .padding(SmallPadding),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+
+        Text(
+            text = stringResource(id = R.string.app_name),
+            fontWeight = FontWeight.Bold,
+            fontStyle = FontStyle.Italic,
+            fontSize = 40.sp
+        )
+        OutlinedTextField(
+            readOnly = true,
+            modifier = Modifier.fillMaxWidth(),
+            value = viewModel.dataNascita,
+            label = { Text("Date") },
+            onValueChange = {viewModel.setDataNascitaX(it)},
+            trailingIcon = {
+                IconButton(
+                    onClick = { isOpen.value = true } // show de dialog
+                ) {
+                    Icon(imageVector = Icons.Default.DateRange, contentDescription = "Calendar")
+                }
+            }
+        )
+        if (isOpen.value) {
+            CustomDatePickerDialog(
+                yearRange = LocalDate.now().minusYears(100).year..LocalDate.now().year,
+                onAccept = {
+                    isOpen.value = false // close dialog
+
+                    if (it != null) { // Set the date
+                        viewModel.setDataNascitaX(
+                            Instant
+                                .ofEpochMilli(it)
+                                .atZone(ZoneId.of("UTC"))
+                                .toLocalDate()
+                                .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                        )
+                    }
+                },
+                onCancel = {
+                    isOpen.value = false //close dialog
+                },
+                useCase = DateUseCase.NASCITA
+            )
+        }
+        Spacer(modifier = Modifier.height(LargePadding))
+        OutlinedTextField(
+            value = viewModel.userName,
+            onValueChange = { viewModel.setUserNameX(it) },
+            label = { Text(stringResource(id = R.string.inserisci_nome)) },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = if (viewModel.erroreNome != StatoErrore.NESSUNO) Color.Red else Color.Black,
+                unfocusedBorderColor = if (viewModel.erroreNome != StatoErrore.NESSUNO) Color.Red else Color.Black
+            ),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(
+                onNext = { focusRequester2.requestFocus() }
+            ),
             modifier = Modifier
-                .padding(MediumPadding)
-                .padding(SmallPadding),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
+                .focusRequester(focusRequester1)
+                .fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(LargePadding))
+        OutlinedTextField(
+            value = viewModel.cognome,
+            onValueChange = { viewModel.setCognomeX(it) },
+            label = { Text(stringResource(R.string.inserisci_cognome)) },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = if (viewModel.erroreCognome != StatoErrore.NESSUNO) {
+                    Color.Red
+                } else {
+                    Color.Black
+                },
+                unfocusedBorderColor = if (viewModel.erroreCognome != StatoErrore.NESSUNO) {
+                    Color.Red
+                } else {
+                    Color.Black
+                }
+            ),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(
+                onNext = { focusRequester3.requestFocus() }
+            ),
+            modifier = Modifier
+                .focusRequester(focusRequester2)
+                .fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(LargePadding))
+        OutlinedTextField(
+            value = viewModel.codCliente,
+            onValueChange = { viewModel.setCodClienteX(it) },
+            label = { Text(stringResource(R.string.inserisci_codice_cliente)) },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = if (viewModel.erroreCodCliente != StatoErrore.NESSUNO) {
+                    Color.Red
+                } else {
+                    Color.Black
+                },
+                unfocusedBorderColor = if (viewModel.erroreCodCliente != StatoErrore.NESSUNO) {
+                    Color.Red
+                } else {
+                    Color.Black
+                }
+            ),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
+            keyboardActions = KeyboardActions(
+                onSend = {
+                    viewModel.auth()
+                }
+            ),
+            modifier = Modifier
+                .focusRequester(focusRequester3)
+                .fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(SmallPadding))
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { viewModel.auth() }
         ) {
+            Text(text = stringResource(id = R.string.conferma))
+        }
 
-            Text(
-                text = stringResource(id = R.string.app_name),
-                fontWeight = FontWeight.Bold,
-                fontStyle = FontStyle.Italic,
-                fontSize = 40.sp
-            )
-            OutlinedTextField(
-                readOnly = true,
-                modifier = Modifier.fillMaxWidth(),
-                value = viewModel.dataNascita,
-                label = { Text("Date") },
-                onValueChange = {viewModel.setDataNascitaX(it)},
-                trailingIcon = {
-                    IconButton(
-                        onClick = { isOpen.value = true } // show de dialog
-                    ) {
-                        Icon(imageVector = Icons.Default.DateRange, contentDescription = "Calendar")
-                    }
-                }
-            )
-            if (isOpen.value) {
-                CustomDatePickerDialog(
-                    yearRange = LocalDate.now().minusYears(100).year..LocalDate.now().year,
-                    onAccept = {
-                        isOpen.value = false // close dialog
 
-                        if (it != null) { // Set the date
-                            viewModel.setDataNascitaX(
-                                Instant
-                                    .ofEpochMilli(it)
-                                    .atZone(ZoneId.of("UTC"))
-                                    .toLocalDate()
-                                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-                            )
-                        }
-                    },
-                    onCancel = {
-                        isOpen.value = false //close dialog
-                    },
-                    useCase = DateUseCase.NASCITA
-                )
+    }
+    LaunchedEffect(navigationState) {
+        when(navigationState){
+            NavigationEvent.NavigateToPin ->{
+                Log.i("Registrazione","sono in Launced effect con navState.toConti")
+                viewModel.fistLogin= false
+                viewModel.writePreferences()
+                navController.navigate("welcome")
             }
-            Spacer(modifier = Modifier.height(LargePadding))
-            OutlinedTextField(
-                value = viewModel.userName,
-                onValueChange = { viewModel.setUserNameX(it) },
-                label = { Text(stringResource(id = R.string.inserisci_nome)) },
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = if (viewModel.erroreNome != StatoErrore.NESSUNO) Color.Red else Color.Black,
-                    unfocusedBorderColor = if (viewModel.erroreNome != StatoErrore.NESSUNO) Color.Red else Color.Black
-                ),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusRequester2.requestFocus() }
-                ),
-                modifier = Modifier
-                    .focusRequester(focusRequester1)
-                    .fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(LargePadding))
-            OutlinedTextField(
-                value = viewModel.cognome,
-                onValueChange = { viewModel.setCognomeX(it) },
-                label = { Text(stringResource(R.string.inserisci_cognome)) },
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = if (viewModel.erroreCognome != StatoErrore.NESSUNO) {
-                        Color.Red
-                    } else {
-                        Color.Black
-                    },
-                    unfocusedBorderColor = if (viewModel.erroreCognome != StatoErrore.NESSUNO) {
-                        Color.Red
-                    } else {
-                        Color.Black
-                    }
-                ),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusRequester3.requestFocus() }
-                ),
-                modifier = Modifier
-                    .focusRequester(focusRequester2)
-                    .fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(LargePadding))
-            OutlinedTextField(
-                value = viewModel.codCliente,
-                onValueChange = { viewModel.setCodClienteX(it) },
-                label = { Text(stringResource(R.string.inserisci_codice_cliente)) },
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = if (viewModel.erroreCodCliente != StatoErrore.NESSUNO) {
-                        Color.Red
-                    } else {
-                        Color.Black
-                    },
-                    unfocusedBorderColor = if (viewModel.erroreCodCliente != StatoErrore.NESSUNO) {
-                        Color.Red
-                    } else {
-                        Color.Black
-                    }
-                ),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
-                keyboardActions = KeyboardActions(
-                    onSend = {
-                        viewModel.auth()
-                    }
-                ),
-                modifier = Modifier
-                    .focusRequester(focusRequester3)
-                    .fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(SmallPadding))
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = { viewModel.auth() }
-            ) {
-                Text(text = stringResource(id = R.string.conferma))
-            }
-
+            NavigationEvent.NavigateToError -> gestisciErrori(viewModel)
+            else->{}
 
         }
-        LaunchedEffect(navigationState) {
-            when(navigationState){
-                NavigationEvent.NavigateToPin ->{
-                    Log.i("Registrazione","sono in Launced effect con navState.toConti")
-                    viewModel.fistLogin= false
-                    viewModel.writePreferences()
-                    navController.navigate("welcome")
-                }
-                NavigationEvent.NavigateToError -> gestisciErrori(viewModel)
-                else->{}
 
-            }
-
-        }
     }
 }
 

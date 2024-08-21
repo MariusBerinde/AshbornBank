@@ -13,14 +13,20 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -34,18 +40,35 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.ashborn.R
 import com.example.ashborn.Validatore
+import com.example.ashborn.data.Operation
+import com.example.ashborn.data.TransactionType
 import com.example.ashborn.ui.theme.SmallPadding
-import com.example.ashborn.viewModel.OperationViewModel
+import com.example.ashborn.view.CustomDatePickerDialog
+import com.example.ashborn.view.DateUseCase
+import com.example.ashborn.view.login.StatoErrore
+import com.example.ashborn.viewModel.BonificoViewModel
+import kotlinx.serialization.json.Json
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Bonifico(navController: NavHostController, viewModelOp: OperationViewModel){
+fun Bonifico(
+    navController: NavHostController,
+    viewModel: BonificoViewModel,
+){
     val focusRequester1 = remember { FocusRequester() }
     val focusRequester2 = remember { FocusRequester() }
     val focusRequester3 = remember { FocusRequester() }
     val focusRequester4 = remember { FocusRequester() }
     val focusRequester5 = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
+    var isOpen = remember { mutableStateOf(false) }
+    val nameFun = object {}.javaClass.enclosingMethod?.name
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -71,35 +94,61 @@ fun Bonifico(navController: NavHostController, viewModelOp: OperationViewModel){
                 .padding(SmallPadding)
                 .fillMaxWidth()
             Row() {
-                OutlinedTextField(
-                    value = viewModelOp.codConto,
-                    onValueChange = {},
-                    modifier = modifier,
-                    readOnly = true,
-                    label = { Text(stringResource(id = R.string.ordinante)) },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color.Black,
-                        unfocusedBorderColor = Color.Black
+                var expanded by remember { mutableStateOf(false) }
+                var selectedText = viewModel.codConto
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = {
+                        expanded = !expanded
+                    }
+                ) {
+                    OutlinedTextField(
+                        value = viewModel.codConto,
+                        onValueChange = {viewModel.setCodContoX(selectedText)},
+                        readOnly = true,
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                        modifier = Modifier
+                            .padding(SmallPadding)
+                            .fillMaxWidth()
+                            .menuAnchor(),
+                        label = { Text(stringResource(id = R.string.ordinante)) },
+                        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Color.Black, unfocusedBorderColor = Color.Black)
                     )
-                )
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        viewModel.listaConti.forEach { item ->
+                            DropdownMenuItem(
+                                text = { Text(text = item.codConto) },
+                                onClick = {
+                                    //selectedText = item.codConto
+                                    viewModel.setCodContoX(item.codConto)
+                                    expanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+
             }
             Row() {
                 val maxLength = 100
                 OutlinedTextField(
-                    value = viewModelOp.beneficiario,
+                    value = viewModel.beneficiario,
                     onValueChange = {
                         if (it.length <= maxLength) {
-                            viewModelOp.setBeneficiarioX(it)
+                            viewModel.setBeneficiarioX(it)
                         }
                     },
                     label = { Text(stringResource(id = R.string.beneficiario)) },
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = if (viewModelOp.erroreBeneficiario == 1) {
+                        focusedBorderColor = if (viewModel.erroreBeneficiario != StatoErrore.NESSUNO) {
                             Color.Red
                         } else {
                             Color.Black
                         },
-                        unfocusedBorderColor = if (viewModelOp.erroreBeneficiario == 1) {
+                        unfocusedBorderColor = if (viewModel.erroreBeneficiario != StatoErrore.NESSUNO) {
                             Color.Red
                         } else {
                             Color.Black
@@ -118,20 +167,20 @@ fun Bonifico(navController: NavHostController, viewModelOp: OperationViewModel){
             Row() {
                 val maxLength = 27
                 OutlinedTextField(
-                    value = viewModelOp.iban,
+                    value = viewModel.iban,
                     onValueChange = {
                         if (it.length <= maxLength) {
-                            viewModelOp.setIbanX(it)
+                            viewModel.setIbanX(it)
                         }
                     },
                     label = { Text(stringResource(id = R.string.iban)) },
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = if (viewModelOp.erroreIban == 1) {
+                        focusedBorderColor = if (viewModel.erroreIban != StatoErrore.NESSUNO) {
                             Color.Red
                         } else {
                             Color.Black
                         },
-                        unfocusedBorderColor = if (viewModelOp.erroreIban == 1) {
+                        unfocusedBorderColor = if (viewModel.erroreIban != StatoErrore.NESSUNO) {
                             Color.Red
                         } else {
                             Color.Black
@@ -149,16 +198,16 @@ fun Bonifico(navController: NavHostController, viewModelOp: OperationViewModel){
             }
             Row() {
                 OutlinedTextField(
-                    value = viewModelOp.importo,
-                    onValueChange = { viewModelOp.setImportoX(it) },
+                    value = viewModel.importo,
+                    onValueChange = { viewModel.setImportoX(it) },
                     label = { Text(stringResource(id = R.string.importo)) },
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = if (viewModelOp.erroreImporto == 1) {
+                        focusedBorderColor = if (viewModel.erroreImporto != StatoErrore.NESSUNO) {
                             Color.Red
                         } else {
                             Color.Black
                         },
-                        unfocusedBorderColor = if (viewModelOp.erroreImporto == 1) {
+                        unfocusedBorderColor = if (viewModel.erroreImporto != StatoErrore.NESSUNO) {
                             Color.Red
                         } else {
                             Color.Black
@@ -180,20 +229,20 @@ fun Bonifico(navController: NavHostController, viewModelOp: OperationViewModel){
             Row() {
                 val maxLength = 300
                 OutlinedTextField(
-                    value = viewModelOp.causale,
+                    value = viewModel.causale,
                     onValueChange = {
                         if (it.length <= maxLength) {
-                            viewModelOp.setCausaleX(it)
+                            viewModel.setCausaleX(it)
                         }
                     },
                     label = { Text(stringResource(id = R.string.causale)) },
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = if (viewModelOp.erroreCausale == 1) {
+                        focusedBorderColor = if (viewModel.erroreCausale != StatoErrore.NESSUNO) {
                             Color.Red
                         } else {
                             Color.Black
                         },
-                        unfocusedBorderColor = if (viewModelOp.erroreCausale == 1) {
+                        unfocusedBorderColor = if (viewModel.erroreCausale != StatoErrore.NESSUNO) {
                             Color.Red
                         } else {
                             Color.Black
@@ -211,51 +260,67 @@ fun Bonifico(navController: NavHostController, viewModelOp: OperationViewModel){
             }
             Row() {
                 OutlinedTextField(
-                    value = viewModelOp.dataAccredito,
-                    onValueChange = { viewModelOp.setDataAccreditoX(it) },
+                    readOnly = true,
+                    value = (viewModel.dataAccredito.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")).toString()),
+                    onValueChange = { viewModel.setDataAccreditoX(viewModel.dataAccredito) },
                     label = { Text(stringResource(id = R.string.dataAccredito)) },
                     trailingIcon = {
-                        IconButton(onClick = { /*TODO mostra date picker dialog*/ }) {
+                        IconButton(onClick = { isOpen.value = true }) {
                             Icon(
-                                Icons.Filled.DateRange,
+                                imageVector = Icons.Filled.DateRange,
                                 contentDescription = stringResource(id = R.string.scegliData),
                                 tint = Color.Black
                             )
                         }
                     },
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = if (viewModelOp.erroreDataAccredito == 1) {
-                            Color.Red
-                        } else {
+                        focusedBorderColor = if (viewModel.erroreDataAccredito == StatoErrore.NESSUNO) {
                             Color.Black
+                        } else {
+                            Color.Red
                         },
-                        unfocusedBorderColor = if (viewModelOp.erroreDataAccredito == 1) {
-                            Color.Red
-                        } else {
+                        unfocusedBorderColor = if (viewModel.erroreDataAccredito == StatoErrore.NESSUNO) {
                             Color.Black
+                        } else {
+                            Color.Red
                         }
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
                     keyboardActions = KeyboardActions(
                         onSend = {
                             if (Validatore().formatoBonificoValido(
-                                    viewModelOp.beneficiario,
-                                    viewModelOp.iban,
-                                    viewModelOp.importo,
-                                    viewModelOp.causale,
-                                    viewModelOp.dataAccredito
+                                    viewModel.beneficiario,
+                                    viewModel.iban,
+                                    viewModel.importo,
+                                    viewModel.causale,
+                                    viewModel.dataAccredito.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
                                 )
                             ) {
                                 Log.i("Bonifico", "Sto per andare in riepilogo")
-                                navController.navigate("riepilogo-bonifico")
+                                val operation = Operation(
+                                    clientCode = viewModel.codCliente,
+                                    dateO = viewModel.dataAccredito,
+                                    dateV = viewModel.dataAccredito,
+                                    operationType = TransactionType.WITHDRAWAL,
+                                    amount = viewModel.importo.toDouble(),
+                                    bankAccount = viewModel.codConto,
+                                    description = viewModel.causale,
+                                    cardCode = null,
+                                    iban = viewModel.iban,
+                                    recipient = viewModel.beneficiario,
+                                )
+                                val json = Json { prettyPrint = true }
+                                val data = json.encodeToString(Operation.serializer(), operation)
+                                Log.d(nameFun, "Operazione creata: $operation")
+                                navController.navigate("riepilogo-bonifico/$data")
                             } else {
-                                gestisciErrori(
-                                    viewModelOp.beneficiario,
-                                    viewModelOp.iban,
-                                    viewModelOp.importo,
-                                    viewModelOp.causale,
-                                    viewModelOp.dataAccredito,
-                                    viewModelOp
+                                gestisciErroriBonifico(
+                                    viewModel.beneficiario,
+                                    viewModel.iban,
+                                    viewModel.importo,
+                                    viewModel.causale,
+                                    viewModel.dataAccredito.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                                    viewModel
                                 )
                             }
                             focusManager.clearFocus()
@@ -267,28 +332,64 @@ fun Bonifico(navController: NavHostController, viewModelOp: OperationViewModel){
                         .fillMaxWidth()
 
                 )
+                if (isOpen.value) {
+                    CustomDatePickerDialog(
+                        yearRange = LocalDate.now().year..LocalDate.now().plusYears(1).year,
+                        onAccept = {
+                            isOpen.value = false // close dialog
+                            if (it != null) { // Set the date
+                                viewModel.setDataAccreditoX(
+                                    Instant
+                                        .ofEpochMilli(it)
+                                        .atZone(ZoneId.of("UTC"))
+                                        .toLocalDateTime()
+                                )
+                            }
+                        },
+                        onCancel = {
+                            isOpen.value = false //close dialog
+                        },
+                        useCase = DateUseCase.BONIFICO
+                    )
+                }
             }
             Row() {
                 Button(
                     onClick = {
                         if (Validatore().formatoBonificoValido(
-                                viewModelOp.beneficiario,
-                                viewModelOp.iban,
-                                viewModelOp.importo,
-                                viewModelOp.causale,
-                                viewModelOp.dataAccredito
+                                viewModel.beneficiario,
+                                viewModel.iban,
+                                viewModel.importo,
+                                viewModel.causale,
+                                viewModel.dataAccredito.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+
                             )
                         ) {
-                            Log.i("Bonifico", "Sto per andare in riepilogo")
-                            navController.navigate("riepilogo-bonifico")
+
+                            val operation = Operation(
+                                clientCode = viewModel.codCliente,
+                                dateO = viewModel.dataAccredito,
+                                dateV = viewModel.dataAccredito,
+                                operationType = TransactionType.WITHDRAWAL,
+                                amount = viewModel.importo.toDouble(),
+                                bankAccount = viewModel.codConto,
+                                description = viewModel.causale,
+                                cardCode = null,
+                                iban = viewModel.iban,
+                                recipient = viewModel.beneficiario,
+                            )
+                            val json = Json { prettyPrint = true }
+                            val data = json.encodeToString(Operation.serializer(), operation)
+                            Log.d(nameFun, "Operazione creata: $operation")
+                            navController.navigate("riepilogo-bonifico/$data")
                         } else {
-                            gestisciErrori(
-                                viewModelOp.beneficiario,
-                                viewModelOp.iban,
-                                viewModelOp.importo,
-                                viewModelOp.causale,
-                                viewModelOp.dataAccredito,
-                                viewModelOp
+                            gestisciErroriBonifico(
+                                viewModel.beneficiario,
+                                viewModel.iban,
+                                viewModel.importo,
+                                viewModel.causale,
+                                viewModel.dataAccredito.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                                viewModel
                             )
                         }
                     },
