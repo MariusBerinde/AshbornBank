@@ -134,7 +134,7 @@ fun AskPIN(
                         if (operation == null) {
                             navController.navigate("conti")
                         } else {
-                            viewModel.saveOperation(operation)
+                            viewModel.executeInstantTransaction(operation)
                             navController.navigate("operazioneConfermata")
                         }
 

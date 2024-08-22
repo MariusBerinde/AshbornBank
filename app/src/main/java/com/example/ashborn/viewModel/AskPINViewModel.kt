@@ -89,10 +89,21 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
     fun resetWrongAttempts() {
         this.wrongAttempts = 0
     }
-
     fun saveOperation(operation: Operation) {
         viewModelScope.launch(Dispatchers.IO) {
             operationRepository.insertOperation(operation)
+        }
+    }
+
+    fun executeTransaction(operation: Operation){
+        viewModelScope.launch(Dispatchers.IO) {
+            operationRepository.insertOperation(operation)
+        }
+    }
+
+    fun executeInstantTransaction(operation: Operation){
+        viewModelScope.launch(Dispatchers.IO) {
+            operationRepository.executeInstantTransaction(operation)
         }
     }
 }
