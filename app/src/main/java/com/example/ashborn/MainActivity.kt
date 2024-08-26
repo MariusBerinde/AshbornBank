@@ -3,18 +3,31 @@ package com.example.ashborn
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.example.ashborn.ui.theme.AshbornTheme
-import com.example.ashborn.viewModel.AshbornViewModel
-import com.example.ashborn.viewModel.OperationViewModel
 
 class MainActivity : ComponentActivity() {
+    private lateinit var connectivityObserver: ConnectivityObserver
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            AshbornTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background,
+                ) {
+                    AppNavigazione2(startDest = "init")
+                }
+            }
+        }
+    }
+}
+
+
+/*class MainActivity : ComponentActivity() {
 
     private lateinit var connectivityObserver: ConnectivityObserver
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,21 +57,4 @@ class MainActivity : ComponentActivity() {
     }
 
 
-}
-/*
-@Preview(showBackground = true)
-@Composable
-fun AshbornPreview() {
-    AshbornTheme {
-
-        val viewModel: AshbornViewModel = AshbornViewModel()
-        val operationViewModel: OperationViewModel = OperationViewModel()
-        AppNavigazione(
-            viewModel = viewModel,
-            operationViewModel = operationViewModel,
-            connectionStatus = ConnectivityObserver.Status.Available
-        )
-    }
-}
-*/
-
+}*/

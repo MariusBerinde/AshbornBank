@@ -30,11 +30,12 @@ import com.example.ashborn.R
 import com.example.ashborn.ui.theme.AshbornTheme
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.viewModel.AshbornViewModel
+import com.example.ashborn.viewModel.OperationViewModel
 
 @Composable
 fun Operazioni(
     navController: NavHostController,
-    viewModel: AshbornViewModel
+    viewModel: OperationViewModel
 ) {
     Box(
         modifier = Modifier,
@@ -124,19 +125,3 @@ fun Operazioni(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PrevOp(){
-
-    val viewModel = AshbornViewModel(application = Application())
-    val navController = rememberNavController()
-
-    AshbornTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize() ,
-            color = MaterialTheme.colorScheme.background
-        ) {
-           Operazioni(navController = navController, viewModel = viewModel  )
-        }
-    }
-}

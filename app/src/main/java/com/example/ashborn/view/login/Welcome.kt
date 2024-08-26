@@ -1,5 +1,6 @@
 package com.example.ashborn.view.login
 
+import android.app.Application
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,27 +12,23 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
-import com.example.ashborn.ConnectivityObserver
 import com.example.ashborn.R
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.ui.theme.SmallVerticalSpacing
-import com.example.ashborn.view.BloccoPIN
-import com.example.ashborn.view.ErroreConnessione
-import com.example.ashborn.viewModel.AshbornViewModel
+import com.example.ashborn.viewModel.WelcomeViewModel
 
 @Composable
 fun Welcome(
+    viewModel: WelcomeViewModel,
     navController: NavHostController,
-    viewModel: AshbornViewModel,
-    connectionStatus: ConnectivityObserver.Status
 ) {
-    ErroreConnessione(connectionStatus = connectionStatus) {
-        BloccoPIN(viewModel = viewModel) {
+     //BloccoPIN(viewModel = viewModel) {
             Column(
                 modifier = Modifier
                     .padding(MediumPadding)
@@ -39,16 +36,8 @@ fun Welcome(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
-
-                Log.i(
-                    "Welcome",
-                    viewModel.dataStoreManager.usernameFlow.collectAsState(initial = "val Iniziale").value
-                )
                 Text(
-                    //text = stringResource(id = R.string.app_name)+"\n"+stringResource(id = R.string.welcome)+"\n"+viewModel.userName,
-                    text = stringResource(id = R.string.app_name) + "\n" + stringResource(id = R.string.welcome) + "\n" + viewModel.dataStoreManager.usernameFlow.collectAsState(
-                        initial = ""
-                    ).value,
+                    text = stringResource(id = R.string.app_name) + "\n" + stringResource(id = R.string.welcome) + "\n" + viewModel.getUsername(),
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
                 Spacer(modifier = Modifier.height(SmallVerticalSpacing))
@@ -57,19 +46,31 @@ fun Welcome(
                     .padding(SmallPadding),
                     //TODO:aggiungere controllo per verifica primo login
                     onClick = {
-                        Log.d("Welcome","valore di first login = ${viewModel.fistLogin}")
-                        if (viewModel.fistLogin) {
+                        if (viewModel.getUsername().isBlank()) {
+                            Log.d("Welcome","verso registrazione")
                             navController.navigate("primo-login")
                         } else {
+                            Log.d("Welcome","verso pin")
                             navController.navigate("login")
-
+                            Log.d("welcome", viewModel.getUsername())
                         }
                     }
                 ) {
                     Text(stringResource(id = R.string.entra))
                 }
             }
-        }
-    }
+    //}
 }
 
+
+/*
+@Preview(showBackground = true)
+@Composable
+fun WelcomePreview() {
+    // Creiamo una versione mock del ViewModel per la preview
+    val mockApplication = Application() // Se hai bisogno di un contesto puoi usarlo qui
+    val mockViewModel = WelcomeViewModel(mockApplication)
+
+    // Richiamiamo il composable con il viewModel mock
+    Welcome(viewModel = mockViewModel)
+}*/

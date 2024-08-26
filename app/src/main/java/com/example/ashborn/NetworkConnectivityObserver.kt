@@ -11,12 +11,12 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class NetworkConnectivityObserver(
+class NetworkConnectivityObserver private constructor(
     private val context: Context
 ): ConnectivityObserver {
-
+    private val applicationContext = context.applicationContext
     private val connectivityManager =
-        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
     override fun observe(): Flow<ConnectivityObserver.Status> {
         return callbackFlow {
@@ -47,5 +47,17 @@ class NetworkConnectivityObserver(
                 connectivityManager.unregisterNetworkCallback(callback)
             }
         }.distinctUntilChanged()
+    }
+
+    companion object {
+        @Volatile
+        private var instance: NetworkConnectivityObserver? = null
+
+        fun getInstance(context: Context): NetworkConnectivityObserver {
+           return instance ?: synchronized(this) {
+               instance = NetworkConnectivityObserver(context.applicationContext)
+               instance!!
+           }
+        }
     }
 }

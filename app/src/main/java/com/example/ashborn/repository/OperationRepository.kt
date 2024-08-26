@@ -5,7 +5,11 @@ import com.example.ashborn.data.Carta
 import com.example.ashborn.data.Conto
 import com.example.ashborn.data.Operation
 import com.example.ashborn.data.Stato
+import com.example.ashborn.data.TransactionType
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 class OperationRepository(private val ashbornDao: AshbornDao) {
@@ -19,9 +23,12 @@ class OperationRepository(private val ashbornDao: AshbornDao) {
     //fun getOperations(clientCode: String, from: LocalDateTime, upTo: LocalDateTime, offset: Int, limit: Int) = ashbornDao.getOperations(clientCode, from, upTo, offset, limit)
     //fun getOperations(clientCode: String, from: LocalDateTime, upTo: LocalDateTime, offset: Int, limit: Int) = ashbornDao.getOperations(clientCode, from, upTo, offset, limit)
 
-    fun getOperazioniCarte(idCarta:Long,from: LocalDateTime, upTo: LocalDateTime, offset: Int, limit: Int) : Flow<MutableList<Operation>> = ashbornDao.getOperazioniCarte(idCarta,from, upTo, offset, limit)
+    fun getOperazioniCarta(idCarta:Long,from: LocalDateTime, upTo: LocalDateTime, offset: Int, limit: Int) : Flow<MutableList<Operation>> = ashbornDao.getOperazioniCarta(idCarta,from, upTo, offset, limit)
 
     fun getOperazioniConto(codConto: String, from: LocalDateTime, upTo: LocalDateTime, offset: Int, limit: Int): Flow<MutableList<Operation>> = ashbornDao.getOperazioniConto(codConto, from, upTo ,offset, limit)
+
+    suspend  fun executeInstantTransaction(operation: Operation) = ashbornDao.executeInstantTransaction(operation)
+
 
 
     // se incrementiamo operazioni su carta @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -37,6 +44,8 @@ class CardRepository(private val ashbornDao: AshbornDao){
 
     fun getCarte(codUtente:String) :Flow<MutableList<Carta>> = ashbornDao.getCarte(codUtente)
 
+    fun bloccaCarta(clientCode: String, cardCode: String) = CoroutineScope(Dispatchers.IO).launch{ashbornDao.aggiornaStatoCarta(cardCode.toLong(), Stato.BLOCCATO)}
+
 }
 
 class ContoRepository(private val ashbornDao: AshbornDao){
@@ -44,4 +53,8 @@ class ContoRepository(private val ashbornDao: AshbornDao){
     fun inserisciConto(conto: Conto) = ashbornDao.inserisciConto(conto)
 
     fun getConti(codCliente:String) : Flow<MutableList<Conto>>   = ashbornDao.getConti(codCliente)
+
+    fun getContoByCodConto(codConto: String): Flow<Conto> = ashbornDao.getContoByCodConto(codConto)
+
+    fun aggiornaSaldo(clientCode: String, bankAccount: String, amount: Double) = CoroutineScope(Dispatchers.IO).launch{ashbornDao.aggiornaSaldo(clientCode, bankAccount, amount)}
 }

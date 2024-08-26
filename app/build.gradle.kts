@@ -1,7 +1,9 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+
     id("org.jetbrains.kotlin.kapt")
+    kotlin("plugin.serialization") version "2.0.10"
 }
 
 android {
@@ -43,6 +45,7 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -62,6 +65,9 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.junit.ktx)
+    implementation(libs.androidx.ui.test.junit4.android)
+    implementation(libs.androidx.room.common)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -73,6 +79,14 @@ dependencies {
     testImplementation("androidx.test:core:1.3.0")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+    implementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.navigation.compose) // Aggiungi questa riga
+
+
 
     val room_version = "2.6.1"
 
@@ -102,6 +116,15 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation("androidx.datastore:datastore-rxjava2:1.1.1")
     implementation("androidx.datastore:datastore-rxjava3:1.1.1")
+
+    // per mock
+   val mockkVersion="1.13.12"
+    testImplementation("io.mockk:mockk:${mockkVersion}")
+    testImplementation ("io.mockk:mockk-android:${mockkVersion}")
+    testImplementation ("io.mockk:mockk-agent:${mockkVersion}")
+    androidTestImplementation ("io.mockk:mockk-android:${mockkVersion}")
+    androidTestImplementation ("io.mockk:mockk-agent:${mockkVersion}")
+
 
 
 }

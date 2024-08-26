@@ -38,12 +38,13 @@ import com.example.ashborn.data.Voice
 import com.example.ashborn.ui.theme.LargePadding
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
+import com.example.ashborn.viewModel.AltroViewModel
 import com.example.ashborn.viewModel.AshbornViewModel
 
 @Composable
 fun Altro(
     navController: NavHostController,
-    viewModel: AshbornViewModel
+    viewModel: AltroViewModel
 ) {
     Column {
         Row(modifier = Modifier.fillMaxWidth()) {
@@ -75,7 +76,7 @@ fun Altro(
 
                     Column {
                         Text(stringResource(id = R.string.profilo))
-                        Text(viewModel.userName)
+                        //Text(viewModel.userName)
                         Text(stringResource(id = R.string.app_name))
 
                     }
@@ -138,42 +139,16 @@ fun ListaAzioni(navController: NavHostController) {
     }
 }
 //todo: quando saranno implementate le funzionalità dovremmo creare file singoli
-@Composable
-fun Avvisi(
-    navController: NavHostController,
-    viewModel: AshbornViewModel
-) {
-    Text(text = stringResource(id = R.string.avvisi))
-}
 
-@Composable
-fun Archivio(
-    navController: NavHostController,
-    viewModel: AshbornViewModel
-) {
-    Text(text = stringResource(id = R.string.archivio))
-    Spacer(modifier = Modifier.padding(LargePadding))
-}
-@Composable
-fun Sicurezza(
-    navController: NavHostController,
-    viewModel: AshbornViewModel
-) {
-    Text(text = stringResource(id = R.string.sicurezza))
 
-}
-@Composable
-fun Impostazioni(
-    navController: NavHostController,
-    viewModel: AshbornViewModel
-) {
-    Text(text = stringResource(id = R.string.impostazioni))
-}
+
+
+
 
 @Composable
 fun Logout(
     navController: NavHostController,
-    viewModel: AshbornViewModel
+    //viewModel: AshbornViewModel
 ) {
     Column(verticalArrangement = Arrangement.Center) {
         Text(text = "Attenzione!!: proseguendo con questa operazione stai per cancellare i dati locali dell'applicazione e dovrai rifare il login")
@@ -183,7 +158,7 @@ fun Logout(
         ) {
             Button(onClick = {
 
-                viewModel.cancellaPreferenzeLocali()
+                //viewModel.cancellaPreferenzeLocali()
                 //   viewModel.set_StartDest("init")
                 //   navController.navigate("init")
                 MainActivity().finish()

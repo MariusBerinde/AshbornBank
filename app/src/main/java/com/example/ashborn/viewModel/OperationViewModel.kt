@@ -5,14 +5,11 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.ViewModelProvider
+import com.example.ashborn.NetworkConnectivityObserver
 import com.example.ashborn.dao.AshbornDao
-import com.example.ashborn.data.Operation
-import com.example.ashborn.data.TransactionType
 import com.example.ashborn.db.AshbornDb
 import com.example.ashborn.repository.OperationRepository
-import kotlinx.coroutines.launch
-import java.time.LocalDateTime
 
 class OperationViewModel(application: Application): AndroidViewModel(application) {
     var ordinanteMav by mutableStateOf("")
@@ -128,5 +125,15 @@ class OperationViewModel(application: Application): AndroidViewModel(application
 
     fun setOrdinanteMavX(ordinanteMav: String) {
         this.ordinanteMav = ordinanteMav
+    }
+}
+
+@Suppress("UNCHECKED_CAST")
+class OperationViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
+    override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(OperationViewModel::class.java)) {
+            return OperationViewModel(application) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

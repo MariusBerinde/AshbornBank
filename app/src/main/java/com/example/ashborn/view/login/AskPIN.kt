@@ -18,127 +18,142 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.ashborn.AskPinViewModel
 import com.example.ashborn.ConnectivityObserver
+import com.example.ashborn.NavigationEvent
+import com.example.ashborn.NetworkConnectivityObserver
 import com.example.ashborn.R
+import com.example.ashborn.data.Operation
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.ui.theme.SmallVerticalSpacing
-import com.example.ashborn.view.ErroreConnessione
-import com.example.ashborn.viewModel.AshbornViewModel
-import com.example.ashborn.viewModel.NavigationEvent
 
 @Composable
 fun AskPIN(
     navController: NavHostController,
-    viewModel: AshbornViewModel,
-    connectionStatus: ConnectivityObserver.Status
+    viewModel: AskPinViewModel,
+    operation: Operation?,
+    //connectionStatus: ConnectivityObserver.Status
 ) {
     Log.i("AskPIN", "renderizzo AskPIN")
-    ErroreConnessione(connectionStatus = connectionStatus) {
-        val navigationState by viewModel.navigationState.observeAsState()
-        Column(
-            modifier = Modifier
-                .padding(MediumPadding)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                Text(stringResource(id = R.string.pin))
-            }
-            Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                OutlinedTextField(
-                    value = viewModel.pin,
-                    onValueChange = { viewModel.setPinX(it) },
-                    readOnly = true,
-                    visualTransformation = PasswordVisualTransformation()
-                )
-            }
-            Spacer(modifier = Modifier.height(MediumPadding))
-            //Row (modifier = Modifier.align(Alignment.CenterHorizontally)) {
+    val networkConnectivityObserver = NetworkConnectivityObserver.getInstance(LocalContext.current.applicationContext)
+    val connectionStatus by networkConnectivityObserver.observe().collectAsState(initial = ConnectivityObserver.Status.Unavailable)
+    val navigationState by viewModel.navigationState.observeAsState()
+    Column(
+        modifier = Modifier
+            .padding(MediumPadding)
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+            Text(stringResource(id = R.string.pin))
+        }
+        Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+            OutlinedTextField(
+                value = viewModel.pin,
+                onValueChange = { viewModel.setPinX(it) },
+                readOnly = true,
+                visualTransformation = PasswordVisualTransformation()
+            )
+        }
+        Spacer(modifier = Modifier.height(MediumPadding))
+        //Row (modifier = Modifier.align(Alignment.CenterHorizontally)) {
 
 
-            for (i in (0..2)) {
-                Row {
-                    for (j in (0..2)) {
-
-                        Spacer(modifier = Modifier.width(SmallVerticalSpacing))
-                        Button(
-                            modifier = Modifier.size(70.dp, 40.dp),
-                            onClick = {
-                                if (viewModel.pin.length <= 8) {
-                                    viewModel.setPinX(viewModel.pin + (3 * i + j + 1).toString())
-                                }
-                            }) {
-                            Text(text = (3 * i + j + 1).toString())
-                        }
-                    }
-                }
-
-
-                Spacer(modifier = Modifier.padding(SmallPadding))
-
-            }
+        for (i in (0..2)) {
             Row {
-                Spacer(modifier = Modifier.width(SmallVerticalSpacing))
-                Button(
-                    modifier = Modifier.size(70.dp, 40.dp),
-                    onClick = {
-                        Log.i("AskPIN", (viewModel.checkPin()).toString())
-                        viewModel.validatePin()
-                    }
-                ) {
-                    Text(text = "OK")
-                }
+                for (j in (0..2)) {
 
-                Spacer(modifier = Modifier.width(SmallVerticalSpacing))
-                Button(
-                    modifier = Modifier.size(70.dp, 40.dp),
-                    onClick = {
-                        if (viewModel.pin.length <= 8) {
-                            viewModel.setPinX(viewModel.pin + "0")
-                        }
-                    }) {
-                    Text(text = "0")
-                }
-
-                Spacer(modifier = Modifier.width(SmallVerticalSpacing))
-                Button(
-                    modifier = Modifier.size(70.dp, 40.dp),
-                    onClick = {
-                        if (viewModel.pin.isNotEmpty()) {
-                            viewModel.setPinX(viewModel.pin.dropLast(1))
-                        }
-                    }) {
-                    Icon(Icons.Filled.Clear, contentDescription = "icona cancellazione")
-                }
-                //FIXME: capire perché non mostra l'overlay
-                LaunchedEffect(navigationState) {
-                    Log.i("AskPIN","valore navigazione= ${navigationState.toString()}")
-                    when(navigationState){
-                        NavigationEvent.NavigateToConti ->{
-                            viewModel.resetWrongAttempts()
-                            navController.navigate("conti")
-                        }
-                        NavigationEvent.NavigateToError -> {
-                            Log.i("AskPIN", "errore e numero di tentativi ${viewModel.wrongAttempts}")
-                            if(viewModel.wrongAttempts > 3 ) {
-                                navController.popBackStack()
+                    Spacer(modifier = Modifier.width(SmallVerticalSpacing))
+                    Button(
+                        modifier = Modifier.size(70.dp, 40.dp),
+                        onClick = {
+                            if (viewModel.pin.length <= 8) {
+                                viewModel.setPinX(viewModel.pin + (3 * i + j + 1).toString())
                             }
+                        }) {
+                        Text(text = (3 * i + j + 1).toString())
+                    }
+                }
+            }
+
+
+            Spacer(modifier = Modifier.padding(SmallPadding))
+
+        }
+        Row {
+            Spacer(modifier = Modifier.width(SmallVerticalSpacing))
+            Button(
+                modifier = Modifier.size(70.dp, 40.dp),
+                onClick = {
+                    Log.i("AskPIN", (viewModel.checkPin()).toString())
+                    viewModel.validatePin()
+                }
+            ) {
+                Text(text = "OK")
+            }
+
+            Spacer(modifier = Modifier.width(SmallVerticalSpacing))
+            Button(
+                modifier = Modifier.size(70.dp, 40.dp),
+                onClick = {
+                    if (viewModel.pin.length <= 8) {
+                        viewModel.setPinX(viewModel.pin + "0")
+                    }
+                }) {
+                Text(text = "0")
+            }
+
+            Spacer(modifier = Modifier.width(SmallVerticalSpacing))
+            Button(
+                modifier = Modifier.size(70.dp, 40.dp),
+                onClick = {
+                    if (viewModel.pin.isNotEmpty()) {
+                        viewModel.setPinX(viewModel.pin.dropLast(1))
+                    }
+                }
+            ) {
+                Icon(Icons.Filled.Clear, contentDescription = "icona cancellazione")
+            }
+            //FIXME: capire perché non mostra l'overlay
+            LaunchedEffect(navigationState) {
+                Log.i("AskPIN","valore navigazione= ${navigationState.toString()}")
+                when(navigationState){
+                    NavigationEvent.NavigateToNext -> {
+                        viewModel.resetWrongAttempts()
+                        if (operation == null) {
+                            navController.navigate("conti")
+                        } else {
+                            viewModel.executeInstantTransaction(operation)
+                            navController.navigate("operazioneConfermata")
                         }
 
-                        else->{}
                     }
+                    NavigationEvent.NavigateToError -> {
+                        Log.i("AskPIN", "errore e numero di tentativi ${viewModel.wrongAttempts}")
+                        if(viewModel.wrongAttempts > 3 ) {
+                            if (operation == null) {
+                                navController.popBackStack()
+                            } else {
+                                navController.navigate("operazioneRifiutata")
+                            }
 
+                        }
+                    }
+                    else->{}
                 }
+
             }
         }
     }

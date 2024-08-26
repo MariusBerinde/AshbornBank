@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -35,7 +36,27 @@ import com.example.ashborn.R
 import com.example.ashborn.data.Carta
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
-import com.example.ashborn.viewModel.AshbornViewModel
+import com.example.ashborn.viewModel.CarteViewModel
+
+@Composable
+fun Carte(
+    navController: NavHostController,
+    viewModel: CarteViewModel
+) {
+    Column (
+        modifier = Modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        FronteCarta(viewModel.cartaMostrata,viewModel.userName+" "+viewModel.cognome)
+        Spacer(modifier = Modifier.height(16.dp))
+        Row {
+            Column (modifier = Modifier.padding(SmallPadding)){
+                ListaOperazioniFatteCarte(navController, viewModel)
+            }
+        }
+    }
+}
 
 @Composable
 fun RigaMagnetica(){
@@ -45,66 +66,55 @@ fun RigaMagnetica(){
         .background(Color.Black), color=Color.Black, content = { Text("") })
 }
 @Composable
-fun FronteCarta(carta: Carta,utente:String) {
-    val nrCarta= carta.nrCarta.toString()
-    val utente= utente
-    val scadenza= carta.dataScadenza.toLocalDate().toString()
-    val cvc= carta.cvc
-    val codUtente= carta.codUtente
+fun FronteCarta(carta: Carta?,utente:String) {
+    val nrCarta = carta?.nrCarta.toString()
+    val scadenza = carta?.dataScadenza?.toLocalDate().toString()
+    val cvc = carta?.cvc
+    val codUtente = carta?.codUtente
     var isFront by remember { mutableStateOf(true) }
-  Card {
-      Column(
-          modifier =  Modifier.padding(0.dp,16.dp),
-          horizontalAlignment = Alignment.CenterHorizontally
-      ) {
-          if(!isFront){
-              RigaMagnetica()
-              Spacer(modifier = Modifier.width(32.dp))
-              Text(text = "CVC: $cvc")
-              Text(text = stringResource(id = R.string.codice_utente)+ codUtente)
-          }else{
-              Text(text = stringResource(id = R.string.app_name), textAlign = TextAlign.Center, fontWeight = FontWeight.Bold)
-              Spacer(modifier = Modifier.width(32.dp))
-              Icon(Icons.Filled.Star, contentDescription ="Simbolo sim", modifier = Modifier.size(48.dp))
-              Text(text = nrCarta)
-              Row (modifier = Modifier.padding(16.dp))
-              {
+    if (carta != null) {
+        Card (modifier = Modifier.padding(SmallPadding).fillMaxWidth()){
+           Column(
+                modifier = Modifier.padding(0.dp, 16.dp).fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                if (!isFront) {
+                    RigaMagnetica()
+                    Spacer(modifier = Modifier.width(32.dp))
+                    Text(text = "CVC: $cvc")
+                    Text(text = stringResource(id = R.string.codice_utente) + codUtente)
+                } else {
+                    Text(
+                        text = stringResource(id = R.string.app_name),
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.width(32.dp))
+                    Icon(
+                        Icons.Filled.Star,
+                        contentDescription = "Simbolo sim",
+                        modifier = Modifier.size(48.dp)
+                    )
+                    Text(text = nrCarta)
+                    Row(modifier = Modifier.padding(16.dp))
+                    {
 
-                  Text(text = utente)
-                  Spacer(modifier = Modifier.width(32.dp))
-                  Text(scadenza)
-              }
-          }
+                        Text(text = utente)
+                        Spacer(modifier = Modifier.width(32.dp))
+                        Text(scadenza)
+                    }
+                }
 
-          Button(onClick = {
-              isFront= !isFront
-          Log.i("Fronte carta","premo pulsante $isFront")
-          }) {
-              Text(text = "Back")
-          }
-      }
-  }
-}
-
-@Composable
-fun Carte(
-    navController: NavHostController,
-    viewModel: AshbornViewModel
-) {
-    Column (
-        modifier = Modifier.padding(MediumPadding),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        FronteCarta(viewModel.cartaMostrata,viewModel.userName+" "+viewModel.cognome)
-        Spacer(modifier = Modifier.height(16.dp))
-        Row {
-            Column (modifier = Modifier.padding(SmallPadding)){
-                ListaOperazioniFatte(navController, viewModel)
+                Button(onClick = {
+                    isFront = !isFront
+                }) {
+                    Text(text = "Back")
+                }
             }
         }
     }
 }
+
 
 /*
 @Preview(showBackground = true)
