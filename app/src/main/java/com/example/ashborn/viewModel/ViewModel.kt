@@ -82,7 +82,7 @@ open class AshbornViewModel(
                 User(
                     "Tom",
                     "Riddle",
-                    "1/01/1990",
+                    "01/01/1990",
                     "87654321".hashCode().toString(),
                     "777777777"
                 )
@@ -91,14 +91,18 @@ open class AshbornViewModel(
                 User(
                     "Sauron",
                     "Lo oscuro",
-                    "1/01/1990",
+                    "01/01/1990",
                     "12345678".hashCode().toString(),
                     "666666666"
                 )
             )
         }
         viewModelScope.launch(Dispatchers.IO) {
+
         insertConto(Conto(codConto = "42",codCliente ="777777777", stato = Stato.ATTIVO, iban = "IT1234567890123456789012345",saldo = 190000.00 ))
+
+            
+
             insertConto(Conto(codConto = "43",codCliente ="666666666", stato = Stato.ATTIVO , iban = "IT1234567890123456789012345",saldo = 200000.000))
             insertCarta(Carta(
                 nrCarta = 1111222233334444,
@@ -112,6 +116,7 @@ open class AshbornViewModel(
             }
 /*
         viewModelScope.launch(Dispatchers.IO) {
+
             insertOperation(Operation( clientCode ="777777777", dateO = LocalDateTime.now(), dateV = LocalDateTime.now(), description = "Pagamento crimini di guerra", amount =  135.89, operationType = TransactionType.WITHDRAWAL, bankAccount = "42", cardCode = null, recipient="", iban = ""))
             insertOperation(Operation( clientCode ="777777777", dateO = LocalDateTime.now().minusDays(1),dateV = LocalDateTime.now().minusDays(1),description = "Pagamento Bolletta Luce", amount =  92.00, operationType = TransactionType.WITHDRAWAL, bankAccount = "42", cardCode = "1111222233334444", recipient="", iban = "" ))
             insertOperation(Operation( clientCode ="777777777", dateO = LocalDateTime.now().minusDays(1),dateV = LocalDateTime.now().minusDays(1),description ="Pagamento per Mutuo del male", amount =  92.00, operationType = TransactionType.WITHDRAWAL,bankAccount = "42", cardCode = "1111222233334444", recipient="", iban = "" ))
@@ -219,14 +224,15 @@ open class AshbornViewModel(
                 description = "Pagamento Bolletta",
                 //CurrencyAmount(167.00, Currency.getInstance("EUR")),
                 amount = 167.00,
+
                 transactionType = TransactionType.WITHDRAWAL,
                 bankAccount = "42",
                 cardCode = "1111222233334444",
                 iban = "",
                 recipient = "",
                 operationType = OperationType.WIRE_TRANSFER
-            )
 
+            )
         )
         set(value) = TODO()
     var arrayOperazioniConto: ArrayList<Operation>
@@ -239,14 +245,19 @@ open class AshbornViewModel(
                 description = "Pagamento Bolletta",
                 //CurrencyAmount(167.00, Currency.getInstance("EUR")),
                 amount = 167.00,
+
                 transactionType = TransactionType.WITHDRAWAL,
+
+                
+
                 bankAccount = "42",
                 cardCode = null,
                 iban = "",
                 recipient = "",
+
                 operationType = OperationType.WIRE_TRANSFER
             )
-
+               
             )
         set(value) = TODO()
     var operazioniCarta by mutableStateOf(arrayOperazioniCarte) //TODO da ren
