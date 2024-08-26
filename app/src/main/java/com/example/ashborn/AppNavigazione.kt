@@ -1,7 +1,6 @@
 package com.example.ashborn
 
 import android.app.Application
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -11,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
@@ -34,7 +32,7 @@ import com.example.ashborn.view.operazioni.Bonifico
 import com.example.ashborn.view.operazioni.DettagliOperazione
 import com.example.ashborn.view.operazioni.Mav
 import com.example.ashborn.view.operazioni.OperazioneConfermata
-import com.example.ashborn.view.operazioni.RiepilogoBonifico
+import com.example.ashborn.view.operazioni.RiepilogoOperazione
 import com.example.ashborn.viewModel.AltroViewModel
 import com.example.ashborn.viewModel.AltroViewModelFactory
 import com.example.ashborn.viewModel.AvvisiViewModel
@@ -47,6 +45,8 @@ import com.example.ashborn.viewModel.ContiViewModel
 import com.example.ashborn.viewModel.ContiViewModelFactory
 import com.example.ashborn.viewModel.DettagliOperazioneViewModel
 import com.example.ashborn.viewModel.DettagliOperazioneViewModelFactory
+import com.example.ashborn.viewModel.MavViewModel
+import com.example.ashborn.viewModel.MavViewModelFactory
 import com.example.ashborn.viewModel.OperationViewModel
 import com.example.ashborn.viewModel.OperationViewModelFactory
 import com.example.ashborn.viewModel.UtenteViewModel
@@ -116,7 +116,7 @@ fun AppNavigazione2(
                 }
             }
             navigation(
-                startDestination = "riepilogo-bonifico",
+                startDestination = "riepilogo-operazione",
                 route = "operazioni",
             ) {
                 composable("pin/{operazione}") {
@@ -263,18 +263,21 @@ fun AppNavigazione2(
                         )
                     }
                 }
-                /*composable("mav") {
+                composable("mav") {
+                    val mavViewModel : MavViewModel = viewModel(
+                        factory = MavViewModelFactory(applicationContext as Application)
+                    )
                     ErroreConnessione(connectionStatus = connectionStatus) {
                         Mav(
                             navController = navController,
                             viewModel = mavViewModel//operationViewModel
                         )
                     }
-                }*/
-                composable("riepilogo-bonifico/{operazione}") {
+                }
+                composable("riepilogo-operazione/{operazione}") {
                     val jsonData = it.arguments?.getString("operazione") ?: "No Data"
                     val operation: Operation = Json{ prettyPrint = true }.decodeFromString(Operation.serializer(), jsonData)
-                    RiepilogoBonifico(
+                    RiepilogoOperazione(
                         navController = navController,
                         operation = operation,
                     )
@@ -400,7 +403,7 @@ fun AppNavigazione(
                 }del = operationViewModel
                 )
             }
-            composable("riepilogo-bonifico") {
+            composable("riepilogo-operazione") {
                 RiepilogoBonifico(
                     navController = navController,
                     viewModel = operationViewModel
@@ -408,7 +411,7 @@ fun AppNavigazione(
             }
         }
         navigation(
-            startDestination = "riepilogo-bonifico",
+            startDestination = "riepilogo-operazione",
             route = "operazioni"
         ) {
             composable("pin") {

@@ -143,7 +143,7 @@ fun ListaOperazioniFatteConti(
                                 modifier = modifier
                             )
                             Text(
-                                text = if (i.operationType == TransactionType.WITHDRAWAL) {
+                                text = if (i.transactionType == TransactionType.WITHDRAWAL) {
                                     "-"
                                 } else {
                                     "+"
@@ -267,7 +267,7 @@ fun ListaOperazioniFatteCarte(
                                 modifier = modifier
                             )
                             Text(
-                                text = if (i.operationType == TransactionType.WITHDRAWAL) {
+                                text = if (i.transactionType == TransactionType.WITHDRAWAL) {
                                     "-"
                                 } else {
                                     "+"

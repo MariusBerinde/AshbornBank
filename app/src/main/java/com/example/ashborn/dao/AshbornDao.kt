@@ -14,6 +14,7 @@ import com.example.ashborn.data.Carta
 import com.example.ashborn.data.Conto
 import com.example.ashborn.data.LocalDateTimeSerializer
 import com.example.ashborn.data.Operation
+import com.example.ashborn.data.OperationType
 import com.example.ashborn.data.Stato
 import com.example.ashborn.data.StatoAvviso
 import com.example.ashborn.data.TransactionType
@@ -124,7 +125,8 @@ interface AshbornDao {
             description = operation.description,
             recipient = operation.recipient,
             amount = operation.amount,
-            operationType = TransactionType.DEPOSIT,
+            transactionType = TransactionType.DEPOSIT,
+            operationType = OperationType.WIRE_TRANSFER,
             bankAccount = codContoDest,
             iban = operation.iban,
             cardCode = null

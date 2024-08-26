@@ -41,6 +41,7 @@ import androidx.navigation.NavHostController
 import com.example.ashborn.R
 import com.example.ashborn.Validatore
 import com.example.ashborn.data.Operation
+import com.example.ashborn.data.OperationType
 import com.example.ashborn.data.TransactionType
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.view.CustomDatePickerDialog
@@ -301,7 +302,8 @@ fun Bonifico(
                                     clientCode = viewModel.codCliente,
                                     dateO = viewModel.dataAccredito,
                                     dateV = viewModel.dataAccredito,
-                                    operationType = TransactionType.WITHDRAWAL,
+                                    transactionType = TransactionType.WITHDRAWAL,
+                                    operationType = OperationType.WIRE_TRANSFER,
                                     amount = viewModel.importo.toDouble(),
                                     bankAccount = viewModel.codConto,
                                     description = viewModel.causale,
@@ -309,10 +311,11 @@ fun Bonifico(
                                     iban = viewModel.iban,
                                     recipient = viewModel.beneficiario,
                                 )
+
                                 val json = Json { prettyPrint = true }
                                 val data = json.encodeToString(Operation.serializer(), operation)
                                 Log.d(nameFun, "Operazione creata: $operation")
-                                navController.navigate("riepilogo-bonifico/$data")
+                                navController.navigate("riepilogo-operazione/$data")
                             } else {
                                 gestisciErroriBonifico(
                                     viewModel.beneficiario,
@@ -370,7 +373,8 @@ fun Bonifico(
                                 clientCode = viewModel.codCliente,
                                 dateO = viewModel.dataAccredito,
                                 dateV = viewModel.dataAccredito,
-                                operationType = TransactionType.WITHDRAWAL,
+                                transactionType = TransactionType.WITHDRAWAL,
+                                operationType = OperationType.WIRE_TRANSFER,
                                 amount = viewModel.importo.toDouble(),
                                 bankAccount = viewModel.codConto,
                                 description = viewModel.causale,
@@ -381,7 +385,7 @@ fun Bonifico(
                             val json = Json { prettyPrint = true }
                             val data = json.encodeToString(Operation.serializer(), operation)
                             Log.d(nameFun, "Operazione creata: $operation")
-                            navController.navigate("riepilogo-bonifico/$data")
+                            navController.navigate("riepilogo-operazione/$data")
                         } else {
                             gestisciErroriBonifico(
                                 viewModel.beneficiario,

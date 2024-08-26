@@ -59,4 +59,6 @@
     <string name="no_avvisi">Non sono presenti avvisi al momento</string>
     <string name="dettagli_avviso">Dettagli Avviso</string>
     <string name="titolo">Titolo</string>
+    <string name="riepilogo_mav">Riepilogo MAV</string>
+    <string name="carta">Riepilogo Carta</string>
 </resources>

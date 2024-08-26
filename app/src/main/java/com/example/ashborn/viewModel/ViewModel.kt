@@ -17,6 +17,7 @@ import com.example.ashborn.data.Carta
 import com.example.ashborn.data.Conto
 import com.example.ashborn.data.ErroreUiRegistrazioneStato
 import com.example.ashborn.data.Operation
+import com.example.ashborn.data.OperationType
 import com.example.ashborn.data.Stato
 import com.example.ashborn.data.TransactionType
 import com.example.ashborn.data.User
@@ -218,11 +219,12 @@ open class AshbornViewModel(
                 description = "Pagamento Bolletta",
                 //CurrencyAmount(167.00, Currency.getInstance("EUR")),
                 amount = 167.00,
-                operationType = TransactionType.WITHDRAWAL,
+                transactionType = TransactionType.WITHDRAWAL,
                 bankAccount = "42",
                 cardCode = "1111222233334444",
                 iban = "",
-                recipient = ""
+                recipient = "",
+                operationType = OperationType.WIRE_TRANSFER
             )
 
         )
@@ -237,11 +239,12 @@ open class AshbornViewModel(
                 description = "Pagamento Bolletta",
                 //CurrencyAmount(167.00, Currency.getInstance("EUR")),
                 amount = 167.00,
-                operationType = TransactionType.WITHDRAWAL,
+                transactionType = TransactionType.WITHDRAWAL,
                 bankAccount = "42",
                 cardCode = null,
                 iban = "",
                 recipient = "",
+                operationType = OperationType.WIRE_TRANSFER
             )
 
             )

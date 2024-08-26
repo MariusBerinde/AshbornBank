@@ -2,10 +2,15 @@ package com.example.ashborn.db
 
 
 import android.content.Context
+import androidx.room.AutoMigration
 import androidx.room.Database
+import androidx.room.RenameColumn
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.AutoMigrationSpec
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.ashborn.Converters
 import com.example.ashborn.dao.AshbornDao
 import com.example.ashborn.data.Avviso
@@ -16,8 +21,16 @@ import com.example.ashborn.data.User
 
 @Database(
     entities = [User::class, Operation::class, Conto::class, Carta::class, Avviso::class],
-    version = 1,
-    exportSchema = false,
+    version = 2,
+    exportSchema = true,
+  /*  autoMigrations = [
+
+        AutoMigration(
+            from = 1,
+            to = 2,
+            spec = AshbornDb.Migration1To2::class
+        )
+    ],*/
 
 )
 @TypeConverters(Converters::class)
@@ -34,17 +47,26 @@ abstract class AshbornDb:RoomDatabase() {
                    AshbornDb::class.java,
                    "Ashborn_db"
                )
-                  // .fallbackToDestructiveMigration()
                    .createFromAsset("Ashborn_db.db")
+              //     .addMigrations(MIGRATION_1_2 )
+                  .fallbackToDestructiveMigration()
                  //  .createFromAsset("sqlite.db")
                    .build()
                    .also { Instance = it }
            }
-       }
+                                                   }
+
    }
 
+    @RenameColumn(tableName = "operations", fromColumnName = "operationType" , toColumnName = "transactionType")
+    class Migration1To2: AutoMigrationSpec
 }
 
+private val MIGRATION_1_2 = object : Migration(1, 2) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE operations ADD COLUMN operationType TEXT not null ")
+    }
+}
 /*
 addCallback(object : RoomDatabase.Callback(){
                    override fun onCreate(db: SupportSQLiteDatabase) {

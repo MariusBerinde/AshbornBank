@@ -1,5 +1,6 @@
 package com.example.ashborn.data
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -19,9 +20,9 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 // todo: scrivere trafila per memorizzare in db
-enum class TransactionType {
-    DEPOSIT, WITHDRAWAL
-}
+enum class TransactionType { DEPOSIT, WITHDRAWAL }
+
+enum class OperationType{ MAV,WIRE_TRANSFER,CARD }
 
 @Entity(
     tableName = "operations",
@@ -44,24 +45,25 @@ enum class TransactionType {
 @Serializable
 data class Operation(
     @PrimaryKey (autoGenerate = true)
-    val id: Long = 0,
-    val clientCode:String,
+    @ColumnInfo("id") val id: Long = 0,
+    @ColumnInfo("clientCode")val clientCode:String,
     @Serializable(with = LocalDateTimeSerializer::class)
     @TypeConverters(Converters::class)
     @Contextual
-    val dateO: LocalDateTime, //data ordinante (effettuazione operazione)
+    @ColumnInfo("dateO")   val dateO: LocalDateTime, //data ordinante (effettuazione operazione)
     @Serializable(with = LocalDateTimeSerializer::class)
     @TypeConverters(Converters::class)
     @Contextual
-    val dateV: LocalDateTime, // data valuta
-    val description:String,
-    val recipient:String,
+    @ColumnInfo("dateV")   val dateV: LocalDateTime, // data valuta
+    @ColumnInfo("description")  val description:String,
+    @ColumnInfo("recipient")val recipient:String,
     //val amount: CurrencyAmount,
-    val amount: Double,
-    val operationType:TransactionType,
-    val bankAccount:String,
-    val iban:String, //iban del destinatario
-    val cardCode:String?, // se nullo è un bonifico altrimenti è un movimento della carta
+    @ColumnInfo("amount")val amount: Double,
+    @ColumnInfo("transactionType") val transactionType: TransactionType,
+    @ColumnInfo("bankAccount")  val bankAccount:String,
+    @ColumnInfo("iban")val iban:String, //iban del destinatario  //se origine MAV iban contiene il codice Mav
+    @ColumnInfo("cardCode") val cardCode:String?, // se nullo è un bonifico altrimenti è un movimento della carta
+    @ColumnInfo("operationType ", defaultValue = "WIRE_TRANSFER")  val operationType:OperationType = OperationType.WIRE_TRANSFER
 )/*{
    open fun getValue(){}
 

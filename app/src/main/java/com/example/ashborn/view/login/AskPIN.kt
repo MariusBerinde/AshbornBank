@@ -122,7 +122,8 @@ fun AskPIN(
                     if (viewModel.pin.isNotEmpty()) {
                         viewModel.setPinX(viewModel.pin.dropLast(1))
                     }
-                }) {
+                }
+            ) {
                 Icon(Icons.Filled.Clear, contentDescription = "icona cancellazione")
             }
             //FIXME: capire perché non mostra l'overlay

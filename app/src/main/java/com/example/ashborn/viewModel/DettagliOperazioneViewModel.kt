@@ -25,7 +25,7 @@ class DettagliOperazioneViewModel(application: Application): AndroidViewModel(ap
             contoRepository.aggiornaSaldo(
                 operation.clientCode,
                 operation.bankAccount,
-                operation.amount * if(operation.operationType == TransactionType.WITHDRAWAL) 1  else -1,
+                operation.amount * if(operation.transactionType == TransactionType.WITHDRAWAL) 1  else -1,
             )
         }
     }
@@ -40,7 +40,7 @@ class DettagliOperazioneViewModel(application: Application): AndroidViewModel(ap
             contoRepository.aggiornaSaldo(
                 operation.clientCode,
                 operation.bankAccount,
-                operation.amount * if(operation.operationType == TransactionType.WITHDRAWAL) 1  else -1,
+                operation.amount * if(operation.transactionType == TransactionType.WITHDRAWAL) 1  else -1,
             )
         }
     }
