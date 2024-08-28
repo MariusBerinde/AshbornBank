@@ -3,6 +3,7 @@ package com.example.ashborn.view.operazioni
 import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,6 +36,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -41,6 +44,7 @@ import androidx.navigation.NavHostController
 import com.example.ashborn.R
 import com.example.ashborn.Validatore
 import com.example.ashborn.data.Operation
+import com.example.ashborn.data.OperationStatus
 import com.example.ashborn.data.OperationType
 import com.example.ashborn.data.TransactionType
 import com.example.ashborn.ui.theme.SmallPadding
@@ -51,7 +55,6 @@ import com.example.ashborn.viewModel.BonificoViewModel
 import kotlinx.serialization.json.Json
 import java.time.Instant
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
@@ -67,7 +70,8 @@ fun Bonifico(
     val focusRequester4 = remember { FocusRequester() }
     val focusRequester5 = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
-    var isOpen = remember { mutableStateOf(false) }
+    val isOpen = remember { mutableStateOf(false) }
+    val isChecked = remember { mutableStateOf(false) }
     val nameFun = object {}.javaClass.enclosingMethod?.name
 
     Column(
@@ -303,13 +307,14 @@ fun Bonifico(
                                     dateO = viewModel.dataAccredito,
                                     dateV = viewModel.dataAccredito,
                                     transactionType = TransactionType.WITHDRAWAL,
-                                    operationType = OperationType.WIRE_TRANSFER,
+                                    operationType = if(isChecked.value) OperationType.INSTANTANEOUS_WIRE_TRANSFER else OperationType.WIRE_TRANSFER,
                                     amount = viewModel.importo.toDouble(),
                                     bankAccount = viewModel.codConto,
                                     description = viewModel.causale,
                                     cardCode = null,
                                     iban = viewModel.iban,
                                     recipient = viewModel.beneficiario,
+                                    operationStatus = if(isChecked.value) OperationStatus.DONE else OperationStatus.PENDING
                                 )
 
                                 val json = Json { prettyPrint = true }
@@ -356,6 +361,17 @@ fun Bonifico(
                     )
                 }
             }
+            Row(modifier = Modifier.align(Alignment.End), verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = stringResource(id = R.string.bonifico_istantaneo),
+                    fontWeight = FontWeight.Bold,
+                )
+                Spacer(modifier = Modifier.padding(SmallPadding))
+                Switch(
+                    checked = isChecked.value,
+                    onCheckedChange = {isChecked.value = !isChecked.value}
+                )
+            }
             Row() {
                 Button(
                     onClick = {
@@ -374,13 +390,14 @@ fun Bonifico(
                                 dateO = viewModel.dataAccredito,
                                 dateV = viewModel.dataAccredito,
                                 transactionType = TransactionType.WITHDRAWAL,
-                                operationType = OperationType.WIRE_TRANSFER,
+                                operationType = if(isChecked.value) OperationType.INSTANTANEOUS_WIRE_TRANSFER else OperationType.WIRE_TRANSFER,
                                 amount = viewModel.importo.toDouble(),
                                 bankAccount = viewModel.codConto,
                                 description = viewModel.causale,
                                 cardCode = null,
                                 iban = viewModel.iban,
                                 recipient = viewModel.beneficiario,
+                                operationStatus = if(isChecked.value) OperationStatus.DONE else OperationStatus.PENDING,
                             )
                             val json = Json { prettyPrint = true }
                             val data = json.encodeToString(Operation.serializer(), operation)

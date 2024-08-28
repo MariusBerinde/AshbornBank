@@ -1,0 +1,392 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 3,
+    "identityHash": "7dcf4ce02bd15d14a4f84de535734f5e",
+    "entities": [
+      {
+        "tableName": "users",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `surname` TEXT NOT NULL, `dateOfBirth` TEXT NOT NULL, `pin` TEXT NOT NULL, `clientCode` TEXT NOT NULL, PRIMARY KEY(`clientCode`))",
+        "fields": [
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "surname",
+            "columnName": "surname",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dateOfBirth",
+            "columnName": "dateOfBirth",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pin",
+            "columnName": "pin",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "clientCode",
+            "columnName": "clientCode",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "clientCode"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "operations",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `clientCode` TEXT NOT NULL, `dateO` TEXT NOT NULL, `dateV` TEXT NOT NULL, `description` TEXT NOT NULL, `recipient` TEXT NOT NULL, `amount` REAL NOT NULL, `transactionType` TEXT NOT NULL, `bankAccount` TEXT NOT NULL, `iban` TEXT NOT NULL, `cardCode` TEXT, `operationType ` TEXT NOT NULL DEFAULT 'WIRE_TRANSFER', `operationStatus` TEXT NOT NULL DEFAULT 'DONE', FOREIGN KEY(`clientCode`) REFERENCES `users`(`clientCode`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`bankAccount`) REFERENCES `conti`(`codConto`) ON UPDATE CASCADE ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "clientCode",
+            "columnName": "clientCode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dateO",
+            "columnName": "dateO",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dateV",
+            "columnName": "dateV",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "recipient",
+            "columnName": "recipient",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "amount",
+            "columnName": "amount",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "transactionType",
+            "columnName": "transactionType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bankAccount",
+            "columnName": "bankAccount",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "iban",
+            "columnName": "iban",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cardCode",
+            "columnName": "cardCode",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "operationType",
+            "columnName": "operationType ",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'WIRE_TRANSFER'"
+          },
+          {
+            "fieldPath": "operationStatus",
+            "columnName": "operationStatus",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'DONE'"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_operations_clientCode",
+            "unique": false,
+            "columnNames": [
+              "clientCode"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_operations_clientCode` ON `${TABLE_NAME}` (`clientCode`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "users",
+            "onDelete": "NO ACTION",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "clientCode"
+            ],
+            "referencedColumns": [
+              "clientCode"
+            ]
+          },
+          {
+            "table": "conti",
+            "onDelete": "NO ACTION",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "bankAccount"
+            ],
+            "referencedColumns": [
+              "codConto"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "conti",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`codConto` TEXT NOT NULL, `codCliente` TEXT NOT NULL, `saldo` REAL NOT NULL, `iban` TEXT NOT NULL, `stato` TEXT NOT NULL, PRIMARY KEY(`codConto`), FOREIGN KEY(`codCliente`) REFERENCES `users`(`clientCode`) ON UPDATE CASCADE ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "codConto",
+            "columnName": "codConto",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "codCliente",
+            "columnName": "codCliente",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "saldo",
+            "columnName": "saldo",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "iban",
+            "columnName": "iban",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "stato",
+            "columnName": "stato",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "codConto"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "users",
+            "onDelete": "NO ACTION",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "codCliente"
+            ],
+            "referencedColumns": [
+              "clientCode"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "carte",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`nrCarta` INTEGER NOT NULL, `dataScadenza` TEXT NOT NULL, `cvc` TEXT NOT NULL, `codUtente` TEXT NOT NULL, `codConto` TEXT NOT NULL, `saldo` REAL NOT NULL, `statoCarta` TEXT NOT NULL, PRIMARY KEY(`nrCarta`), FOREIGN KEY(`codUtente`) REFERENCES `users`(`clientCode`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`codConto`) REFERENCES `conti`(`codConto`) ON UPDATE CASCADE ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "nrCarta",
+            "columnName": "nrCarta",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dataScadenza",
+            "columnName": "dataScadenza",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cvc",
+            "columnName": "cvc",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "codUtente",
+            "columnName": "codUtente",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "codConto",
+            "columnName": "codConto",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "saldo",
+            "columnName": "saldo",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "statoCarta",
+            "columnName": "statoCarta",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "nrCarta"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "users",
+            "onDelete": "NO ACTION",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "codUtente"
+            ],
+            "referencedColumns": [
+              "clientCode"
+            ]
+          },
+          {
+            "table": "conti",
+            "onDelete": "NO ACTION",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "codConto"
+            ],
+            "referencedColumns": [
+              "codConto"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "avvisi",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `titolo` TEXT NOT NULL, `contenuto` TEXT NOT NULL, `data` TEXT NOT NULL, `destinatario` TEXT NOT NULL, `stato` TEXT NOT NULL, FOREIGN KEY(`destinatario`) REFERENCES `users`(`clientCode`) ON UPDATE CASCADE ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "titolo",
+            "columnName": "titolo",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "contenuto",
+            "columnName": "contenuto",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "data",
+            "columnName": "data",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "destinatario",
+            "columnName": "destinatario",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "stato",
+            "columnName": "stato",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_avvisi_id",
+            "unique": false,
+            "columnNames": [
+              "id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_avvisi_id` ON `${TABLE_NAME}` (`id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "users",
+            "onDelete": "NO ACTION",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "destinatario"
+            ],
+            "referencedColumns": [
+              "clientCode"
+            ]
+          }
+        ]
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7dcf4ce02bd15d14a4f84de535734f5e')"
+    ]
+  }
+}

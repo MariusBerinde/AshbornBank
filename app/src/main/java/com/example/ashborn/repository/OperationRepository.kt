@@ -28,7 +28,7 @@ class OperationRepository(private val ashbornDao: AshbornDao) {
     fun getOperazioniConto(codConto: String, from: LocalDateTime, upTo: LocalDateTime, offset: Int, limit: Int): Flow<MutableList<Operation>> = ashbornDao.getOperazioniConto(codConto, from, upTo ,offset, limit)
 
     suspend  fun executeInstantTransaction(operation: Operation) = ashbornDao.executeInstantTransaction(operation)
-
+    suspend fun executeTransaction(operation: Operation)  = ashbornDao.executeTransaction(operation)
 
 
     // se incrementiamo operazioni su carta @Insert(onConflict = OnConflictStrategy.IGNORE)

@@ -1,11 +1,11 @@
-- l'utente ha 2 conti per mostrare il passaggio
-- gestione carta 
-- pagare f24
-- sezione chiamata "documenti tasse" in cui a seconda del modello di tasse scelto e dell'anno restituisce doc bancari
-- creazione estratti conto in cui si sceglie il tipo
+# Cose Da Svipuppare
+
+- interfaccia selezione conto o carta 
 - semplificare richiesta di disconoscimento
-- aggiungere cambio valute 
 - gestione della password
-- l'utente può avere diversi conti 
 - non si possono fare screenshot quando l'applicazione è in primo piano. non si può aprire l'app in schermo diviso o popup
-- pagamento mav/rav con qrcode, il qrcode contiene informazioni per fare il pagamento
+- pagamento mav con qrcode, il qrcode contiene informazioni per fare il pagamento
+- condivisione iban
+- condivisione operazione fatta
+- notifica quando avviene un'operazione
+- pulsante logout

@@ -6,30 +6,24 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import androidx.room.TypeConverters
 import androidx.room.Upsert
-import com.example.ashborn.Converters
 import com.example.ashborn.data.Avviso
 import com.example.ashborn.data.Carta
 import com.example.ashborn.data.Conto
-import com.example.ashborn.data.LocalDateTimeSerializer
 import com.example.ashborn.data.Operation
-import com.example.ashborn.data.OperationType
+import com.example.ashborn.data.OperationStatus
 import com.example.ashborn.data.Stato
 import com.example.ashborn.data.StatoAvviso
 import com.example.ashborn.data.TransactionType
 import com.example.ashborn.data.User
 import kotlinx.coroutines.flow.Flow
-import kotlinx.serialization.Contextual
-import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 
 /**
- * serve a  prendere dati i dati dell'utente dal db
+ * @brief serve a  interagire con ashborndb
  */
 @Dao
 interface AshbornDao {
-
    @Upsert
    suspend fun upsertUser(utente:User)
 
@@ -47,16 +41,19 @@ interface AshbornDao {
    suspend fun insertOperation(operation: Operation)
 
    @Delete
-   suspend fun deleteOperation(operation: Operation)
+   suspend fun deleteOperationB(operation: Operation)
 
-   // @Query("SELECT * FROM operations WHERE clientCode = :clientCode AND dateO >= :from AND dateO <= :upTo LIMIT :limit OFFSET :offset")
-   //fun getOperations(clientCode: String, from: LocalDateTime, upTo: LocalDateTime, offset: Int, limit: Int): Flow<MutableList<Operation>>
+   @Transaction
+   suspend fun deleteOperation(operation: Operation) {
+      aggiornaSaldo(clientCode = operation.clientCode, operation.bankAccount, -operation.amount)
+      updateOperationStatus(operation.id, OperationStatus.CANCELED)
+   }
 
+   @Query("UPDATE operations SET operationStatus = :status WHERE id = :operationId")
+   fun updateOperationStatus(operationId: Long, status: OperationStatus)
 
    @Transaction
    suspend fun insertAllOperations(listOperation: List<Operation>) = listOperation.forEach{insertOperation(it)}
-
-
 
    @Insert(onConflict = OnConflictStrategy.IGNORE)
    suspend fun insertCarta(carta:Carta)
@@ -69,14 +66,10 @@ interface AshbornDao {
    @Query(" update carte set statoCarta=:nuovoStato where nrCarta=:idCarta")
    suspend fun aggiornaStatoCarta(idCarta:Long,nuovoStato:Stato)
 
-
-   @Query("select * from operations where cardCode=:idCarta AND dateO >= :from AND dateO <= :upTo LIMIT :limit OFFSET :offset")
-   // @Query("select * from operations where cardCode=:idCarta  LIMIT :limit OFFSET :offset")
+   @Query("select * from operations where cardCode=:idCarta AND dateO >= :from AND dateO <= :upTo AND operationStatus <> 'CANCELED' LIMIT :limit OFFSET :offset")
    fun getOperazioniCarta(idCarta:Long,from: LocalDateTime, upTo: LocalDateTime, offset: Int, limit: Int) : Flow<MutableList<Operation>>
-   //fun getOperazioniCarte(idCarta:Long,from: LocalDateTime, upTo: LocalDateTime, offset: Int, limit: Int) : Flow<MutableList<Operation>>
 
-   @Query("SELECT * FROM operations WHERE bankAccount = :codConto AND dateO >= :from AND dateO <= :upTo LIMIT :limit OFFSET :offset")
-   //@Query("SELECT * FROM operations WHERE bankAccount = :codConto  LIMIT :limit OFFSET :offset")
+   @Query("SELECT * FROM operations WHERE bankAccount = :codConto AND dateO >= :from AND dateO <= :upTo AND operationStatus <> 'CANCELED' LIMIT :limit OFFSET :offset")
    fun getOperazioniConto(codConto: String, from: LocalDateTime, upTo: LocalDateTime, offset: Int, limit: Int): Flow<MutableList<Operation>>
 
    @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -95,7 +88,6 @@ interface AshbornDao {
       amount: Double,
    )
 
-
    @Query("select * from avvisi where destinatario= :codCliente")
    fun getAvvisi(codCliente: String): Flow<MutableList<Avviso>>
 
@@ -106,15 +98,25 @@ interface AshbornDao {
    fun aggiungiAvviso(avviso:Avviso)
 
    @Transaction
+   suspend fun executeTransaction(operation: Operation) {
+      val nameFun = object {}.javaClass.enclosingMethod?.name
+      Log.d(nameFun, "Enter")
+      aggiornaSaldo(operation.clientCode,operation.bankAccount,-operation.amount)
+      Log.d(nameFun, "Amount Updated")
+      insertOperation(operation)
+      Log.d(nameFun, "Exit")
+   }
+
+   @Transaction
    suspend fun executeInstantTransaction(operation: Operation) {
 
       val nameFun = object {}.javaClass.enclosingMethod?.name
-
-      aggiornaSaldo(operation.clientCode,operation.bankAccount,-(operation.amount+operation.amount/10))
+      Log.d(nameFun, "Enter")
+      aggiornaSaldo(operation.clientCode, operation.bankAccount, -operation.amount)
       insertOperation(operation)
       if(isAshbornIban(operation.iban)){
          Log.d(nameFun,"passato is valid iban")
-        aggiornaSaldoIban(operation.iban,operation.amount)
+         aggiornaSaldoIban(operation.iban,operation.amount)
          val conto = getContoByIban(operation.iban)
          val codClienteDest = conto.codCliente
          val codContoDest = conto.codConto
@@ -126,18 +128,18 @@ interface AshbornDao {
             recipient = operation.recipient,
             amount = operation.amount,
             transactionType = TransactionType.DEPOSIT,
-            operationType = OperationType.WIRE_TRANSFER,
+            operationType = operation.operationType,
             bankAccount = codContoDest,
             iban = operation.iban,
-            cardCode = null
+            cardCode = null,
+            operationStatus = OperationStatus.DONE
          )
-
          Log.d(nameFun,"dettagli operazione creata $newOp")
-
-        insertOperation(
-         newOp
-        )
+         insertOperation(newOp)
+         aggiornaSaldo(codClienteDest, codContoDest, newOp.amount)
       }
+      Log.d(nameFun, "Exit")
+
    }
 
    @Query("select * from conti where iban = :iban")
@@ -151,6 +153,8 @@ interface AshbornDao {
 
    @Query("select exists (select iban from conti where iban= :iban)")
    fun isAshbornIban(iban: String): Boolean
+
+
 
 
 }

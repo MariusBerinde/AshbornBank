@@ -61,4 +61,5 @@
     <string name="titolo">Titolo</string>
     <string name="riepilogo_mav">Riepilogo MAV</string>
     <string name="carta">Riepilogo Carta</string>
+    <string name="bonifico_istantaneo">Bonifico Istantaneo</string>
 </resources>

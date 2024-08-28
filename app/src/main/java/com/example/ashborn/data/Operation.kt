@@ -22,7 +22,9 @@ import java.time.format.DateTimeFormatter
 // todo: scrivere trafila per memorizzare in db
 enum class TransactionType { DEPOSIT, WITHDRAWAL }
 
-enum class OperationType{ MAV,WIRE_TRANSFER,CARD }
+enum class OperationType { MAV, WIRE_TRANSFER, INSTANTANEOUS_WIRE_TRANSFER, CARD }
+
+enum class OperationStatus { DONE, PENDING, CANCELED }
 
 @Entity(
     tableName = "operations",
@@ -57,13 +59,13 @@ data class Operation(
     @ColumnInfo("dateV")   val dateV: LocalDateTime, // data valuta
     @ColumnInfo("description")  val description:String,
     @ColumnInfo("recipient")val recipient:String,
-    //val amount: CurrencyAmount,
     @ColumnInfo("amount")val amount: Double,
     @ColumnInfo("transactionType") val transactionType: TransactionType,
     @ColumnInfo("bankAccount")  val bankAccount:String,
     @ColumnInfo("iban")val iban:String, //iban del destinatario  //se origine MAV iban contiene il codice Mav
     @ColumnInfo("cardCode") val cardCode:String?, // se nullo è un bonifico altrimenti è un movimento della carta
-    @ColumnInfo("operationType ", defaultValue = "WIRE_TRANSFER")  val operationType:OperationType = OperationType.WIRE_TRANSFER
+    @ColumnInfo("operationType ", defaultValue = "WIRE_TRANSFER")  val operationType:OperationType = OperationType.WIRE_TRANSFER,
+    @ColumnInfo("operationStatus", defaultValue = "DONE") val operationStatus: OperationStatus = OperationStatus.DONE
 )/*{
    open fun getValue(){}
 
