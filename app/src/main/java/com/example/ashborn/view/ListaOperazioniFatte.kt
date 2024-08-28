@@ -138,7 +138,7 @@ fun ListaOperazioniFatteConti(
                                 modifier = modifier
                             )
                             Text(
-                                text = i.description,
+                                text = i.description.substring(0, if(i.description.length > 25) 25 else i.description.length) + if(i.description.length > 25) "..." else "",
                                 fontSize = 13.sp,
                                 modifier = modifier
                             )

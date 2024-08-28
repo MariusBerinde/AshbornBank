@@ -97,7 +97,7 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
 
     fun executeTransaction(operation: Operation){
         viewModelScope.launch(Dispatchers.IO) {
-            operationRepository.insertOperation(operation)
+            operationRepository.executeTransaction(operation)
         }
     }
 

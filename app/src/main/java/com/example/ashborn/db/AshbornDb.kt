@@ -2,13 +2,10 @@ package com.example.ashborn.db
 
 
 import android.content.Context
-import androidx.room.AutoMigration
 import androidx.room.Database
-import androidx.room.RenameColumn
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import androidx.room.migration.AutoMigrationSpec
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.ashborn.Converters
@@ -19,11 +16,12 @@ import com.example.ashborn.data.Conto
 import com.example.ashborn.data.Operation
 import com.example.ashborn.data.User
 
+
 @Database(
     entities = [User::class, Operation::class, Conto::class, Carta::class, Avviso::class],
-    version = 2,
+    version = 3,
     exportSchema = true,
-  /*  autoMigrations = [
+    /*autoMigrations = [
 
         AutoMigration(
             from = 1,
@@ -36,37 +34,39 @@ import com.example.ashborn.data.User
 @TypeConverters(Converters::class)
 abstract class AshbornDb:RoomDatabase() {
    abstract fun ashbornDao(): AshbornDao
-   // abstract val dao:UserDao
    companion object{
        @Volatile
        private var Instance:AshbornDb?=null
-       fun getDatabase(context: Context): AshbornDb{
-           return Instance?: synchronized(this){
+       fun getDatabase(context: Context): AshbornDb {
+           return Instance ?: synchronized(this) {
                Room.databaseBuilder(
                    context,
                    AshbornDb::class.java,
                    "Ashborn_db"
                )
                    .createFromAsset("Ashborn_db.db")
-              //     .addMigrations(MIGRATION_1_2 )
-                  .fallbackToDestructiveMigration()
-                 //  .createFromAsset("sqlite.db")
+                   .addMigrations(MIGRATION_2_3)
+                   .fallbackToDestructiveMigration()
                    .build()
                    .also { Instance = it }
            }
-                                                   }
-
+       }
    }
-
-    @RenameColumn(tableName = "operations", fromColumnName = "operationType" , toColumnName = "transactionType")
-    class Migration1To2: AutoMigrationSpec
 }
 
 private val MIGRATION_1_2 = object : Migration(1, 2) {
-    override fun migrate(database: SupportSQLiteDatabase) {
-        database.execSQL("ALTER TABLE operations ADD COLUMN operationType TEXT not null ")
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE operations ADD COLUMN operationType TEXT not null")
     }
 }
+
+private val MIGRATION_2_3 = object : Migration(2, 3) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE operations ADD COLUMN operationStatus TEXT NOT NULL DEFAULT 'DONE'")
+    }
+}
+
+
 /*
 addCallback(object : RoomDatabase.Callback(){
                    override fun onCreate(db: SupportSQLiteDatabase) {
