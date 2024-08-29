@@ -86,7 +86,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.navigation.compose) // Aggiungi questa riga
 
-
+    implementation(libs.google.code.scanner)
 
     val room_version = "2.6.1"
 
