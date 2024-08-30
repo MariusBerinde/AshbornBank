@@ -15,7 +15,7 @@ junitKtx = "1.2.1"
 uiTestJunit4Android = "1.6.8"
 roomCommon = "2.6.1"
 
-code-scanner = "16.0.0"
+code-scanner = "16.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

@@ -19,7 +19,6 @@ import com.google.mlkit.vision.codescanner.GmsBarcodeScanner
 import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 
-/*
 class MainActivity : ComponentActivity() {
     private lateinit var connectivityObserver: ConnectivityObserver
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,8 +36,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-*/
 
+/*
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,7 +78,7 @@ class MainActivity : ComponentActivity() {
                 Log.d(TAG, "initiateScanner: $result")
 
                 when (barcode.valueType) {
-                    Barcode.TYPE_URL -> {
+                    Barcode.TYPE_TEXT -> {
                         Log.d(TAG, "initiateScanner: ${barcode.valueType}")
                     }
 
@@ -117,3 +116,4 @@ fun Greeting(name: String, modifier: Modifier = Modifier, onClick: () -> Unit = 
         }
     }
 }
+*/

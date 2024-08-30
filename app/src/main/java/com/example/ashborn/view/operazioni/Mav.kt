@@ -1,6 +1,8 @@
 package com.example.ashborn.view.operazioni
 
+import android.content.Context
 import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -33,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,6 +45,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.ashborn.R
 import com.example.ashborn.data.Operation
+import com.example.ashborn.data.OperationStatus
 import com.example.ashborn.data.OperationType
 import com.example.ashborn.data.TransactionType
 import com.example.ashborn.ui.theme.LargePadding
@@ -49,27 +53,170 @@ import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.view.CustomDatePickerDialog
 import com.example.ashborn.view.DateUseCase
 import com.example.ashborn.viewModel.MavViewModel
+import com.google.mlkit.vision.barcode.common.Barcode
+import com.google.mlkit.vision.codescanner.GmsBarcodeScanner
+import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions
+import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 import kotlinx.serialization.json.Json
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Mav(
     navController: NavHostController,
-    viewModel: MavViewModel,
+    //viewModel: MavViewModel,
 ){
+    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
+        Row (modifier = Modifier
+            .fillMaxWidth()
+            .padding(LargePadding)) {
+            Button(onClick = { navController.navigate("scan-qrcode") }) {
+                Text(text = stringResource(id = R.string.scan_qrcode))
+            }
+        }
+        Spacer(modifier = Modifier.padding(LargePadding))
+        Row (modifier = Modifier
+            .fillMaxWidth()
+            .padding(LargePadding)) {
+            Button(onClick = { navController.navigate("mav-manuale") }) {
+                Text(text = stringResource(id = R.string.inserisci_a_mano))
+            }
+        }
 
-    var isOpen = remember { mutableStateOf(false) }
+    }
+}
+
+@Composable
+fun MavQrCode(
+    navController: NavHostController,
+    viewModel: MavViewModel,
+) {
+    val nameFun = object {}.javaClass.enclosingMethod?.name
+    val context = LocalContext.current
+    val gmsScannerOptions = configureScannerOption()
+    val instance = getBarcodeScannerInstance(context,gmsScannerOptions)
+    val json = Json { prettyPrint = true }
+    Column(modifier = Modifier.fillMaxSize()) {
+        //var result: String?
+        //do {
+        //result = initiateScanner(instance)
+        instance.startScan()
+            .addOnSuccessListener { barcode ->
+                val result: String //= barcode.rawValue.toString()
+                when (barcode.valueType) {
+                    Barcode.TYPE_TEXT -> {
+                        result = barcode.rawValue.toString()
+                        Log.d(nameFun , "initiateScanner: $result")
+                        Log.d(nameFun, "initiateScanner: ${barcode.valueType}")
+                        val arguments = result.split("|")
+                        if (arguments.size != 3) {
+                            val operation = Operation(
+                                clientCode = viewModel.codCliente,
+                                dateO = viewModel.dataAccreditoMav,
+                                dateV = viewModel.dataAccreditoMav,
+                                transactionType = TransactionType.WITHDRAWAL,
+                                operationType = OperationType.MAV,
+                                amount = arguments[2].toDouble() / 100.0,
+                                bankAccount = viewModel.codConto,
+                                description = arguments[1],
+                                cardCode = null,
+                                iban = arguments[0],
+                                recipient = viewModel.codiceMav,
+                            )
+                            val data = json.encodeToString(Operation.serializer(), operation)
+
+                            Log.d(nameFun, "Operazione creata: $operation")
+                            navController.navigate("mav-manuale/$data")
+                        }
+                    }
+                    else -> {
+                        Log.d(nameFun, "initiateScanner: ${barcode.valueType}")
+                        navController.popBackStack()
+                    }
+                }
+            }
+            .addOnCanceledListener {}
+            .addOnFailureListener {}
+        //} while (result == null)
+    }
+}
+
+private fun configureScannerOption(): GmsBarcodeScannerOptions {
+    return GmsBarcodeScannerOptions.Builder()
+        .setBarcodeFormats(
+            Barcode.FORMAT_QR_CODE,
+            Barcode.FORMAT_AZTEC
+        )
+        .build()
+}
+
+private fun getBarcodeScannerInstance(
+    context: Context,
+    gmsBarcodeScannerOptions: GmsBarcodeScannerOptions
+): GmsBarcodeScanner {
+    return GmsBarcodeScanning.getClient(context, gmsBarcodeScannerOptions)
+}
+
+private fun initiateScanner(gmsBarcodeScanner: GmsBarcodeScanner) {
+    val nameFun = object {}.javaClass.enclosingMethod?.name
+    var result: String? = null
+    gmsBarcodeScanner.startScan()
+        .addOnSuccessListener { barcode ->
+            // Task completed successfully
+            result = barcode.rawValue.toString()
+            Log.d(nameFun , "initiateScanner: $result")
+
+
+            when (barcode.valueType) {
+                Barcode.TYPE_TEXT -> {
+                    result = barcode.rawValue.toString()
+                    Log.d(nameFun , "initiateScanner: $result")
+                    Log.d(nameFun, "initiateScanner: ${barcode.valueType}")
+                }
+
+                else -> {
+                    result = null
+                    Log.d(nameFun, "initiateScanner: ${barcode.valueType}")
+                }
+            }
+
+
+
+            /*Log.d(nameFun, "initiateScanner: Display value ${barcode.displayValue}")
+            Log.d(nameFun, "initiateScanner: Display value ${barcode.format}")*/
+        }
+        .addOnCanceledListener {
+            // Task canceled
+        }
+        .addOnFailureListener {
+            // Task failed with an exception
+        }
+    //while (result == null) delay(1)
+    //return result
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MavManuale(
+    navController: NavHostController,
+    viewModel: MavViewModel,
+    operation: Operation?,
+) {
+    val isOpen = remember { mutableStateOf(false) }
     val focusRequester1 = remember { FocusRequester() }
     val focusRequester2 = remember { FocusRequester() }
     val focusRequester3 = remember { FocusRequester() }
     val nameFun = object {}.javaClass.enclosingMethod?.name
     val focusManager = LocalFocusManager.current
     val json = Json { prettyPrint = true }
-
+    if(operation != null) {
+        viewModel.setCodiceMavX(operation.iban)
+        viewModel.setImportoMavX(operation.amount.toString())
+        viewModel.setDescrizioneMavX(operation.description)
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -101,7 +248,7 @@ fun Mav(
         Spacer(modifier = Modifier.padding(LargePadding))
         Row() {
             var expanded by remember { mutableStateOf(false) }
-            var selectedText = viewModel.ordinanteMav
+            val selectedText = viewModel.ordinanteMav
             ExposedDropdownMenuBox(
                 expanded = expanded,
                 onExpandedChange = {
@@ -110,7 +257,7 @@ fun Mav(
             ) {
                 OutlinedTextField(
                     value = viewModel.ordinanteMav,
-                    onValueChange = {viewModel.setOrdinanteMavX(selectedText)},
+                    onValueChange = { viewModel.setOrdinanteMavX(selectedText) },
                     readOnly = true,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                     modifier = Modifier
@@ -118,7 +265,10 @@ fun Mav(
                         .fillMaxWidth()
                         .menuAnchor(),
                     label = { Text(stringResource(id = R.string.ordinante)) },
-                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Color.Black, unfocusedBorderColor = Color.Black)
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color.Black,
+                        unfocusedBorderColor = Color.Black
+                    )
                 )
                 ExposedDropdownMenu(
                     expanded = expanded,
@@ -182,9 +332,10 @@ fun Mav(
             // CustomDatePicker(useCase = DateUseCase.MAV, yearRange = LocalDate.now().year..LocalDate.now().plusYears(2).year)
         }
         Spacer(modifier = Modifier.padding(LargePadding))
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(SmallPadding)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(SmallPadding)
         ) {
             OutlinedTextField(
                 modifier = Modifier
@@ -198,12 +349,13 @@ fun Mav(
                 value = viewModel.codiceMav,
                 onValueChange = { viewModel.setCodiceMavX(it) },
 
-            )
+                )
         }
         Spacer(modifier = Modifier.padding(LargePadding))
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(SmallPadding)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(SmallPadding)
         ) {
             OutlinedTextField(
                 modifier = Modifier
@@ -214,7 +366,7 @@ fun Mav(
                     onNext = { focusRequester3.requestFocus() }
                 ),
                 label = { Text(stringResource(id = R.string.importo)) },
-                value = viewModel.importoMav.toString(),
+                value = viewModel.importoMav,
                 onValueChange = { viewModel.setImportoMavX(it) }
             )
         }
@@ -243,6 +395,7 @@ fun Mav(
                             cardCode = null,
                             iban = viewModel.codiceMav,
                             recipient = viewModel.codiceMav,
+                            operationStatus = if (viewModel.dataAccreditoMav == LocalDateTime.now()) OperationStatus.DONE else OperationStatus.PENDING,
                         )
 
                         val data = json.encodeToString(Operation.serializer(), operation)
@@ -261,30 +414,31 @@ fun Mav(
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-           val operation = Operation(
-                            clientCode = viewModel.codCliente,
-                            dateO = viewModel.dataAccreditoMav,
-                            dateV = viewModel.dataAccreditoMav,
-                            transactionType = TransactionType.WITHDRAWAL,
-                            operationType = OperationType.MAV,
-                            amount = viewModel.importoMav.toDouble(),
-                            bankAccount = viewModel.codConto,
-                            description = viewModel.descrizioneMav,
-                            cardCode = null,
-                            iban = viewModel.codiceMav,
-                            recipient = viewModel.codiceMav,
-                        )
+                val operation = Operation(
+                    clientCode = viewModel.codCliente,
+                    dateO = viewModel.dataAccreditoMav,
+                    dateV = viewModel.dataAccreditoMav,
+                    transactionType = TransactionType.WITHDRAWAL,
+                    operationType = OperationType.MAV,
+                    amount = viewModel.importoMav.toDouble(),
+                    bankAccount = viewModel.codConto,
+                    description = viewModel.descrizioneMav,
+                    cardCode = null,
+                    iban = viewModel.codiceMav,
+                    recipient = viewModel.codiceMav,
+                    operationStatus = if (viewModel.dataAccreditoMav == LocalDateTime.now()) OperationStatus.DONE else OperationStatus.PENDING,
+                )
 
-                        val data = json.encodeToString(Operation.serializer(), operation)
+                val data = json.encodeToString(Operation.serializer(), operation)
 
-                        Log.d(nameFun, "Operazione creata: $operation")
-                        navController.navigate("riepilogo-operazione/$data")
+                Log.d(nameFun, "Operazione creata: $operation")
+                navController.navigate("riepilogo-operazione/$data")
             }
         ) {
             Text(text = stringResource(id = R.string.continua))
         }
 
     }
+
+
 }
-
-

@@ -62,4 +62,6 @@
     <string name="riepilogo_mav">Riepilogo MAV</string>
     <string name="carta">Riepilogo Carta</string>
     <string name="bonifico_istantaneo">Bonifico Istantaneo</string>
+    <string name="scan_qrcode">Scannerizza Qr Code</string>
+    <string name="inserisci_a_mano">Inserisci Dati Mav Manualmente</string>
 </resources>

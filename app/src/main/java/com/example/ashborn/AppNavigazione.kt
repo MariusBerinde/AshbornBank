@@ -31,6 +31,8 @@ import com.example.ashborn.view.operazioni.Archivio
 import com.example.ashborn.view.operazioni.Bonifico
 import com.example.ashborn.view.operazioni.DettagliOperazione
 import com.example.ashborn.view.operazioni.Mav
+import com.example.ashborn.view.operazioni.MavManuale
+import com.example.ashborn.view.operazioni.MavQrCode
 import com.example.ashborn.view.operazioni.OperazioneConfermata
 import com.example.ashborn.view.operazioni.RiepilogoOperazione
 import com.example.ashborn.viewModel.AltroViewModel
@@ -264,13 +266,38 @@ fun AppNavigazione2(
                     }
                 }
                 composable("mav") {
+                    /*val mavViewModel : MavViewModel = viewModel(
+                        factory = MavViewModelFactory(applicationContext as Application)
+                    )*/
+                    ErroreConnessione(connectionStatus = connectionStatus) {
+                        Mav(
+                            navController = navController,
+                            //viewModel = mavViewModel//operationViewModel
+                        )
+                    }
+                }
+                composable("scan-qrcode") {
                     val mavViewModel : MavViewModel = viewModel(
                         factory = MavViewModelFactory(applicationContext as Application)
                     )
                     ErroreConnessione(connectionStatus = connectionStatus) {
-                        Mav(
+                        MavQrCode(
                             navController = navController,
-                            viewModel = mavViewModel//operationViewModel
+                            viewModel = mavViewModel
+                        )
+                    }
+                }
+                composable("mav-manuale{operazione}") {
+                    val mavViewModel : MavViewModel = viewModel(
+                        factory = MavViewModelFactory(applicationContext as Application)
+                    )
+                    val jsonData = it.arguments?.getString("operazione") ?: "No Data"
+                    val operation: Operation = Json{ prettyPrint = true }.decodeFromString(Operation.serializer(), jsonData)
+                    ErroreConnessione(connectionStatus = connectionStatus) {
+                        MavManuale(
+                            navController = navController,
+                            viewModel = mavViewModel,
+                            operation = operation,
                         )
                     }
                 }
