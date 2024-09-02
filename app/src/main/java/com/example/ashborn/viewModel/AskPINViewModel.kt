@@ -113,11 +113,11 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
     fun revocaOperazione(operation: Operation) {
         viewModelScope.launch {
             operationRepository.deleteOperation(operation)
-            contoRepository.aggiornaSaldo(
+           /* contoRepository.aggiornaSaldo(
                 operation.clientCode,
                 operation.bankAccount,
                 operation.amount * if(operation.transactionType == TransactionType.WITHDRAWAL) 1  else -1,
-                )
+                )*/
         }
     }
 }

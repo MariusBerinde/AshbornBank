@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.ashborn.R
 import com.example.ashborn.data.Operation
+import com.example.ashborn.data.OperationStatus
 import com.example.ashborn.data.OperationType
 import com.example.ashborn.data.TransactionType
 import com.example.ashborn.ui.theme.LargePadding
@@ -52,6 +53,7 @@ import com.example.ashborn.viewModel.MavViewModel
 import kotlinx.serialization.json.Json
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
@@ -231,6 +233,7 @@ fun Mav(
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
                 keyboardActions = KeyboardActions(
                     onSend = {
+                        val limit_today = LocalDateTime.of( LocalDate.now().year, LocalDate.now().month, LocalDate.now().dayOfMonth, 17, 0, 0)
                         val operation = Operation(
                             clientCode = viewModel.codCliente,
                             dateO = viewModel.dataAccreditoMav,
@@ -243,7 +246,9 @@ fun Mav(
                             cardCode = null,
                             iban = viewModel.codiceMav,
                             recipient = viewModel.codiceMav,
-                        )
+
+                            operationStatus = if(viewModel.dataAccreditoMav <= limit_today)  OperationStatus.DONE else OperationStatus.PENDING,
+                            )
 
                         val data = json.encodeToString(Operation.serializer(), operation)
 

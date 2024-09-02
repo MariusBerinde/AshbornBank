@@ -161,8 +161,6 @@ fun DettagliOperazione(
                                         val data = json.encodeToString(Operation.serializer(), operation)
                                         navController.navigate("annulla-operazione/$data")
                                     }
-                                    else if(operation.operationStatus == OperationStatus.DONE)
-                                        navController.navigate("disconosci-operazione")
                                 }
                             ) {
                                 Text(
@@ -173,12 +171,7 @@ fun DettagliOperazione(
                             Button(
                                 colors = ButtonDefaults.buttonColors(Color.Red),
                                 onClick = {
-                                    if(operation.operationStatus == OperationStatus.PENDING){
-                                        val json = Json{prettyPrint=true}
-                                        val data = json.encodeToString(Operation.serializer(), operation)
-                                        navController.navigate("annulla-operazione/$data")
-                                    }
-                                    else if(operation.operationStatus == OperationStatus.DONE)
+
                                         navController.navigate("disconosci-operazione")
                                  }
                             ) {
