@@ -109,7 +109,7 @@ fun ListaOperazioniFatteConti(
                 }
             }
         }
-        if (voci == null) {
+        if (voci == null || voci.isEmpty()) {
             item { Text(text = "non ci sono elementi") }
         } else {
             for (i in voci) {

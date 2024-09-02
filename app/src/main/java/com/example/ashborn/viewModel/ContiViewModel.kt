@@ -66,20 +66,20 @@ class ContiViewModel(application: Application): AndroidViewModel(application) {
     ): ArrayList<Operation> {
         val nameFun = nameClass+","+ (object {}.javaClass.enclosingMethod?.name ?: "")
         var dati = arrayListOf<Operation>()
-            Log.d(nameFun,"Conto mostato ${cm?.codConto}")
-            runBlocking (Dispatchers.IO) {
-                val operazioniDb = viewModelScope.async(Dispatchers.IO) {
-                    return@async operationRepository.getOperazioniConto(
-                        cm.codConto,
-                        LocalDateTime.now().minusDays(30),
-                        LocalDateTime.now(),
-                        0,
-                        10
-                    )
-                }.await()
-                dati = operazioniDb.first().toCollection(ArrayList<Operation>())
-           //     Log.d(nameFun, "getOperationConto : $operazioniConto")
-            }
+        Log.d(nameFun,"Conto mostato ${cm?.codConto}")
+        runBlocking (Dispatchers.IO) {
+            val operazioniDb = viewModelScope.async(Dispatchers.IO) {
+                return@async operationRepository.getOperazioniConto(
+                    cm.codConto,
+                    LocalDateTime.now().minusDays(30),
+                    LocalDateTime.now().plusMonths(18),
+                    0,
+                    10
+                )
+            }.await()
+            dati = operazioniDb.first().toCollection(ArrayList<Operation>())
+            //     Log.d(nameFun, "getOperationConto : $operazioniConto")
+        }
 
         return dati
     }

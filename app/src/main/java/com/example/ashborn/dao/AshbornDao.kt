@@ -70,6 +70,7 @@ interface AshbornDao {
    fun getOperazioniCarta(idCarta:Long,from: LocalDateTime, upTo: LocalDateTime, offset: Int, limit: Int) : Flow<MutableList<Operation>>
 
    @Query("SELECT * FROM operations WHERE bankAccount = :codConto AND dateO >= :from AND dateO <= :upTo AND operationStatus <> 'CANCELED' LIMIT :limit OFFSET :offset")
+  // @Query("SELECT * FROM operations WHERE bankAccount = :codConto AND  operationStatus <> 'CANCELED' LIMIT :limit OFFSET :offset")
    fun getOperazioniConto(codConto: String, from: LocalDateTime, upTo: LocalDateTime, offset: Int, limit: Int): Flow<MutableList<Operation>>
 
    @Insert(onConflict = OnConflictStrategy.IGNORE)

@@ -27,34 +27,3 @@ class MainActivity : ComponentActivity() {
 }
 
 
-/*class MainActivity : ComponentActivity() {
-
-    private lateinit var connectivityObserver: ConnectivityObserver
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        connectivityObserver = NetworkConnectivityObserver(applicationContext)
-        setContent {
-            AshbornTheme {
-                val status by connectivityObserver.observe().collectAsState(
-                    initial = ConnectivityObserver.Status.Unavailable
-                )
-
-                val viewModel: AshbornViewModel by viewModels()
-
-                val operationViewModel: OperationViewModel by viewModels()
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    AppNavigazione(
-                        viewModel = viewModel,
-                        operationViewModel = operationViewModel,
-                        connectionStatus = status
-                    )
-                }
-            }
-        }
-    }
-
-
-}*/
