@@ -45,7 +45,7 @@ interface AshbornDao {
 
    @Transaction
    suspend fun deleteOperation(operation: Operation) {
-      aggiornaSaldo(clientCode = operation.clientCode, operation.bankAccount, -operation.amount)
+      aggiornaSaldo(clientCode = operation.clientCode, operation.bankAccount, operation.amount)
       updateOperationStatus(operation.id, OperationStatus.CANCELED)
    }
 

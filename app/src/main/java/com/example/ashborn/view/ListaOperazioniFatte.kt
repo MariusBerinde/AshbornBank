@@ -3,11 +3,14 @@ package com.example.ashborn.view
 import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -20,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -129,19 +133,26 @@ fun ListaOperazioniFatteConti(
                                 val data = json.encodeToString(Operation.serializer(), i)
 
                                 navController.navigate("dettagli-operazione/$data")
-                            }
+                            },
+                            horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
+                            val width = 140.dp
                             val modifier = Modifier.padding(16.dp, 18.dp, 2.dp, 4.dp)
-                            Text(
-                                text = i.dateO.toLocalDate().toString(),
-                                fontSize = 13.sp,
-                                modifier = modifier
-                            )
-                            Text(
+                            Column(modifier = Modifier.width(width).align(Alignment.CenterVertically)) {
+                                Text(
+                                    text = i.dateO.toLocalDate().toString(),
+                                    fontSize = 13.sp,
+                                    //modifier = modifier
+                                )
+                            }
+
+                            Column(modifier = Modifier.width(width).align(Alignment.CenterVertically)) {
+                                Text(
                                 text = i.description.substring(0, if(i.description.length > 25) 25 else i.description.length) + if(i.description.length > 25) "..." else "",
                                 fontSize = 13.sp,
-                                modifier = modifier
-                            )
+                                //modifier = modifier
+                            )}
+                            Column(modifier = Modifier.width(150.dp).align(Alignment.CenterVertically)) {
                             Text(
                                 text = if (i.transactionType == TransactionType.WITHDRAWAL) {
                                     "-"
@@ -149,8 +160,8 @@ fun ListaOperazioniFatteConti(
                                     "+"
                                 } + i.amount.toString() + "€",
                                 fontSize = 13.sp,
-                                modifier = modifier
-                            )
+                                //modifier = modifier
+                            )}
                         }
                     }
                 }

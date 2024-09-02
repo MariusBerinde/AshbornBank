@@ -246,7 +246,6 @@ fun Mav(
                             cardCode = null,
                             iban = viewModel.codiceMav,
                             recipient = viewModel.codiceMav,
-
                             operationStatus = if(viewModel.dataAccreditoMav <= limit_today)  OperationStatus.DONE else OperationStatus.PENDING,
                             )
 
@@ -266,24 +265,26 @@ fun Mav(
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-           val operation = Operation(
-                            clientCode = viewModel.codCliente,
-                            dateO = viewModel.dataAccreditoMav,
-                            dateV = viewModel.dataAccreditoMav,
-                            transactionType = TransactionType.WITHDRAWAL,
-                            operationType = OperationType.MAV,
-                            amount = viewModel.importoMav.toDouble(),
-                            bankAccount = viewModel.codConto,
-                            description = viewModel.descrizioneMav,
-                            cardCode = null,
-                            iban = viewModel.codiceMav,
-                            recipient = viewModel.codiceMav,
-                        )
+                val limit_today = LocalDateTime.of( LocalDate.now().year, LocalDate.now().month, LocalDate.now().dayOfMonth, 17, 0, 0)
+                val operation = Operation(
+                    clientCode = viewModel.codCliente,
+                    dateO = viewModel.dataAccreditoMav,
+                    dateV = viewModel.dataAccreditoMav,
+                    transactionType = TransactionType.WITHDRAWAL,
+                    operationType = OperationType.MAV,
+                    amount = viewModel.importoMav.toDouble(),
+                    bankAccount = viewModel.codConto,
+                    description = viewModel.descrizioneMav,
+                    cardCode = null,
+                    iban = viewModel.codiceMav,
+                    recipient = viewModel.codiceMav,
+                    operationStatus = if(viewModel.dataAccreditoMav <= limit_today)  OperationStatus.DONE else OperationStatus.PENDING,
+                )
 
-                        val data = json.encodeToString(Operation.serializer(), operation)
+                val data = json.encodeToString(Operation.serializer(), operation)
 
-                        Log.d(nameFun, "Operazione creata: $operation")
-                        navController.navigate("riepilogo-operazione/$data")
+                Log.d(nameFun, "Operazione creata: $operation")
+                navController.navigate("riepilogo-operazione/$data")
             }
         ) {
             Text(text = stringResource(id = R.string.continua))

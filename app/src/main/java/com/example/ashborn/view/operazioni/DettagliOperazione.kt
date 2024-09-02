@@ -144,15 +144,20 @@ fun DettagliOperazione(
                                 tint = Color.Gray
                             )
                         }
+                        val todatAtFivePm =  LocalDateTime.of(
+                            LocalDate.now().year,
+                            LocalDate.now().month,
+                            LocalDate.now().dayOfMonth,
+                            17,
+                            0,
+                            0)
+                        val dateIsTodayInTime = operation.dateO <= todatAtFivePm && LocalDateTime.now() <= todatAtFivePm &&
+                                operation.operationStatus == OperationStatus.PENDING
 
-                        if (operation.dateO <= LocalDateTime.of(
-                                LocalDate.now().year,
-                                LocalDate.now().month,
-                                LocalDate.now().dayOfMonth,
-                                17,
-                                0,
-                                0)
-                        ) {
+                        val dateIsAtLeastTomorrow = operation.dateO >= todatAtFivePm &&
+                                operation.operationStatus == OperationStatus.PENDING
+
+                        if (dateIsTodayInTime || dateIsAtLeastTomorrow) {
                             Button(
                                 colors = ButtonDefaults.buttonColors(Color.Red),
                                 onClick = {
