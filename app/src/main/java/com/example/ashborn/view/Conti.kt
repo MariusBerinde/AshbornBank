@@ -2,10 +2,13 @@ package com.example.ashborn.view
 
 import android.content.Context
 import android.content.Intent
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
@@ -34,56 +37,78 @@ fun Conti(
     navController: NavHostController,
     viewModel: ContiViewModel
 ) {
-
-    Column (modifier = Modifier) {
-        Row(modifier = Modifier) {
-            Box(modifier = Modifier.padding(MediumPadding)) {
-                Card(modifier = Modifier.padding(MediumPadding)) {
-                    Column {
-                        Row(modifier = Modifier.padding(MediumPadding)) {
-                            Text(
-                                text = stringResource(id = R.string.conto) + ": " + viewModel.contoMostrato?.codConto,
-                                modifier = Modifier
-                            )
-                        }
-                        Row(modifier = Modifier.padding(MediumPadding)) {
-                            Column(modifier = Modifier.align(Alignment.CenterVertically)) {
+    if(viewModel.contoMostrato != null){
+        Column(modifier = Modifier) {
+            Row(modifier = Modifier) {
+                Box(modifier = Modifier.padding(MediumPadding)) {
+                    Card(modifier = Modifier.padding(MediumPadding)) {
+                        Column {
+                            Row(modifier = Modifier.padding(MediumPadding)) {
                                 Text(
-                                    text = stringResource(id = R.string.saldo) + ": " + viewModel.contoMostrato?.saldo,
-                                    fontSize = 20.sp
-                                )
-                            }
-                            Spacer(modifier = Modifier.padding(start = 160.dp))
-                            Column {
-                                IconButton(onClick = {  }, modifier = Modifier) {
-                                    Icon(Icons.Filled.Info, contentDescription = "mostra saldo")
-                                }
-                            }
-                        }
-                        Row(modifier = Modifier.padding(MediumPadding)) {
-                            Column(modifier = Modifier.align(Alignment.CenterVertically)) {
-                                Text(
-                                    text = "IBAN: " + viewModel.contoMostrato?.iban,
-                                    fontSize = 12.sp,
+                                    text = stringResource(id = R.string.conto) + ": " + viewModel.contoMostrato?.codConto,
                                     modifier = Modifier
                                 )
                             }
-                            Spacer(modifier = Modifier.padding(start = 20.dp))
-                            Column {
-                                Share(
-                                    text = viewModel.contoMostrato?.iban?:"",
-                                    context = LocalContext.current
-                                )
+                            Row(modifier = Modifier.padding(MediumPadding)) {
+                                Column(modifier = Modifier.align(Alignment.CenterVertically)) {
+                                    Text(
+                                        text = stringResource(id = R.string.saldo) + ": " + viewModel.contoMostrato?.saldo,
+                                        fontSize = 20.sp
+                                    )
+                                }
+                                Spacer(modifier = Modifier.padding(start = 160.dp))
+                                Column {
+                                    IconButton(onClick = { }, modifier = Modifier) {
+                                        Icon(Icons.Filled.Info, contentDescription = "mostra saldo")
+                                    }
+                                }
+                            }
+                            Row(modifier = Modifier.padding(MediumPadding)) {
+                                Column(modifier = Modifier.align(Alignment.CenterVertically)) {
+                                    Text(
+                                        text = "IBAN: " + viewModel.contoMostrato?.iban,
+                                        fontSize = 12.sp,
+                                        modifier = Modifier
+                                    )
+                                }
+                                Spacer(modifier = Modifier.padding(start = 20.dp))
+                                Column {
+                                    Share(
+                                        text = viewModel.contoMostrato?.iban ?: "",
+                                        context = LocalContext.current
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
+            Spacer(modifier = Modifier.padding(SmallPadding))
+            Row {
+                Column(modifier = Modifier.padding(SmallPadding)) {
+                    ListaOperazioniFatteConti(navController, viewModel)
+                }
+            }
         }
-        Spacer(modifier = Modifier.padding(SmallPadding))
-        Row {
-            Column(modifier = Modifier.padding(SmallPadding)) {
-                ListaOperazioniFatteConti(navController, viewModel)
+    } else {
+        Card (
+            modifier = Modifier
+                .padding(SmallPadding)
+                .fillMaxWidth()
+        ){
+            Column (
+                modifier = Modifier
+                    .height(150.dp)
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.Center
+            ){
+                Row (modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(SmallPadding)
+                    .align(Alignment.CenterHorizontally)
+                ){
+                    Text(text = stringResource(id = R.string.no_conti))
+                }
             }
         }
     }
