@@ -23,8 +23,9 @@ import java.time.format.DateTimeFormatter
 enum class TransactionType { DEPOSIT, WITHDRAWAL }
 
 enum class OperationType { MAV, WIRE_TRANSFER, INSTANTANEOUS_WIRE_TRANSFER, CARD }
-
-enum class OperationStatus { DONE, PENDING, CANCELED }
+/*@ lo stato canceled indica che l'operazione è da cancellare , TO_DELETE indica che l'operazione è da cancellare
+* */
+enum class OperationStatus { DONE, PENDING, CANCELED , TO_DELETE}
 
 @Entity(
     tableName = "operations",
@@ -65,7 +66,7 @@ data class Operation(
     @ColumnInfo("iban")val iban:String, //iban del destinatario  //se origine MAV iban contiene il codice Mav
     @ColumnInfo("cardCode") val cardCode:String?, // se nullo è un bonifico altrimenti è un movimento della carta
     @ColumnInfo("operationType ", defaultValue = "WIRE_TRANSFER")  val operationType:OperationType = OperationType.WIRE_TRANSFER,
-    @ColumnInfo("operationStatus", defaultValue = "DONE") val operationStatus: OperationStatus = OperationStatus.DONE
+    @ColumnInfo("operationStatus", defaultValue = "DONE") var operationStatus: OperationStatus = OperationStatus.DONE
 )/*{
    open fun getValue(){}
 

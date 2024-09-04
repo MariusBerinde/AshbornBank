@@ -13,9 +13,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.ashborn.data.Operation
+import com.example.ashborn.data.TransactionType
 import com.example.ashborn.data.User
 import com.example.ashborn.db.AshbornDb
 import com.example.ashborn.model.DataStoreManager
+import com.example.ashborn.repository.ContoRepository
 import com.example.ashborn.repository.OfflineUserRepository
 import com.example.ashborn.repository.OperationRepository
 import kotlinx.coroutines.CoroutineScope
@@ -35,6 +37,7 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
     val ashbornDao = AshbornDb.getDatabase(application).ashbornDao()
     val userRepository = OfflineUserRepository(ashbornDao)
     val operationRepository = OperationRepository(ashbornDao)
+    val contoRepository = ContoRepository(ashbornDao)
     val codCliente = run {
         var ris = ""
         runBlocking(Dispatchers.IO) {
@@ -104,6 +107,17 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
     fun executeInstantTransaction(operation: Operation){
         viewModelScope.launch(Dispatchers.IO) {
             operationRepository.executeInstantTransaction(operation)
+        }
+    }
+
+    fun revocaOperazione(operation: Operation) {
+        viewModelScope.launch {
+            operationRepository.deleteOperation(operation)
+           /* contoRepository.aggiornaSaldo(
+                operation.clientCode,
+                operation.bankAccount,
+                operation.amount * if(operation.transactionType == TransactionType.WITHDRAWAL) 1  else -1,
+                )*/
         }
     }
 }

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
@@ -73,9 +74,14 @@ fun FronteCarta(carta: Carta?,utente:String) {
     val codUtente = carta?.codUtente
     var isFront by remember { mutableStateOf(true) }
     if (carta != null) {
-        Card (modifier = Modifier.padding(SmallPadding).fillMaxWidth()){
+        Log.d("Carta ","stato carta = $carta")
+        Card (modifier = Modifier
+            .padding(SmallPadding)
+            .fillMaxWidth()){
            Column(
-                modifier = Modifier.padding(0.dp, 16.dp).fillMaxSize(),
+                modifier = Modifier
+                    .padding(0.dp, 16.dp)
+                    .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 if (!isFront) {
@@ -112,6 +118,27 @@ fun FronteCarta(carta: Carta?,utente:String) {
                 }
             }
         }
+    } else {
+       Card (
+           modifier = Modifier
+               .padding(SmallPadding)
+               .fillMaxWidth()
+       ){
+           Column (
+               modifier = Modifier
+                   .height(150.dp)
+                   .fillMaxWidth(),
+               verticalArrangement = Arrangement.Center
+           ){
+               Row (modifier = Modifier
+                   .fillMaxWidth()
+                   .padding(SmallPadding)
+                   .align(Alignment.CenterHorizontally)
+               ){
+                   Text(text = stringResource(id = R.string.no_carte))
+               }
+           }
+       }
     }
 }
 

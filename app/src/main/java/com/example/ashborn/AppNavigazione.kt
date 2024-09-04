@@ -16,10 +16,12 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.example.ashborn.data.Avviso
 import com.example.ashborn.data.Operation
+import com.example.ashborn.view.AnnullaOperazione
 import com.example.ashborn.view.Avvisi
 import com.example.ashborn.view.DettagliAvviso
 import com.example.ashborn.view.ErroreConnessione
 import com.example.ashborn.view.Impostazioni
+import com.example.ashborn.view.IstruzioniDisconiscimento
 import com.example.ashborn.view.Logout
 import com.example.ashborn.view.Pagine
 import com.example.ashborn.view.Sicurezza
@@ -280,6 +282,20 @@ fun AppNavigazione2(
                     RiepilogoOperazione(
                         navController = navController,
                         operation = operation,
+                    )
+                }
+                composable("disconosci-operazione"){
+
+                    IstruzioniDisconiscimento(
+                        navController = navController,
+                        )
+                }
+                composable("annulla-operazione/{operation}"){
+                    val jsonData = it.arguments?.getString("operation") ?: "No Data"
+                    val operation: Operation = Json{ prettyPrint = true }.decodeFromString(Operation.serializer(), jsonData)
+                    AnnullaOperazione(
+                        navController = navController,
+                        operazion = operation
                     )
                 }
             }

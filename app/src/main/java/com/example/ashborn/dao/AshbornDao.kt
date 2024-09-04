@@ -45,7 +45,7 @@ interface AshbornDao {
 
    @Transaction
    suspend fun deleteOperation(operation: Operation) {
-      aggiornaSaldo(clientCode = operation.clientCode, operation.bankAccount, -operation.amount)
+      aggiornaSaldo(clientCode = operation.clientCode, operation.bankAccount, operation.amount)
       updateOperationStatus(operation.id, OperationStatus.CANCELED)
    }
 
@@ -69,7 +69,8 @@ interface AshbornDao {
    @Query("select * from operations where cardCode=:idCarta AND dateO >= :from AND dateO <= :upTo AND operationStatus <> 'CANCELED' LIMIT :limit OFFSET :offset")
    fun getOperazioniCarta(idCarta:Long,from: LocalDateTime, upTo: LocalDateTime, offset: Int, limit: Int) : Flow<MutableList<Operation>>
 
-   @Query("SELECT * FROM operations WHERE bankAccount = :codConto AND dateO >= :from AND dateO <= :upTo AND operationStatus <> 'CANCELED' LIMIT :limit OFFSET :offset")
+   @Query("SELECT * FROM operations WHERE bankAccount = :codConto AND dateO >= :from AND dateO <= :upTo AND operationStatus <> 'CANCELED' ORDER BY dateO DESC LIMIT :limit OFFSET :offset")
+  // @Query("SELECT * FROM operations WHERE bankAccount = :codConto AND  operationStatus <> 'CANCELED' LIMIT :limit OFFSET :offset")
    fun getOperazioniConto(codConto: String, from: LocalDateTime, upTo: LocalDateTime, offset: Int, limit: Int): Flow<MutableList<Operation>>
 
    @Insert(onConflict = OnConflictStrategy.IGNORE)
