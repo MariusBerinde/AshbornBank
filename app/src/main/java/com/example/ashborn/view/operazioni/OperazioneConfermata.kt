@@ -38,7 +38,7 @@ fun OperazioneConfermata(navController : NavHostController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row (modifier = Modifier.align(Alignment.CenterHorizontally)) {
-            Text(text = stringResource(id = R.string.bonifico), fontSize = 40.sp)
+            Text(text = stringResource(id = R.string.operazione_confermata), fontSize = 40.sp)
         }
         Spacer(modifier = Modifier.padding(top = 150.dp))
         Row () {
@@ -64,6 +64,42 @@ fun OperazioneConfermata(navController : NavHostController) {
     }
 }
 
+@Composable
+fun OperazioneRifiutata(navController: NavHostController) {
+    Column(
+        modifier = Modifier
+            .padding(MediumPadding)
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row (modifier = Modifier.align(Alignment.CenterHorizontally)) {
+            Text(text = stringResource(id = R.string.operazione_rifiutata), fontSize = 40.sp)
+        }
+        Spacer(modifier = Modifier.padding(top = 150.dp))
+        Row () {
+            Text(text = stringResource(id = R.string.rifiuto_operazione), fontSize = 20.sp)
+        }
+        Row () {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.emoticon_sad),
+                modifier = Modifier.size(256.dp),
+                tint = Color.Yellow,
+                contentDescription = "smile")
+        }
+        Row () {
+            Button(onClick = { navController.navigate("bonifico") }, modifier = Modifier.fillMaxWidth()) {
+                Text(text = stringResource(id = R.string.altro_bonifico))
+            }
+        }
+        Row () {
+            Button(onClick = { navController.navigate("conti") }, modifier = Modifier.fillMaxWidth()) {
+                Text(text = stringResource(id = R.string.chiudi))
+            }
+        }
+    }
+}
+
+
 @Preview(showBackground = true)
 @Composable
 fun PreviewOperazioneConfermata() {
@@ -73,7 +109,7 @@ fun PreviewOperazioneConfermata() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            OperazioneConfermata(navController = navController)
+            OperazioneRifiutata(navController = navController)
         }
     }
 }

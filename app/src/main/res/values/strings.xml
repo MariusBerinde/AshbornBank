@@ -65,4 +65,14 @@
     <string name="no_operazioni">Non ci sono ancora operazioni</string>
     <string name="no_carte">Non hai ancora nessuna carte, chiedine una in filiale</string>
     <string name="no_conti">Non hai nessun conto aperto al momento, aprine uno in filiale</string>
+    <string name="elimina">Elimina Smartphone</string>
+    <string name="elimina_dialog">Vuoi rimuovere tutti i dati da questo dispositivo? Clicca conferma per procedere</string>
+    <string name="annulla">Annulla</string>
+    <string name="conferma_elimina_dialog">"Sei sicuro? Questa operazione è irreversibile, e eliminerà dal dispositivo tutti i dati relativi a questa applicazione. Clicca conferma per proseguire "</string>
+    <string name="condividi_operazione">Vorrei condividere con te le informazioni dell\'operazione che ho eseguito</string>
+    <string name="id_operazione">Identificativo</string>
+    <string name="eseguito_app">Eseguito con app: Ashborn Bank</string>
+    <string name="operazione_confermata">Operazione Confermata</string>
+    <string name="operazione_rifiutata">Operazione Rifiutata</string>
+    <string name="rifiuto_operazione">Operazione Fallita per eccesso di errori</string>
 </resources>

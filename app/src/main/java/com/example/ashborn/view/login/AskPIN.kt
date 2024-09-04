@@ -99,7 +99,7 @@ fun AskPIN(
             Button(
                 modifier = Modifier.size(70.dp, 40.dp),
                 onClick = {
-                    Log.i("AskPIN", (viewModel.checkPin()).toString())
+
                     viewModel.validatePin()
                 }
             ) {
@@ -147,7 +147,7 @@ fun AskPIN(
                         }
 
                     }
-                    NavigationEvent.NavigateToError -> {
+                    NavigationEvent.NavigateToError, NavigationEvent.NavigateToErrorAlt -> {
                         Log.i("AskPIN", "errore e numero di tentativi ${viewModel.wrongAttempts}")
                         if(viewModel.wrongAttempts > 3 ) {
                             if (operation == null) {

@@ -13,7 +13,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.ashborn.data.Operation
-import com.example.ashborn.data.TransactionType
 import com.example.ashborn.data.User
 import com.example.ashborn.db.AshbornDb
 import com.example.ashborn.model.DataStoreManager
@@ -61,15 +60,21 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
 
     fun validatePin() {
         if (!checkPin()) {
-            Log.i("ViewModel", "formato pin sbagliato")
-            _navigationEvent.value = NavigationEvent.NavigateToError
             wrongAttempts++
+            Log.i("ViewModel", "formato pin sbagliato: $wrongAttempts")
+            if (wrongAttempts % 2 == 0)
+                _navigationEvent.value = NavigationEvent.NavigateToError
+            else
+                _navigationEvent.value = NavigationEvent.NavigateToErrorAlt
         } else {
             viewModelScope.launch {
                 if (!userRepository.isPinCorrect(codCliente, pin.hashCode().toString()).first()) {
                     Log.i("ViewModel", " pin sbagliato")
-                    _navigationEvent.value = NavigationEvent.NavigateToError
                     wrongAttempts++
+                    if (wrongAttempts % 2 == 0)
+                        _navigationEvent.value = NavigationEvent.NavigateToError
+                    else
+                        _navigationEvent.value = NavigationEvent.NavigateToErrorAlt
                 } else {
                     _navigationEvent.value = NavigationEvent.NavigateToNext
                 }
@@ -113,11 +118,6 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
     fun revocaOperazione(operation: Operation) {
         viewModelScope.launch {
             operationRepository.deleteOperation(operation)
-           /* contoRepository.aggiornaSaldo(
-                operation.clientCode,
-                operation.bankAccount,
-                operation.amount * if(operation.transactionType == TransactionType.WITHDRAWAL) 1  else -1,
-                )*/
         }
     }
 }
@@ -134,5 +134,6 @@ class AskPinViewModelFactory(private val application: Application) : ViewModelPr
 sealed class NavigationEvent {
     object NavigateToNext: NavigationEvent()
     object NavigateToError: NavigationEvent()
+    object NavigateToErrorAlt: NavigationEvent()
     object NavigateToPin: NavigationEvent()
 }

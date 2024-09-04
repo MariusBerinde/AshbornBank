@@ -17,20 +17,29 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.ashborn.MainActivity
 import com.example.ashborn.R
@@ -92,7 +101,7 @@ fun Altro(
         }
         Row {
             Column(modifier = Modifier.padding(SmallPadding)) {
-                ListaAzioni(navController)
+                ListaAzioni(navController, viewModel)
             }
         }
     }
@@ -100,7 +109,7 @@ fun Altro(
 
 
 @Composable
-fun ListaAzioni(navController: NavHostController) {
+fun ListaAzioni(navController: NavHostController, viewModel: AltroViewModel) {
     Column(modifier = Modifier.run {
         padding(SmallPadding)
             .border(1.dp, Color.Black, shape = RoundedCornerShape(9.dp))
@@ -108,12 +117,14 @@ fun ListaAzioni(navController: NavHostController) {
             .height(450.dp)
     }
     ) {
+        val isOpen = remember { mutableStateOf(false) }
+        var confermaEliminazioneSmartphone = remember { mutableStateOf(false) }
+
         val voci: ArrayList<Voice> = arrayListOf(
             Voice(Icons.Filled.PlayArrow, stringResource(id = R.string.avvisi), "avvisi"),
             Voice(Icons.Filled.PlayArrow, stringResource(id = R.string.archivio), "archivio"),
             Voice(Icons.Filled.PlayArrow, stringResource(id = R.string.sicurezza), "sicurezza"),
             Voice(Icons.Filled.PlayArrow, stringResource(id = R.string.impostazioni), "impostazioni"),
-            Voice(Icons.Filled.PlayArrow, stringResource(id = R.string.logout), "logout")
         )
         for (i in voci) {
             Card (
@@ -133,56 +144,123 @@ fun ListaAzioni(navController: NavHostController) {
                     Icon(i.icon, contentDescription = "icona")
                     Text(i.name)
                 }
+            }
+        }
+        Card (
+            modifier = Modifier
+                .padding(SmallPadding)
+                .height(60.dp)
+                .fillMaxWidth()
+                .align(Alignment.CenterHorizontally)
+        ){
+            Row(modifier = Modifier
+                .fillMaxSize()
+                .clickable {
+                    Log.d("OperazioniAltro", "elimina")
+                    isOpen.value = !isOpen.value
+                }
+            ) {
+                Icon(Icons.Filled.Delete, contentDescription = "icona")
+                Text(stringResource(id = R.string.elimina))
+            }
+        }
+        if (isOpen.value) {
+            Dialog(onDismissRequest = {isOpen.value = false}) {
+                Card (
+                    modifier = Modifier
+                        .padding(MediumPadding)
+                        .fillMaxWidth()
+                ){
+                    Column (
+                        modifier = Modifier.fillMaxWidth().height(300.dp),
+                        verticalArrangement = Arrangement.Center
+                    ){
+                        Row (
+                            modifier = Modifier
+                                .padding(LargePadding)
+                                .fillMaxWidth()
+                                .align(Alignment.CenterHorizontally)
+                        ) {
+                            Text(text = stringResource(id = R.string.elimina_dialog))
+                        }
+                        Row (
+                            modifier = Modifier
+                                .padding(SmallPadding)
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            Button(onClick = { isOpen.value = false}) {
+                                Text(text = stringResource(id = R.string.annulla))
+                            }
+                            Spacer(modifier = Modifier.padding(MediumPadding))
+                            Button(
+                                onClick = {
+                                    confermaEliminazioneSmartphone.value = true
+                                    isOpen.value = false
+                                }
+                            ){
+                                Text(text = stringResource(id = R.string.conferma))
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
+        if (confermaEliminazioneSmartphone.value) {
+            Dialog(
+                onDismissRequest = {
+                    isOpen.value = false
+                    confermaEliminazioneSmartphone.value = false
+                }
+            ) {
+                Card (
+                    modifier = Modifier
+                        .padding(MediumPadding)
+                        .fillMaxWidth()
+                ){
+                    Column (
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(300.dp),
+                        verticalArrangement = Arrangement.Center
+                    ){
+                        Row (
+                            modifier = Modifier
+                                .padding(LargePadding)
+                                .fillMaxWidth()
+                                .align(Alignment.CenterHorizontally)
+                        ) {
+                            Text(text = stringResource(id = R.string.conferma_elimina_dialog))
+                        }
+                        Row (
+                            modifier = Modifier
+                                .padding(SmallPadding)
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            Button(
+                                onClick = {
+                                    isOpen.value = false
+                                    confermaEliminazioneSmartphone.value = false
+                                }
+                            ) {
+                                Text(text = stringResource(id = R.string.annulla))
+                            }
+                            Spacer(modifier = Modifier.padding(MediumPadding))
+                            Button(
+                                onClick = {
+                                    viewModel.deletePreferences()
+                                    navController.navigate("welcome")
+                                },
+                                colors = ButtonColors(Color.Red, Color.Black, Color.Red, Color.Black)
+                            ){
+                                Text(text = stringResource(id = R.string.conferma))
+                            }
+                        }
+                    }
+                }
             }
         }
     }
 }
-//todo: quando saranno implementate le funzionalità dovremmo creare file singoli
-
-
-
-
-
-
-@Composable
-fun Logout(
-    navController: NavHostController,
-    //viewModel: AshbornViewModel
-) {
-    Column(verticalArrangement = Arrangement.Center) {
-        Text(text = "Attenzione!!: proseguendo con questa operazione stai per cancellare i dati locali dell'applicazione e dovrai rifare il login")
-        Spacer(Modifier.padding(10.dp))
-        Row(
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Button(onClick = {
-
-                //viewModel.cancellaPreferenzeLocali()
-                //   viewModel.set_StartDest("init")
-                //   navController.navigate("init")
-                MainActivity().finish()
-                MainActivity().startActivity(MainActivity().intent)
-
-            }) {
-                Text(text = "Esegui operazione")
-            }
-        }
-    }
-}
-
-/*
-@Preview(showBackground = true)
-@Composable
-fun OpPreview() {
-    val viewModel = AshbornViewModel()
-    val navController = rememberNavController()
-    AshbornTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize() ,
-            color = MaterialTheme.colorScheme.background
-        ) {
-            Altro(navController, viewModel)
-        }
-    }
-}*/

@@ -22,7 +22,6 @@ import com.example.ashborn.view.DettagliAvviso
 import com.example.ashborn.view.ErroreConnessione
 import com.example.ashborn.view.Impostazioni
 import com.example.ashborn.view.IstruzioniDisconiscimento
-import com.example.ashborn.view.Logout
 import com.example.ashborn.view.Pagine
 import com.example.ashborn.view.Sicurezza
 import com.example.ashborn.view.Utente
@@ -34,6 +33,7 @@ import com.example.ashborn.view.operazioni.Bonifico
 import com.example.ashborn.view.operazioni.DettagliOperazione
 import com.example.ashborn.view.operazioni.Mav
 import com.example.ashborn.view.operazioni.OperazioneConfermata
+import com.example.ashborn.view.operazioni.OperazioneRifiutata
 import com.example.ashborn.view.operazioni.RiepilogoOperazione
 import com.example.ashborn.viewModel.AltroViewModel
 import com.example.ashborn.viewModel.AltroViewModelFactory
@@ -56,13 +56,6 @@ import com.example.ashborn.viewModel.UtenteViewModelFactory
 import com.example.ashborn.viewModel.WelcomeViewModel
 import com.example.ashborn.viewModel.WelcomeViewModelFactory
 import kotlinx.serialization.json.Json
-
-@Composable
-fun OperazioneRifiutata(navController: NavHostController) {
-    Column(modifier = Modifier.fillMaxSize()) {
-
-    }
-}
 
 @Composable
 fun AppNavigazione2(
@@ -246,12 +239,6 @@ fun AppNavigazione2(
                             //viewModel = viewModel
                         )
                     }
-                }
-                composable("logout") {
-                    Logout(
-                        navController = navController,
-                        //viewModel = viewModel
-                    )
                 }
 
                 composable("bonifico") {
