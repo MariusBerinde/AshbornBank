@@ -62,6 +62,8 @@
     <string name="riepilogo_mav">Riepilogo MAV</string>
     <string name="carta">Riepilogo Carta</string>
     <string name="bonifico_istantaneo">Bonifico Istantaneo</string>
+    <string name="scan_qrcode">Scannerizza Qr Code</string>
+    <string name="inserisci_a_mano">Inserisci Dati Mav Manualmente</string>
     <string name="no_operazioni">Non ci sono ancora operazioni</string>
     <string name="no_carte">Non hai ancora nessuna carte, chiedine una in filiale</string>
     <string name="no_conti">Non hai nessun conto aperto al momento, aprine uno in filiale</string>
