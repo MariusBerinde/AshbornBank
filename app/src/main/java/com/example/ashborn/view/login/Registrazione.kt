@@ -51,7 +51,6 @@ import java.time.format.DateTimeFormatter
 fun Registrazione(
     navController: NavHostController,
     viewModel: RegistrazioneViewModel,//AshbornViewModel,
-    //connectionStatus: ConnectivityObserver.Status
 ) {
     val focusRequester1 = remember { FocusRequester() }
     val focusRequester2 = remember { FocusRequester() }

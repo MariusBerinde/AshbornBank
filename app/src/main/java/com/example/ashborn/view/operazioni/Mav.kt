@@ -16,19 +16,23 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,9 +44,12 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.ashborn.BarcodeScanner
+import com.example.ashborn.MainActivity
 import com.example.ashborn.R
 import com.example.ashborn.data.Operation
 import com.example.ashborn.data.OperationStatus
@@ -57,12 +64,14 @@ import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanner
 import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
 @Composable
 fun Mav(
@@ -89,114 +98,94 @@ fun Mav(
     }
 }
 
+
 @Composable
 fun MavQrCode(
     navController: NavHostController,
     viewModel: MavViewModel,
 ) {
     val nameFun = object {}.javaClass.enclosingMethod?.name
-    val context = LocalContext.current
-    val gmsScannerOptions = configureScannerOption()
-    val instance = getBarcodeScannerInstance(context,gmsScannerOptions)
-    val json = Json { prettyPrint = true }
-    Column(modifier = Modifier.fillMaxSize()) {
-        //var result: String?
-        //do {
-        //result = initiateScanner(instance)
-        instance.startScan()
-            .addOnSuccessListener { barcode ->
-                val result: String //= barcode.rawValue.toString()
-                when (barcode.valueType) {
-                    Barcode.TYPE_TEXT -> {
-                        result = barcode.rawValue.toString()
-                        Log.d(nameFun , "initiateScanner: $result")
-                        Log.d(nameFun, "initiateScanner: ${barcode.valueType}")
-                        val arguments = result.split("|")
-                        if (arguments.size != 3) {
-                            val operation = Operation(
-                                clientCode = viewModel.codCliente,
-                                dateO = viewModel.dataAccreditoMav,
-                                dateV = viewModel.dataAccreditoMav,
-                                transactionType = TransactionType.WITHDRAWAL,
-                                operationType = OperationType.MAV,
-                                amount = arguments[2].toDouble() / 100.0,
-                                bankAccount = viewModel.codConto,
-                                description = arguments[1],
-                                cardCode = null,
-                                iban = arguments[0],
-                                recipient = viewModel.codiceMav,
-                            )
-                            val data = json.encodeToString(Operation.serializer(), operation)
+    val barcodeResults = viewModel.barcodeResults.collectAsState(null)
 
-                            Log.d(nameFun, "Operazione creata: $operation")
-                            navController.navigate("mav-manuale/$data")
-                        }
-                    }
-                    else -> {
-                        Log.d(nameFun, "initiateScanner: ${barcode.valueType}")
-                        navController.popBackStack()
-                    }
+    val json = Json { prettyPrint = true }
+
+    ScanBarcode(
+        viewModel.barcodeScanner::startScan,
+        barcodeResults.value,
+    )
+
+    Log.d(nameFun,"risultato scan ${barcodeResults.value}")
+    if (!barcodeResults.value.isNullOrBlank()) {
+
+        Log.d(nameFun,"risultato scan valido=${barcodeResults.value}")
+        val arguments = barcodeResults.value?.split("|") ?: emptyList()
+        if (arguments.size == 3) {
+            val operation = Operation(
+                clientCode = viewModel.codCliente,
+                dateO = viewModel.dataAccreditoMav,
+                dateV = viewModel.dataAccreditoMav,
+                transactionType = TransactionType.WITHDRAWAL,
+                operationType = OperationType.MAV,
+                amount = arguments[2].toDouble() / 100.0,
+                bankAccount = viewModel.codConto,
+                description = arguments[1],
+                cardCode = null,
+                iban = arguments[0],
+                recipient = viewModel.codiceMav,
+            )
+
+            val data = json.encodeToString(Operation.serializer(), operation)
+
+            Log.d(nameFun, "Operazione creata: $operation")
+            navController.navigate("mav-manuale/$data")
+        } else {
+            Log.d(nameFun, "initiateScanner: ${barcodeResults.value}")
+            navController.popBackStack()
+        }
+    }
+
+
+
+
+}
+@Composable
+private fun ScanBarcode(
+    onScanBarcode: suspend () -> Unit,
+    barcodeValue: String?,
+) {
+    val scope = rememberCoroutineScope()
+    val nameFun = object {}.javaClass.enclosingMethod?.name
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+
+        Button(
+            modifier = Modifier
+                .fillMaxWidth(.85f),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Black
+            ),
+            onClick = {
+                scope.launch {
+                    onScanBarcode()
                 }
-            }
-            .addOnCanceledListener {}
-            .addOnFailureListener {}
-        //} while (result == null)
+            }) {
+            Text(
+                text = "Scan Barcode",
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.displayMedium,
+                color = Color.DarkGray,
+                //style = TextStyle(fontWeight = FontWeight.Bold)
+            )
+        }
+
+
     }
 }
 
-private fun configureScannerOption(): GmsBarcodeScannerOptions {
-    return GmsBarcodeScannerOptions.Builder()
-        .setBarcodeFormats(
-            Barcode.FORMAT_QR_CODE,
-            Barcode.FORMAT_AZTEC
-        )
-        .build()
-}
-
-private fun getBarcodeScannerInstance(
-    context: Context,
-    gmsBarcodeScannerOptions: GmsBarcodeScannerOptions
-): GmsBarcodeScanner {
-    return GmsBarcodeScanning.getClient(context, gmsBarcodeScannerOptions)
-}
-
-private fun initiateScanner(gmsBarcodeScanner: GmsBarcodeScanner) {
-    val nameFun = object {}.javaClass.enclosingMethod?.name
-    var result: String? = null
-    gmsBarcodeScanner.startScan()
-        .addOnSuccessListener { barcode ->
-            // Task completed successfully
-            result = barcode.rawValue.toString()
-            Log.d(nameFun , "initiateScanner: $result")
-
-
-            when (barcode.valueType) {
-                Barcode.TYPE_TEXT -> {
-                    result = barcode.rawValue.toString()
-                    Log.d(nameFun , "initiateScanner: $result")
-                    Log.d(nameFun, "initiateScanner: ${barcode.valueType}")
-                }
-
-                else -> {
-                    result = null
-                    Log.d(nameFun, "initiateScanner: ${barcode.valueType}")
-                }
-            }
-
-
-
-            /*Log.d(nameFun, "initiateScanner: Display value ${barcode.displayValue}")
-            Log.d(nameFun, "initiateScanner: Display value ${barcode.format}")*/
-        }
-        .addOnCanceledListener {
-            // Task canceled
-        }
-        .addOnFailureListener {
-            // Task failed with an exception
-        }
-    //while (result == null) delay(1)
-    //return result
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -442,3 +431,112 @@ fun MavManuale(
 
 
 }
+
+/*
+@Composable
+fun MavQrCode(
+    navController: NavHostController,
+    viewModel: MavViewModel,
+) {
+    val gmsScannerOptions = configureScannerOption()
+    val instance = getBarcodeScannerInstance(context,gmsScannerOptions)
+    val json = Json { prettyPrint = true }
+    Column(modifier = Modifier.fillMaxSize()) {
+        //var result: String?
+        //do {
+        //result = initiateScanner(instance)
+        instance.startScan()
+            .addOnSuccessListener { barcode ->
+                val result: String //= barcode.rawValue.toString()
+                when (barcode.valueType) {
+                    Barcode.TYPE_TEXT -> {
+                        result = barcode.rawValue.toString()
+                        Log.d(nameFun , "initiateScanner: $result")
+                        Log.d(nameFun, "initiateScanner: ${barcode.valueType}")
+   val arguments = result.split("|")
+                        if (arguments.size != 3) {
+                            val operation = Operation(
+                                clientCode = viewModel.codCliente,
+                                dateO = viewModel.dataAccreditoMav,
+                                dateV = viewModel.dataAccreditoMav,
+                                transactionType = TransactionType.WITHDRAWAL,
+                                operationType = OperationType.MAV,
+                                amount = arguments[2].toDouble() / 100.0,
+                                bankAccount = viewModel.codConto,
+                                description = arguments[1],
+                                cardCode = null,
+                                iban = arguments[0],
+                                recipient = viewModel.codiceMav,
+                            )
+                            val data = json.encodeToString(Operation.serializer(), operation)
+
+                            Log.d(nameFun, "Operazione creata: $operation")
+                            navController.navigate("mav-manuale/$data")
+                        }
+                    }
+                    else -> {
+                        Log.d(nameFun, "initiateScanner: ${barcode.valueType}")
+                        navController.popBackStack()
+                    }
+                }
+            }
+            .addOnCanceledListener {}
+            .addOnFailureListener {}
+        //} while (result == null)
+    }
+}
+
+private fun configureScannerOption(): GmsBarcodeScannerOptions {
+    return GmsBarcodeScannerOptions.Builder()
+        .setBarcodeFormats(
+            Barcode.FORMAT_QR_CODE,
+            Barcode.FORMAT_AZTEC
+        )
+        .build()
+}
+
+private fun getBarcodeScannerInstance(
+    context: Context,
+    gmsBarcodeScannerOptions: GmsBarcodeScannerOptions
+): GmsBarcodeScanner {
+    return GmsBarcodeScanning.getClient(context, gmsBarcodeScannerOptions)
+}
+
+private fun initiateScanner(gmsBarcodeScanner: GmsBarcodeScanner) {
+    val nameFun = object {}.javaClass.enclosingMethod?.name
+    var result: String? = null
+    gmsBarcodeScanner.startScan()
+        .addOnSuccessListener { barcode ->
+            // Task completed successfully
+            result = barcode.rawValue.toString()
+            Log.d(nameFun , "initiateScanner: $result")
+
+
+            when (barcode.valueType) {
+                Barcode.TYPE_TEXT -> {
+                    result = barcode.rawValue.toString()
+                    Log.d(nameFun , "initiateScanner: $result")
+                    Log.d(nameFun, "initiateScanner: ${barcode.valueType}")
+                }
+
+                else -> {
+                    result = null
+                    Log.d(nameFun, "initiateScanner: ${barcode.valueType}")
+                }
+            }
+
+
+
+            /*Log.d(nameFun, "initiateScanner: Display value ${barcode.displayValue}")
+            Log.d(nameFun, "initiateScanner: Display value ${barcode.format}")*/
+        }
+        .addOnCanceledListener {
+            // Task canceled
+        }
+        .addOnFailureListener {
+            // Task failed with an exception
+        }
+    //while (result == null) delay(1)
+    //return result
+}
+ */

@@ -126,6 +126,8 @@ dependencies {
     androidTestImplementation ("io.mockk:mockk-agent:${mockkVersion}")
 
 
+    implementation(libs.gpsCoroutines)
+
 
 }
 

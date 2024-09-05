@@ -6,17 +6,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import com.example.ashborn.BarcodeScanner
 import com.example.ashborn.dao.AshbornDao
 import com.example.ashborn.db.AshbornDb
 import com.example.ashborn.model.DataStoreManager
 import com.example.ashborn.repository.ContoRepository
 import com.example.ashborn.repository.OperationRepository
 import com.example.ashborn.view.login.StatoErrore
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
+class MavViewModel  (
+    application: Application,
+): AndroidViewModel(application) {
+    val barcodeScanner = BarcodeScanner( application )
 
-class MavViewModel(application: Application): AndroidViewModel(application) {
     var codiceMav by mutableStateOf("")
         private set
     var importoMav by mutableStateOf("")
@@ -69,6 +76,14 @@ class MavViewModel(application: Application): AndroidViewModel(application) {
    fun setDataAccreditoMavX(dataAccredito:LocalDateTime) {
       this.dataAccreditoMav = dataAccredito
    }
+
+    fun startScan(){
+        viewModelScope.launch (Dispatchers.Default){
+            barcodeScanner.startScan()
+        }
+    }
+
+    var barcodeResults = barcodeScanner.barCodeResults
 }
 
 @Suppress("UNCHECKED_CAST")

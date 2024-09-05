@@ -14,8 +14,9 @@ runtimeLivedata = "1.6.8"
 junitKtx = "1.2.1"
 uiTestJunit4Android = "1.6.8"
 roomCommon = "2.6.1"
-
+# per scanner
 code-scanner = "16.1.0"
+gpsCoroutines = "1.6.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -39,9 +40,11 @@ androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.
 androidx-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4-android", version.ref = "uiTestJunit4Android" }
 androidx-room-common = { group = "androidx.room", name = "room-common", version.ref = "roomCommon" }
 google-code-scanner = {group = "com.google.android.gms", name = "play-services-code-scanner", version.ref = "code-scanner"}
-
+# per scanner
+gpsCoroutines = {module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "gpsCoroutines"}
 
 [plugins]
+
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 

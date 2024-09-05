@@ -287,7 +287,7 @@ fun AppNavigazione2(
                         )
                     }
                 }
-                composable("mav-manuale{operazione}") {
+                composable("mav-manuale/{operazione}") {
                     val mavViewModel : MavViewModel = viewModel(
                         factory = MavViewModelFactory(applicationContext as Application)
                     )
