@@ -16,11 +16,12 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.example.ashborn.data.Avviso
 import com.example.ashborn.data.Operation
+import com.example.ashborn.view.AnnullaOperazione
 import com.example.ashborn.view.Avvisi
 import com.example.ashborn.view.DettagliAvviso
 import com.example.ashborn.view.ErroreConnessione
 import com.example.ashborn.view.Impostazioni
-import com.example.ashborn.view.Logout
+import com.example.ashborn.view.IstruzioniDisconiscimento
 import com.example.ashborn.view.Pagine
 import com.example.ashborn.view.Sicurezza
 import com.example.ashborn.view.Utente
@@ -34,6 +35,7 @@ import com.example.ashborn.view.operazioni.Mav
 import com.example.ashborn.view.operazioni.MavManuale
 import com.example.ashborn.view.operazioni.MavQrCode
 import com.example.ashborn.view.operazioni.OperazioneConfermata
+import com.example.ashborn.view.operazioni.OperazioneRifiutata
 import com.example.ashborn.view.operazioni.RiepilogoOperazione
 import com.example.ashborn.viewModel.AltroViewModel
 import com.example.ashborn.viewModel.AltroViewModelFactory
@@ -56,13 +58,6 @@ import com.example.ashborn.viewModel.UtenteViewModelFactory
 import com.example.ashborn.viewModel.WelcomeViewModel
 import com.example.ashborn.viewModel.WelcomeViewModelFactory
 import kotlinx.serialization.json.Json
-
-@Composable
-fun OperazioneRifiutata(navController: NavHostController) {
-    Column(modifier = Modifier.fillMaxSize()) {
-
-    }
-}
 
 @Composable
 fun AppNavigazione2(
@@ -247,12 +242,6 @@ fun AppNavigazione2(
                         )
                     }
                 }
-                composable("logout") {
-                    Logout(
-                        navController = navController,
-                        //viewModel = viewModel
-                    )
-                }
 
                 composable("bonifico") {
                     val bonificoViewModel : BonificoViewModel = viewModel(
@@ -307,6 +296,20 @@ fun AppNavigazione2(
                     RiepilogoOperazione(
                         navController = navController,
                         operation = operation,
+                    )
+                }
+                composable("disconosci-operazione"){
+
+                    IstruzioniDisconiscimento(
+                        navController = navController,
+                        )
+                }
+                composable("annulla-operazione/{operation}"){
+                    val jsonData = it.arguments?.getString("operation") ?: "No Data"
+                    val operation: Operation = Json{ prettyPrint = true }.decodeFromString(Operation.serializer(), jsonData)
+                    AnnullaOperazione(
+                        navController = navController,
+                        operazion = operation
                     )
                 }
             }

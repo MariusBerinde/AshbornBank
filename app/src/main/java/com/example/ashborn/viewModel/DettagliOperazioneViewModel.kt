@@ -44,7 +44,6 @@ class DettagliOperazioneViewModel(application: Application): AndroidViewModel(ap
             )
         }
     }
-
 }
 
 @Suppress("UNCHECKED_CAST")

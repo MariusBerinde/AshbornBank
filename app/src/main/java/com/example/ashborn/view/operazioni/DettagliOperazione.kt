@@ -1,5 +1,7 @@
 package com.example.ashborn.view.operazioni
 
+import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -25,14 +27,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavHostController
 import com.example.ashborn.R
 import com.example.ashborn.data.Operation
+import com.example.ashborn.data.OperationStatus
+import com.example.ashborn.data.TransactionType
+import com.example.ashborn.ui.theme.SmallPadding
+import com.example.ashborn.view.Share
 import com.example.ashborn.viewModel.DettagliOperazioneViewModel
+import kotlinx.serialization.json.Json
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -46,6 +55,7 @@ fun DettagliOperazione(
     /*Log.i("Dettagli operazione", "indice operazione $indexOperation")
     var op=viewModel.operazioniConto.find { e->e.id==indexOperation}
     Log.i("Dettagli operazione", "Oggetto corrispondente ${op}")*/
+    Log.d("DettagliOperazione","Operazione = $operation")
     val nameFun = object {}.javaClass.enclosingMethod?.name
     Log.d(nameFun, "operazione arrivata: $operation")
     Column(
@@ -134,25 +144,36 @@ fun DettagliOperazione(
                         horizontalArrangement = Arrangement.SpaceEvenly,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        IconButton(onClick = { /*TODO*/ }) {
-                            Icon(
-                                imageVector = Icons.Default.Share,
-                                contentDescription = "share",
-                                tint = Color.Gray
-                            )
-                        }
+                        val shareMessage: String = stringResource(id = R.string.condividi_operazione) + "\n\n" +
+                                stringResource(id = R.string.descrizione) + " " + operation.description + "\n" +
+                                stringResource(id = R.string.importo) + if(operation.transactionType == TransactionType.WITHDRAWAL) " -" else " +" + operation.amount + "€\n" +
+                                stringResource(id = R.string.id_operazione) + " " + operation.id + "\n" +
+                                stringResource(id = R.string.data) + " " + operation.dateO.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n" +
+                                stringResource(id = R.string.eseguito_app)
+                        Share(text = shareMessage, context = LocalContext.current)
+                        val todatAtFivePm =  LocalDateTime.of(
+                            LocalDate.now().year,
+                            LocalDate.now().month,
+                            LocalDate.now().dayOfMonth,
+                            17,
+                            0,
+                            0)
+                        val dateIsTodayInTime = operation.dateO <= todatAtFivePm && LocalDateTime.now() <= todatAtFivePm &&
+                                operation.operationStatus == OperationStatus.PENDING
 
-                        if (operation.dateO <= LocalDateTime.of(
-                                LocalDate.now().year,
-                                LocalDate.now().month,
-                                LocalDate.now().dayOfMonth,
-                                17,
-                                0,
-                                0)
-                        ) {
+                        val dateIsAtLeastTomorrow = operation.dateO >= todatAtFivePm &&
+                                operation.operationStatus == OperationStatus.PENDING
+
+                        if (dateIsTodayInTime || dateIsAtLeastTomorrow) {
                             Button(
                                 colors = ButtonDefaults.buttonColors(Color.Red),
-                                onClick = { viewModel.revocaOperazione(operation) }
+                                onClick = {
+                                    if(operation.operationStatus == OperationStatus.PENDING){
+                                        val json = Json{prettyPrint=true}
+                                        val data = json.encodeToString(Operation.serializer(), operation)
+                                        navController.navigate("annulla-operazione/$data")
+                                    }
+                                }
                             ) {
                                 Text(
                                     text = stringResource(id = R.string.revoca)
@@ -161,7 +182,10 @@ fun DettagliOperazione(
                         } else {
                             Button(
                                 colors = ButtonDefaults.buttonColors(Color.Red),
-                                onClick = { viewModel.disconosciOperazione(operation) }
+                                onClick = {
+
+                                        navController.navigate("disconosci-operazione")
+                                 }
                             ) {
                                 Text(
                                     text = stringResource(id = R.string.disconosci)
@@ -174,3 +198,4 @@ fun DettagliOperazione(
         }
     }
 }
+

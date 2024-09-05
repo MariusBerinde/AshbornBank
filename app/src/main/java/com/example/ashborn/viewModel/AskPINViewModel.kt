@@ -16,6 +16,7 @@ import com.example.ashborn.data.Operation
 import com.example.ashborn.data.User
 import com.example.ashborn.db.AshbornDb
 import com.example.ashborn.model.DataStoreManager
+import com.example.ashborn.repository.ContoRepository
 import com.example.ashborn.repository.OfflineUserRepository
 import com.example.ashborn.repository.OperationRepository
 import kotlinx.coroutines.CoroutineScope
@@ -35,6 +36,7 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
     val ashbornDao = AshbornDb.getDatabase(application).ashbornDao()
     val userRepository = OfflineUserRepository(ashbornDao)
     val operationRepository = OperationRepository(ashbornDao)
+    val contoRepository = ContoRepository(ashbornDao)
     val codCliente = run {
         var ris = ""
         runBlocking(Dispatchers.IO) {
@@ -58,15 +60,21 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
 
     fun validatePin() {
         if (!checkPin()) {
-            Log.i("ViewModel", "formato pin sbagliato")
-            _navigationEvent.value = NavigationEvent.NavigateToError
             wrongAttempts++
+            Log.i("ViewModel", "formato pin sbagliato: $wrongAttempts")
+            if (wrongAttempts % 2 == 0)
+                _navigationEvent.value = NavigationEvent.NavigateToError
+            else
+                _navigationEvent.value = NavigationEvent.NavigateToErrorAlt
         } else {
             viewModelScope.launch {
                 if (!userRepository.isPinCorrect(codCliente, pin.hashCode().toString()).first()) {
                     Log.i("ViewModel", " pin sbagliato")
-                    _navigationEvent.value = NavigationEvent.NavigateToError
                     wrongAttempts++
+                    if (wrongAttempts % 2 == 0)
+                        _navigationEvent.value = NavigationEvent.NavigateToError
+                    else
+                        _navigationEvent.value = NavigationEvent.NavigateToErrorAlt
                 } else {
                     _navigationEvent.value = NavigationEvent.NavigateToNext
                 }
@@ -106,6 +114,12 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
             operationRepository.executeInstantTransaction(operation)
         }
     }
+
+    fun revocaOperazione(operation: Operation) {
+        viewModelScope.launch {
+            operationRepository.deleteOperation(operation)
+        }
+    }
 }
 @Suppress("UNCHECKED_CAST")
 class AskPinViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
@@ -120,5 +134,6 @@ class AskPinViewModelFactory(private val application: Application) : ViewModelPr
 sealed class NavigationEvent {
     object NavigateToNext: NavigationEvent()
     object NavigateToError: NavigationEvent()
+    object NavigateToErrorAlt: NavigationEvent()
     object NavigateToPin: NavigationEvent()
 }

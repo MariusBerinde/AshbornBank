@@ -34,6 +34,7 @@ import com.example.ashborn.NavigationEvent
 import com.example.ashborn.NetworkConnectivityObserver
 import com.example.ashborn.R
 import com.example.ashborn.data.Operation
+import com.example.ashborn.data.OperationStatus
 import com.example.ashborn.data.OperationType
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
@@ -98,7 +99,7 @@ fun AskPIN(
             Button(
                 modifier = Modifier.size(70.dp, 40.dp),
                 onClick = {
-                    Log.i("AskPIN", (viewModel.checkPin()).toString())
+
                     viewModel.validatePin()
                 }
             ) {
@@ -136,7 +137,9 @@ fun AskPIN(
                         if (operation == null) {
                             navController.navigate("conti")
                         } else {
-                            if(operation.operationType == OperationType.WIRE_TRANSFER)
+                            if ( operation.operationStatus == OperationStatus.TO_DELETE )
+                               viewModel.revocaOperazione(operation)
+                            else if(operation.operationType == OperationType.WIRE_TRANSFER)
                                 viewModel.executeTransaction(operation)
                             else
                                 viewModel.executeInstantTransaction(operation)
@@ -144,7 +147,7 @@ fun AskPIN(
                         }
 
                     }
-                    NavigationEvent.NavigateToError -> {
+                    NavigationEvent.NavigateToError, NavigationEvent.NavigateToErrorAlt -> {
                         Log.i("AskPIN", "errore e numero di tentativi ${viewModel.wrongAttempts}")
                         if(viewModel.wrongAttempts > 3 ) {
                             if (operation == null) {

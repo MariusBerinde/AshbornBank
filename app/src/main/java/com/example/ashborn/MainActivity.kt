@@ -24,10 +24,8 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background,
                 ) {
                     AppNavigazione2(startDest = "init")
-
                 }
             }
         }
     }
 }
-

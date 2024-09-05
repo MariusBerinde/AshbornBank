@@ -372,6 +372,7 @@ fun MavManuale(
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
                 keyboardActions = KeyboardActions(
                     onSend = {
+                        val limit_today = LocalDateTime.of( LocalDate.now().year, LocalDate.now().month, LocalDate.now().dayOfMonth, 17, 0, 0)
                         val operation = Operation(
                             clientCode = viewModel.codCliente,
                             dateO = viewModel.dataAccreditoMav,
@@ -384,9 +385,10 @@ fun MavManuale(
                             cardCode = null,
                             iban = viewModel.codiceMav,
                             recipient = viewModel.codiceMav,
-                            operationStatus = if (viewModel.dataAccreditoMav == LocalDateTime.now()) OperationStatus.DONE else OperationStatus.PENDING,
-                        )
+//                            operationStatus = if (viewModel.dataAccreditoMav == LocalDateTime.now()) OperationStatus.DONE else OperationStatus.PENDING,
 
+                            operationStatus = if(viewModel.dataAccreditoMav <= limit_today)  OperationStatus.DONE else OperationStatus.PENDING,
+                        )
                         val data = json.encodeToString(Operation.serializer(), operation)
 
                         Log.d(nameFun, "Operazione creata: $operation")
@@ -399,10 +401,10 @@ fun MavManuale(
             )
         }
         Spacer(modifier = Modifier.padding(LargePadding))
-
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
+                val limit_today = LocalDateTime.of( LocalDate.now().year, LocalDate.now().month, LocalDate.now().dayOfMonth, 17, 0, 0)
                 val operation = Operation(
                     clientCode = viewModel.codCliente,
                     dateO = viewModel.dataAccreditoMav,
@@ -415,7 +417,7 @@ fun MavManuale(
                     cardCode = null,
                     iban = viewModel.codiceMav,
                     recipient = viewModel.codiceMav,
-                    operationStatus = if (viewModel.dataAccreditoMav == LocalDateTime.now()) OperationStatus.DONE else OperationStatus.PENDING,
+                    operationStatus = if(viewModel.dataAccreditoMav <= limit_today)  OperationStatus.DONE else OperationStatus.PENDING,
                 )
 
                 val data = json.encodeToString(Operation.serializer(), operation)
@@ -426,117 +428,5 @@ fun MavManuale(
         ) {
             Text(text = stringResource(id = R.string.continua))
         }
-
-    }
-
-
-}
-
-/*
-@Composable
-fun MavQrCode(
-    navController: NavHostController,
-    viewModel: MavViewModel,
-) {
-    val gmsScannerOptions = configureScannerOption()
-    val instance = getBarcodeScannerInstance(context,gmsScannerOptions)
-    val json = Json { prettyPrint = true }
-    Column(modifier = Modifier.fillMaxSize()) {
-        //var result: String?
-        //do {
-        //result = initiateScanner(instance)
-        instance.startScan()
-            .addOnSuccessListener { barcode ->
-                val result: String //= barcode.rawValue.toString()
-                when (barcode.valueType) {
-                    Barcode.TYPE_TEXT -> {
-                        result = barcode.rawValue.toString()
-                        Log.d(nameFun , "initiateScanner: $result")
-                        Log.d(nameFun, "initiateScanner: ${barcode.valueType}")
-   val arguments = result.split("|")
-                        if (arguments.size != 3) {
-                            val operation = Operation(
-                                clientCode = viewModel.codCliente,
-                                dateO = viewModel.dataAccreditoMav,
-                                dateV = viewModel.dataAccreditoMav,
-                                transactionType = TransactionType.WITHDRAWAL,
-                                operationType = OperationType.MAV,
-                                amount = arguments[2].toDouble() / 100.0,
-                                bankAccount = viewModel.codConto,
-                                description = arguments[1],
-                                cardCode = null,
-                                iban = arguments[0],
-                                recipient = viewModel.codiceMav,
-                            )
-                            val data = json.encodeToString(Operation.serializer(), operation)
-
-                            Log.d(nameFun, "Operazione creata: $operation")
-                            navController.navigate("mav-manuale/$data")
-                        }
-                    }
-                    else -> {
-                        Log.d(nameFun, "initiateScanner: ${barcode.valueType}")
-                        navController.popBackStack()
-                    }
-                }
-            }
-            .addOnCanceledListener {}
-            .addOnFailureListener {}
-        //} while (result == null)
     }
 }
-
-private fun configureScannerOption(): GmsBarcodeScannerOptions {
-    return GmsBarcodeScannerOptions.Builder()
-        .setBarcodeFormats(
-            Barcode.FORMAT_QR_CODE,
-            Barcode.FORMAT_AZTEC
-        )
-        .build()
-}
-
-private fun getBarcodeScannerInstance(
-    context: Context,
-    gmsBarcodeScannerOptions: GmsBarcodeScannerOptions
-): GmsBarcodeScanner {
-    return GmsBarcodeScanning.getClient(context, gmsBarcodeScannerOptions)
-}
-
-private fun initiateScanner(gmsBarcodeScanner: GmsBarcodeScanner) {
-    val nameFun = object {}.javaClass.enclosingMethod?.name
-    var result: String? = null
-    gmsBarcodeScanner.startScan()
-        .addOnSuccessListener { barcode ->
-            // Task completed successfully
-            result = barcode.rawValue.toString()
-            Log.d(nameFun , "initiateScanner: $result")
-
-
-            when (barcode.valueType) {
-                Barcode.TYPE_TEXT -> {
-                    result = barcode.rawValue.toString()
-                    Log.d(nameFun , "initiateScanner: $result")
-                    Log.d(nameFun, "initiateScanner: ${barcode.valueType}")
-                }
-
-                else -> {
-                    result = null
-                    Log.d(nameFun, "initiateScanner: ${barcode.valueType}")
-                }
-            }
-
-
-
-            /*Log.d(nameFun, "initiateScanner: Display value ${barcode.displayValue}")
-            Log.d(nameFun, "initiateScanner: Display value ${barcode.format}")*/
-        }
-        .addOnCanceledListener {
-            // Task canceled
-        }
-        .addOnFailureListener {
-            // Task failed with an exception
-        }
-    //while (result == null) delay(1)
-    //return result
-}
- */
