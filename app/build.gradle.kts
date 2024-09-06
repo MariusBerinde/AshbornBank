@@ -75,12 +75,13 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    testImplementation("org.robolectric:robolectric:4.5.1")
+    testImplementation(libs.robolectric)
     testImplementation("androidx.test:core:1.3.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
-    implementation("androidx.datastore:datastore-preferences:1.1.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
-    implementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
+    implementation(libs.kotlinx.datetime)
+    implementation(libs.androidx.datastore.preferences)
+    //implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.mockito.kotlin)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -90,43 +91,46 @@ dependencies {
 
     val room_version = "2.6.1"
 
-    implementation("androidx.room:room-runtime:$room_version")
-    kapt("androidx.room:room-compiler:$room_version")
+    implementation(libs.androidx.room.runtime)
+    kapt(libs.androidx.room.compiler)
 
     // optional - Kotlin Extensions and Coroutines support for Room
-    implementation("androidx.room:room-ktx:$room_version")
+    implementation(libs.androidx.room.ktx)
 
     // optional - RxJava2 support for Room
-    implementation("androidx.room:room-rxjava2:$room_version")
+    implementation(libs.androidx.room.rxjava2)
 
     // optional - RxJava3 support for Room
-    implementation("androidx.room:room-rxjava3:$room_version")
+    implementation(libs.androidx.room.rxjava3)
 
     // optional - Guava support for Room, including Optional and ListenableFuture
-    implementation("androidx.room:room-guava:$room_version")
+    implementation(libs.androidx.room.guava)
 
     // optional - Test helpers
-    testImplementation("androidx.room:room-testing:$room_version")
+    testImplementation(libs.androidx.room.testing)
 
     // optional - Paging 3 Integration
-    implementation("androidx.room:room-paging:$room_version")
+    implementation(libs.androidx.room.paging)
 
     // per datastore
-    implementation("androidx.datastore:datastore:1.1.1")
-    implementation("androidx.datastore:datastore-preferences:1.1.1")
-    implementation("androidx.datastore:datastore-rxjava2:1.1.1")
-    implementation("androidx.datastore:datastore-rxjava3:1.1.1")
+    implementation(libs.androidx.datastore)
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.datastore.rxjava2)
+    implementation(libs.androidx.datastore.rxjava3)
 
     // per mock
    val mockkVersion="1.13.12"
-    testImplementation("io.mockk:mockk:${mockkVersion}")
-    testImplementation ("io.mockk:mockk-android:${mockkVersion}")
-    testImplementation ("io.mockk:mockk-agent:${mockkVersion}")
-    androidTestImplementation ("io.mockk:mockk-android:${mockkVersion}")
-    androidTestImplementation ("io.mockk:mockk-agent:${mockkVersion}")
+    testImplementation(libs.mockk)
+    testImplementation (libs.mockk.android)
+    testImplementation (libs.mockk.agent)
+    androidTestImplementation (libs.mockk.android)
+    androidTestImplementation (libs.mockk.agent)
 
 
     implementation(libs.gpsCoroutines)
+
+    // per workmanager
+    implementation(libs.workmanager)
 
 
 }
