@@ -29,6 +29,7 @@ class OperationRepository(private val ashbornDao: AshbornDao) {
 
     suspend  fun executeInstantTransaction(operation: Operation) = ashbornDao.executeInstantTransaction(operation)
     suspend fun executeTransaction(operation: Operation)  = ashbornDao.executeTransaction(operation)
+    suspend fun completePendingOperations() = ashbornDao.completePendingOperations()
 
 
     // se incrementiamo operazioni su carta @Insert(onConflict = OnConflictStrategy.IGNORE)
