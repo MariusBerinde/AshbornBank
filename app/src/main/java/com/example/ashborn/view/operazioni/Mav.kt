@@ -1,6 +1,5 @@
 package com.example.ashborn.view.operazioni
 
-import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -39,7 +38,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -48,8 +46,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.ashborn.BarcodeScanner
-import com.example.ashborn.MainActivity
 import com.example.ashborn.R
 import com.example.ashborn.data.Operation
 import com.example.ashborn.data.OperationStatus
@@ -60,10 +56,6 @@ import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.view.CustomDatePickerDialog
 import com.example.ashborn.view.DateUseCase
 import com.example.ashborn.viewModel.MavViewModel
-import com.google.mlkit.vision.barcode.common.Barcode
-import com.google.mlkit.vision.codescanner.GmsBarcodeScanner
-import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions
-import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import java.time.Instant
@@ -71,7 +63,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import javax.inject.Inject
 
 @Composable
 fun Mav(
@@ -165,9 +156,6 @@ private fun ScanBarcode(
         Button(
             modifier = Modifier
                 .fillMaxWidth(.85f),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Black
-            ),
             onClick = {
                 scope.launch {
                     onScanBarcode()
@@ -177,8 +165,6 @@ private fun ScanBarcode(
                 text = "Scan Barcode",
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.displayMedium,
-                color = Color.DarkGray,
-                //style = TextStyle(fontWeight = FontWeight.Bold)
             )
         }
 
