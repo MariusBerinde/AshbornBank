@@ -17,6 +17,8 @@ import com.example.ashborn.data.StatoAvviso
 import com.example.ashborn.data.TransactionType
 import com.example.ashborn.data.User
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 /**
@@ -155,7 +157,43 @@ interface AshbornDao {
    @Query("select exists (select iban from conti where iban= :iban)")
    fun isAshbornIban(iban: String): Boolean
 
+   @Transaction
+   suspend fun completePendingOperations() {
+      val nameFun = object{}.javaClass.enclosingMethod?.name
+      val todayDate = LocalDate.now()
+      val todayDateTime = LocalDateTime.of(todayDate.year, todayDate.month, todayDate.dayOfMonth, 17,0,0)
+      val operations = getAllScheduledPendingOperations(todayDateTime)
+      for (op in operations.first()) {
+         updateOperationStatus(op.id, OperationStatus.DONE)
+         Log.d(nameFun, "operazione mandante fatta: $op")
+         if(isAshbornIban(op.iban)) {
+            val conto = getContoByIban(op.iban)
+            val codClienteDest = conto.codCliente
+            val codContoDest = conto.codConto
+            val newOp = Operation(
+               clientCode = codClienteDest,
+               dateO = op.dateO,
+               dateV = op.dateV,
+               description = op.description,
+               recipient = op.recipient,
+               amount = op.amount - 1.0,
+               transactionType = TransactionType.DEPOSIT,
+               operationType = op.operationType,
+               bankAccount = codContoDest,
+               iban = op.iban,
+               cardCode = null,
+               operationStatus = OperationStatus.DONE
+            )
+            insertOperation(newOp)
+            aggiornaSaldo(codClienteDest, codContoDest, newOp.amount)
+            Log.d(nameFun, "operazione ricevente fatta: $newOp")
 
+         }
+      }
+   }
+
+   @Query("SELECT * FROM operations WHERE operationStatus = 'PENDING' AND dateO <= :today")
+   fun getAllScheduledPendingOperations(today: LocalDateTime): Flow<MutableList<Operation>>
 
 
 }
