@@ -39,11 +39,28 @@ fun setupPeriodicWork(context: Context){
         20, //min 15 minuti
         TimeUnit.MINUTES
     ).build()
-    WorkManager.getInstance(context)
+
+    val paymentWorkRequest = PeriodicWorkRequestBuilder<DbWorker>(
+        20, //min 15 minuti
+        TimeUnit.MINUTES
+    ).build()
+    WorkManager
+        .getInstance(context)
         .enqueueUniquePeriodicWork(
             "db_work",
             ExistingPeriodicWorkPolicy.KEEP,
             workRequest
         )
+    WorkManager
+        .getInstance(context)
+        .enqueueUniquePeriodicWork(
+            "payment_work",
+            ExistingPeriodicWorkPolicy.KEEP,
+            paymentWorkRequest
+        )
+
+
 }
+
+
 

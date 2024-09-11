@@ -25,26 +25,18 @@ enum class Stato{ //todo:spostare in file enums
         childColumns = ["codConto"],
         onUpdate = ForeignKey.CASCADE
        )
-        /*ForeignKey(
-            entity = Conto::class,
-            parentColumns = ["saldo"],
-            childColumns = ["saldo"],
-            onUpdate = ForeignKey.CASCADE
-        )*/
     ]
-
 )
 data class Carta (
     @PrimaryKey
-    val nrCarta:Long,
+    val nrCarta: Long,
 
     @TypeConverters(Converters::class)
     val dataScadenza: LocalDateTime,
-    val cvc:String,
-    //TODO: dovrebbe essere una foreign key
-    val codUtente:String,
+    val cvc: String,
+    val codUtente: String,
     val codConto: String,
-//assunzione visto che trattiamo solo carte collegate a conti il saldo del conto è lo stesso della carta in questo caso  deve essere una foreign key
-    var saldo:Double,
-    val statoCarta: Stato
+    var saldo: Double, // Quanto è stato speso con quella carta mensilmente
+    val statoCarta: Stato,
+    val plafond: Double = 1500.0,
 )

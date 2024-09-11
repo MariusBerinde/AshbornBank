@@ -145,6 +145,34 @@ interface AshbornDao {
 
    }
 
+   @Transaction
+   suspend fun executePaymentTransaction(operation: Operation) {
+
+      val nameFun = object {}.javaClass.enclosingMethod?.name
+      Log.d(nameFun, "Enter")
+      if(operation.cardCode != null && isAshbornCard(operation.cardCode.toLong())){
+         Log.d(nameFun,"is valid payment")
+         val carta:Carta = getCardByCardNumber(operation.cardCode)
+         insertOperation(operation)
+         aggiornaSaldoConto(carta.codConto, operation.amount)
+         aggiornaSaldoCarta(operation.cardCode, operation.amount)
+      }
+      Log.d(nameFun, "Exit")
+
+   }
+
+   @Query("UPDATE conti SET saldo = saldo + :amount WHERE codConto = :codConto")
+   fun aggiornaSaldoConto(codConto: String, amount: Double)
+
+   @Query("SELECT * FROM carte WHERE nrCarta = :cardCode")
+   fun getCardByCardNumber(cardCode: Long): Carta
+
+   @Query("UPDATE carte SET saldo = saldo + :amount WHERE nrCarta = :cardCode")
+   fun aggiornaSaldoCarta(cardCode: Long, amount: Double)
+
+   @Query("select exists (select nrCarta from carte where nrCarta = :cardCode)")
+   fun isAshbornCard(cardCode: Long): Boolean
+
    @Query("select * from conti where iban = :iban")
    fun getContoByIban(iban: String): Conto
 
@@ -181,7 +209,7 @@ interface AshbornDao {
                operationType = op.operationType,
                bankAccount = codContoDest,
                iban = op.iban,
-               cardCode = null,
+               cardCode = op.cardCode,
                operationStatus = OperationStatus.DONE
             )
             insertOperation(newOp)
