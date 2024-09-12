@@ -72,15 +72,31 @@ private val MIGRATION_3_4 = object : Migration(3, 4) {
         //FIXME: non funziona ancora correttamente
         db.execSQL(
             """
-            BEGIN;
-            ALTER TABLE operations ADD COLUMN cardCode2 INTEGER REFERENCES carte(nrCarta) DEFAULT NULL;
-            UPDATE operations SET cardCode2 = cast(cardCode AS INTEGER);
-            ALTER TABLE operations DROP COLUMN cardCode;
-            ALTER TABLE operations RENAME COLUMN cardCode2 TO cardCode;
-            ALTER TABLE carte ADD COLUMN plafond DOUBLE NOT NULL DEFAULT 1500.0
-            END;
+            CREATE TABLE operationsnew (
+                bankAccount TEXT NOT NULL,
+                amount REAL NOT NULL,
+                operationType TEXT NOT NULL DEFAULT 'WIRE_TRANSFER',
+                operationStatus TEXT NOT NULL DEFAULT 'DONE',
+                dateV TEXT NOT NULL,
+                cardCode INTEGER,
+                description TEXT NOT NULL,
+                dateO TEXT NOT NULL,
+                transactionType TEXT NOT NULL,
+                clientCode TEXT NOT NULL,
+                iban TEXT NOT NULL,
+                recipient TEXT NOT NULL,
+                id INTEGER NOT NULL PRIMARY KEY,
+                FOREIGN KEY(bankAccount) REFERENCES conti(codConto) ON UPDATE CASCADE,
+                FOREIGN KEY(cardCode) REFERENCES carte(nrCarta) ON UPDATE CASCADE,
+                FOREIGN KEY(clientCode) REFERENCES users(clientCode) ON UPDATE CASCADE
+            )
             """.trimIndent()
         )
+        db.execSQL("DROP INDEX index_operations_clientCode")
+        db.execSQL("CREATE INDEX index_operations_clientCode ON operationsnew (clientCode)")
+        db.execSQL("DROP TABLE operations")
+        db.execSQL("ALTER TABLE operationsnew RENAME TO operations")
+        db.execSQL("ALTER TABLE carte ADD COLUMN plafond DOUBLE NOT NULL DEFAULT 1500.0")
     }
 }
 
@@ -91,8 +107,7 @@ addCallback(object : RoomDatabase.Callback(){
                        super.onCreate(db)
                        db.execSQL(
                            """
-                            CREATE TRIGGER aggiorna_saldo_carte
-                            AFTER UPDATE ON conti
+oooooooo                            AFTER UPDATE ON conti
                             FOR EACH ROW
                             BEGIN
                                 UPDATE carta

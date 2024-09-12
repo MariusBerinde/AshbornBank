@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 4,
-    "identityHash": "474377ff1b3f0b6bf971e4d8881fa092",
+    "identityHash": "28add1e0d886599b8073ac729789c973",
     "entities": [
       {
         "tableName": "users",
@@ -50,7 +50,7 @@
       },
       {
         "tableName": "operations",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `clientCode` TEXT NOT NULL, `dateO` TEXT NOT NULL, `dateV` TEXT NOT NULL, `description` TEXT NOT NULL, `recipient` TEXT NOT NULL, `amount` REAL NOT NULL, `transactionType` TEXT NOT NULL, `bankAccount` TEXT NOT NULL, `iban` TEXT NOT NULL, `cardCode` INTEGER, `operationType ` TEXT NOT NULL DEFAULT 'WIRE_TRANSFER', `operationStatus` TEXT NOT NULL DEFAULT 'DONE', FOREIGN KEY(`clientCode`) REFERENCES `users`(`clientCode`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`bankAccount`) REFERENCES `conti`(`codConto`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`cardCode`) REFERENCES `carte`(`nrCarta`) ON UPDATE CASCADE ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `clientCode` TEXT NOT NULL, `dateO` TEXT NOT NULL, `dateV` TEXT NOT NULL, `description` TEXT NOT NULL, `recipient` TEXT NOT NULL, `amount` REAL NOT NULL, `transactionType` TEXT NOT NULL, `bankAccount` TEXT NOT NULL, `iban` TEXT NOT NULL, `cardCode` INTEGER, `operationType` TEXT NOT NULL DEFAULT 'WIRE_TRANSFER', `operationStatus` TEXT NOT NULL DEFAULT 'DONE', FOREIGN KEY(`clientCode`) REFERENCES `users`(`clientCode`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`bankAccount`) REFERENCES `conti`(`codConto`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`cardCode`) REFERENCES `carte`(`nrCarta`) ON UPDATE CASCADE ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
@@ -120,7 +120,7 @@
           },
           {
             "fieldPath": "operationType",
-            "columnName": "operationType ",
+            "columnName": "operationType",
             "affinity": "TEXT",
             "notNull": true,
             "defaultValue": "'WIRE_TRANSFER'"
@@ -403,7 +403,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '474377ff1b3f0b6bf971e4d8881fa092')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '28add1e0d886599b8073ac729789c973')"
     ]
   }
 }

@@ -82,7 +82,7 @@ data class Operation(
     val iban:String, //iban del destinatario  //se origine MAV iban contiene il codice Mav
     @ColumnInfo("cardCode")
     val cardCode:Long?, // se nullo è un bonifico altrimenti è un movimento della carta
-    @ColumnInfo("operationType ", defaultValue = "WIRE_TRANSFER")
+    @ColumnInfo("operationType", defaultValue = "WIRE_TRANSFER")
     val operationType:OperationType = OperationType.WIRE_TRANSFER,
     @ColumnInfo("operationStatus", defaultValue = "DONE")
     var operationStatus: OperationStatus = OperationStatus.DONE
