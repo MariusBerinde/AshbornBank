@@ -1,5 +1,6 @@
 package com.example.ashborn.view.operazioni
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -125,10 +126,12 @@ fun MavQrCode(
                 recipient = viewModel.codiceMav,
             )
 
-            val data = json.encodeToString(Operation.serializer(), operation)
-
+           // val data = json.encodeToString(Operation.serializer(), operation)
+            val data = Json { prettyPrint = true }.encodeToString(Operation.serializer(), operation)
             Log.d(nameFun, "Operazione creata: $operation")
-            navController.navigate("mav-manuale/$data")
+               val encodedOperation = Uri.encode(data)
+          //  navController.navigate("mav-manuale/$data")
+            navController.navigate("mav-manuale?operazione=$encodedOperation")
         } else {
             Log.d(nameFun, "initiateScanner: ${barcodeResults.value}")
             navController.popBackStack()
@@ -378,6 +381,7 @@ fun MavManuale(
                         val data = json.encodeToString(Operation.serializer(), operation)
 
                         Log.d(nameFun, "Operazione creata: $operation")
+
                         navController.navigate("riepilogo-operazione/$data")
                     }
                 ),

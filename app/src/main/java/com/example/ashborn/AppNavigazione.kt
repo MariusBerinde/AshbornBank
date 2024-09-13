@@ -276,12 +276,18 @@ fun AppNavigazione2(
                         )
                     }
                 }
-                composable("mav-manuale/{operazione}") {
+                composable("mav-manuale?operazione={operazione}") {
                     val mavViewModel : MavViewModel = viewModel(
                         factory = MavViewModelFactory(applicationContext as Application)
                     )
-                    val jsonData = it.arguments?.getString("operazione") ?: "No Data"
-                    val operation: Operation = Json{ prettyPrint = true }.decodeFromString(Operation.serializer(), jsonData)
+                    //val jsonData = it.arguments?.getString("operazione") ?: "No Data"
+                   // val operation: Operation = Json{ prettyPrint = true }.decodeFromString(Operation.serializer(), jsonData)
+
+                    val jsonData = it.arguments?.getString("operazione")
+                    val operation: Operation? = jsonData?.let { data ->
+                        // Decodifica JSON in un oggetto Operation
+                        Json { prettyPrint = true }.decodeFromString(Operation.serializer(), data)
+                    }
                     ErroreConnessione(connectionStatus = connectionStatus) {
                         MavManuale(
                             navController = navController,
