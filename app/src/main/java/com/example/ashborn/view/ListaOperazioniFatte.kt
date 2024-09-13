@@ -38,6 +38,7 @@ import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.viewModel.CarteViewModel
 import com.example.ashborn.viewModel.ContiViewModel
 import kotlinx.serialization.json.Json
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun ListaOperazioniFatteConti(
@@ -117,7 +118,7 @@ fun ListaOperazioniFatteConti(
                 }
             }
         }
-        if (voci == null) {
+        if (voci.isNullOrEmpty()) {
             item {
                 Column (verticalArrangement = Arrangement.Center) {
                     Row (
@@ -130,7 +131,8 @@ fun ListaOperazioniFatteConti(
                         Text(
                             modifier = Modifier.fillParentMaxWidth(),
                             text = stringResource(id = R.string.no_operazioni),
-                            textAlign = TextAlign.Center)
+                            textAlign = TextAlign.Center
+                        )
                     }
                 }
             }
@@ -162,7 +164,7 @@ fun ListaOperazioniFatteConti(
                                     SmallPadding
                                 )) {
                                 Text(
-                                    text = i.dateO.toLocalDate().toString(),
+                                    text = i.dateO.toLocalDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                                     fontSize = 13.sp,
                                 )
                             }
@@ -212,7 +214,7 @@ fun ListaOperazioniFatteCarte(
             .fillMaxWidth()
             .height(450.dp)
     ) {
-        if (voci != null && !voci.isEmpty()) {
+        if (!voci.isNullOrEmpty()) {
             item {
                 Row(modifier = Modifier.padding(SmallPadding)) {
                     Button(
@@ -271,7 +273,7 @@ fun ListaOperazioniFatteCarte(
                 }
             }
         }
-        if (voci == null) {
+        if (voci.isNullOrEmpty()) {
             item {
                 Column (verticalArrangement = Arrangement.Center) {
                     Row (
@@ -284,7 +286,8 @@ fun ListaOperazioniFatteCarte(
                         Text(
                             modifier = Modifier.fillParentMaxWidth(),
                             text = stringResource(id = R.string.no_operazioni),
-                            textAlign = TextAlign.Center)
+                            textAlign = TextAlign.Center
+                        )
                     }
                 }
             }
@@ -303,19 +306,18 @@ fun ListaOperazioniFatteCarte(
                                 Log.d(nameFun, "operazione inviata: ${i}")
                                 val json = Json { prettyPrint = true }
                                 val data = json.encodeToString(Operation.serializer(), i)
-
                                 navController.navigate("dettagli-operazione/$data")
                             }
                         ) {
                             val width = 90.dp
-                            Column(modifier = Modifier
-                                .width(width)
-                                .align(Alignment.CenterVertically)
-                                .padding(
-                                    SmallPadding
-                                )) {
+                            Column(
+                                modifier = Modifier
+                                    .width(width)
+                                    .align(Alignment.CenterVertically)
+                                    .padding(SmallPadding),
+                            ) {
                                 Text(
-                                    text = i.dateO.toLocalDate().toString(),
+                                    text = i.dateO.toLocalDate().format(DateTimeFormatter.ofPattern("dd/M/yyyy")),
                                     fontSize = 13.sp,
                                 )
                             }

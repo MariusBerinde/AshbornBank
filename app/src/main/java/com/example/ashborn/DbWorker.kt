@@ -11,7 +11,6 @@ import com.example.ashborn.data.OperationType
 import com.example.ashborn.data.TransactionType
 import com.example.ashborn.db.AshbornDb
 import com.example.ashborn.repository.OperationRepository
-import net.bytebuddy.jar.asm.TypeReference
 import java.time.LocalDateTime
 import kotlin.math.roundToInt
 import kotlin.random.Random
@@ -32,6 +31,7 @@ class DbWorker(
     val ashbornDao: AshbornDao = AshbornDb.getDatabase(context).ashbornDao()
     val operationRepository = OperationRepository(ashbornDao)
     val className = DbWorker::class.java.name
+
     override suspend fun doWork(): Result {
         Log.d(className, "eseguo")
         dbWork()
@@ -53,41 +53,69 @@ class PaymentWorker(
     val context = context
     val ashbornDao: AshbornDao = AshbornDb.getDatabase(context).ashbornDao()
     val operationRepository = OperationRepository(ashbornDao)
-    val className = DbWorker::class.java.name
+    val className = PaymentWorker::class.java.name
     override suspend fun doWork(): Result {
-        Log.d(className, "eseguo")
+        Log.d(className, "eseguo payment")
         paymentWork()
         return Result.success()
     }
 
     private fun randomOperation(): Operation {
-        val clientCodes = arrayListOf("")
-        val bankAccounts = arrayListOf("")
-        val descriptions = arrayListOf("")
-        val ibans = arrayListOf("")
-        val cardCodes = arrayListOf<Long?>(0)
-        val recipents = arrayListOf("")
-        val transactionTypes  = arrayListOf(TransactionType.DEPOSIT, TransactionType.WITHDRAWAL)
+        val clientCodes = arrayListOf(
+            "777777777",
+            "666666666",
+        )
+        val bankAccounts = arrayListOf(
+            "42",
+            "43",
+            "44",
+        )
+        val recipients = arrayListOf(
+            "",
+            "",
+            ""
+        )
+        val ibans = arrayListOf(
+            "GB82WEST12345698765432",
+            "IT60X0542811101000000123456",
+            "DE89370400440532013000",
+        )
+        val cardCodes = arrayListOf<Long?>(
+            1111222233334444,
+        )
+        val descriptions = arrayListOf(
+            "Spesa affitto Nazgul",
+            "Rapimento villico innocente",
+            "Pagamento maghi per torture prigionieri",
+            "Affitto Nave Spaziale",
+            "Pagamento lezioni di manipolazione dei protagonisti",
+            "Affitto mutanti per distruzione di massa",
+            "Tortura Genitori di Neville",
+        )
+        val indexSender = (0..cardCodes.size).shuffled().first()
+        var indexReceiver: Int
+        do  {indexReceiver = (0..ibans.size).shuffled().first()} while (indexReceiver == indexSender)
         val result = Operation(
-            clientCode = clientCodes[(0..clientCodes.size).shuffled().first()],
-            bankAccount = bankAccounts[(0..bankAccounts.size).shuffled().first()],
+            bankAccount = bankAccounts[indexSender],
             amount = ((Random.nextDouble(1.0, 5000.0)*100).roundToInt().toDouble())/100,
             description = descriptions[(0..bankAccounts.size).shuffled().first()],
             dateV = LocalDateTime.now(),
             dateO = LocalDateTime.now(),
-            transactionType = transactionTypes[(0..transactionTypes.size).shuffled().first()],
-            iban = ibans[(0..ibans.size).shuffled().first()],
-            cardCode = cardCodes[(0..cardCodes.size).shuffled().first()],
+            transactionType = TransactionType.WITHDRAWAL,
+            cardCode = cardCodes[indexSender],
+            clientCode = clientCodes[indexSender],
+            iban = ibans[indexReceiver],
             operationStatus = OperationStatus.DONE,
             operationType = OperationType.CARD,
-            recipient = recipents[(0..recipents.size).shuffled().first()],
+            recipient = recipients[indexReceiver],
         )
         Log.d(className, "operazione random creata: $result")
         return result
     }
 
     suspend fun paymentWork() {
+        Log.d(className, "paymentWork")
         val operation = randomOperation()
-        operationRepository.executeInstantTransaction(operation)
+        operationRepository.executePaymentTransaction(operation)
     }
 }

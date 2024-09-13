@@ -14,10 +14,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,6 +41,7 @@ import com.example.ashborn.data.Carta
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.viewModel.CarteViewModel
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun Carte(
@@ -49,9 +53,26 @@ fun Carte(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        FronteCarta(viewModel.cartaMostrata,viewModel.userName+" "+viewModel.cognome)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+        ) {
+            IconButton(
+                modifier = Modifier.padding(top = 70.dp),
+                onClick = { viewModel.cartaPrecedente() }
+            ) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "precedente")
+            }
+            FronteCarta(viewModel.cartaMostrata,viewModel.userName + " " + viewModel.cognome)
+            IconButton(
+                modifier = Modifier.padding(top = 70.dp),
+                onClick = { viewModel.cartaSuccessiva() }
+            ) {
+                Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "successivo")
+            }
+        }
         Spacer(modifier = Modifier.height(16.dp))
-        Row {
+        Row(modifier = Modifier.fillMaxWidth()) {
             Column (modifier = Modifier.padding(SmallPadding)){
                 ListaOperazioniFatteCarte(navController, viewModel)
             }
@@ -63,27 +84,26 @@ fun Carte(
 fun RigaMagnetica(){
     Surface(modifier = Modifier
         .height(60.dp)
-        .fillMaxWidth()
+        .width(300.dp)
         .background(Color.Black), color=Color.Black, content = { Text("") })
 }
 @Composable
 fun FronteCarta(carta: Carta?,utente:String) {
     val nrCarta = carta?.nrCarta.toString()
-    val scadenza = carta?.dataScadenza?.toLocalDate().toString()
+    val scadenza = carta?.let{ carta.dataScadenza.toLocalDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))} ?: ""
     val cvc = carta?.cvc
     val codUtente = carta?.codUtente
     var isFront by remember { mutableStateOf(true) }
     if (carta != null) {
         Log.d("Carta ","stato carta = $carta")
-        Card (modifier = Modifier
-            .padding(SmallPadding)
-            .fillMaxWidth()){
+        Card (
+            modifier = Modifier,
+        ){
            Column(
                 modifier = Modifier
-                    .padding(0.dp, 16.dp)
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+                    .padding(0.dp, 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+           ) {
                 if (!isFront) {
                     RigaMagnetica()
                     Spacer(modifier = Modifier.width(32.dp))
@@ -102,18 +122,14 @@ fun FronteCarta(carta: Carta?,utente:String) {
                         modifier = Modifier.size(48.dp)
                     )
                     Text(text = nrCarta)
-                    Row(modifier = Modifier.padding(16.dp))
-                    {
-
+                    Row(modifier = Modifier.padding(16.dp)) {
                         Text(text = utente)
                         Spacer(modifier = Modifier.width(32.dp))
                         Text(scadenza)
                     }
                 }
 
-                Button(onClick = {
-                    isFront = !isFront
-                }) {
+                Button(onClick = { isFront = !isFront }) {
                     Text(text = "Back")
                 }
             }
@@ -141,23 +157,3 @@ fun FronteCarta(carta: Carta?,utente:String) {
        }
     }
 }
-
-
-/*
-@Preview(showBackground = true)
-@Composable
-fun PreviewC() {
-    val viewModel = AshbornViewModel()
-    val navController = rememberNavController()
-    AshbornTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            Carte (
-                navController = navController,
-                viewModel =viewModel
-            )
-        }
-    }
-}*/

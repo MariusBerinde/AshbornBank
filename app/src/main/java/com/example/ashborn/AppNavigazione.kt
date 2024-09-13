@@ -72,7 +72,7 @@ fun AppNavigazione2(
     val networkConnectivityObserver = NetworkConnectivityObserver.getInstance(applicationContext)
     val connectionStatus by networkConnectivityObserver.observe().collectAsState(initial = ConnectivityObserver.Status.Unavailable)
     val json = Json { prettyPrint = true }
-    //val startDest = startDest
+
     NavHost(
         navController = navController,
         startDestination = startDest
@@ -85,7 +85,6 @@ fun AppNavigazione2(
                 val viewModel: WelcomeViewModel = viewModel(
                     factory = WelcomeViewModelFactory(applicationContext as Application)
                 )
-                //  Welcome(viewModel = viewModel)
                 ErroreConnessione(connectionStatus = connectionStatus) {
                     Welcome(navController = navController, viewModel = viewModel)
                 }
@@ -98,8 +97,7 @@ fun AppNavigazione2(
                     AskPIN(
                         navController = navController,
                         viewModel = viewModel,
-                        operation = null
-                        //connectionStatus = connectionStatus
+                        operation = null,
                     )
                 }
             }
@@ -111,7 +109,6 @@ fun AppNavigazione2(
                     Registrazione(
                         navController = navController,
                         viewModel = viewModel,
-                        //connectionStatus = connectionStatus
                     )
                 }
             }
@@ -245,7 +242,6 @@ fun AppNavigazione2(
                         )
                     }
                 }
-
                 composable("bonifico") {
                     val bonificoViewModel : BonificoViewModel = viewModel(
                         factory = BonificoViewModelFactory(applicationContext as Application)
@@ -258,7 +254,6 @@ fun AppNavigazione2(
                     }
                 }
                 composable("mav") {
-
                     ErroreConnessione(connectionStatus = connectionStatus) {
                         Mav(navController = navController)
                     }
@@ -274,17 +269,19 @@ fun AppNavigazione2(
                         )
                     }
                 }
-                composable("mav-manuale/{operazione}") {
+                composable("mav-manuale?operazione={operazione}") {
                     val mavViewModel : MavViewModel = viewModel(
                         factory = MavViewModelFactory(applicationContext as Application)
                     )
-                    val jsonData = it.arguments?.getString("operazione") ?: "No Data"
-                    val operation: Operation? = if (jsonData != "No Data") {
-                        json.decodeFromString(Operation.serializer(), jsonData)
-                    } else {
-                        null
+                    //val jsonData = it.arguments?.getString("operazione") ?: "No Data"
+                    // val operation: Operation = Json{ prettyPrint = true }.decodeFromString(Operation.serializer(), jsonData)
+
+                    val jsonData = it.arguments?.getString("operazione")
+                    val operation: Operation? = jsonData?.let { data ->
+                        // Decodifica JSON in un oggetto Operation
+                        Json { prettyPrint = true }.decodeFromString(Operation.serializer(), data)
                     }
-                        ErroreConnessione(connectionStatus = connectionStatus) {
+                    ErroreConnessione(connectionStatus = connectionStatus) {
                         MavManuale(
                             navController = navController,
                             viewModel = mavViewModel,

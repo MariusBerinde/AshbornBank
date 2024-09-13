@@ -1,4 +1,5 @@
 package com.example.ashborn.dao
+import android.graphics.Path.Op
 import android.util.Log
 import androidx.room.Dao
 import androidx.room.Delete
@@ -12,6 +13,7 @@ import com.example.ashborn.data.Carta
 import com.example.ashborn.data.Conto
 import com.example.ashborn.data.Operation
 import com.example.ashborn.data.OperationStatus
+import com.example.ashborn.data.OperationType
 import com.example.ashborn.data.Stato
 import com.example.ashborn.data.StatoAvviso
 import com.example.ashborn.data.TransactionType
@@ -112,7 +114,6 @@ interface AshbornDao {
 
    @Transaction
    suspend fun executeInstantTransaction(operation: Operation) {
-
       val nameFun = object {}.javaClass.enclosingMethod?.name
       Log.d(nameFun, "Enter")
       aggiornaSaldo(operation.clientCode, operation.bankAccount, -operation.amount)
@@ -147,7 +148,6 @@ interface AshbornDao {
 
    @Transaction
    suspend fun executePaymentTransaction(operation: Operation) {
-
       val nameFun = object {}.javaClass.enclosingMethod?.name
       Log.d(nameFun, "Enter")
       if(operation.cardCode != null && isAshbornCard(operation.cardCode.toLong())){
@@ -156,6 +156,25 @@ interface AshbornDao {
          insertOperation(operation)
          aggiornaSaldoConto(carta.codConto, operation.amount)
          aggiornaSaldoCarta(operation.cardCode, operation.amount)
+         if (isAshbornIban(operation.iban)){
+            val conto = getContoByIban(operation.iban)
+            val newOp = Operation(
+               clientCode = conto.codCliente,
+               iban = conto.iban,
+               dateO = LocalDateTime.now(),
+               dateV = LocalDateTime.now(),
+               transactionType = TransactionType.DEPOSIT,
+               operationType = OperationType.CARD,
+               operationStatus = OperationStatus.DONE,
+               bankAccount = conto.codConto,
+               cardCode = null,
+               recipient = operation.recipient,
+               description = operation.description,
+               amount = operation.amount,
+            )
+            insertOperation(newOp)
+            aggiornaSaldo(conto.codCliente, conto.codConto, operation.amount)
+         }
       }
       Log.d(nameFun, "Exit")
 

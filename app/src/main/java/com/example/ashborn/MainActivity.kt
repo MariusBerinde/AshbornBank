@@ -35,22 +35,22 @@ class MainActivity : ComponentActivity() {
 }
 
 fun setupPeriodicWork(context: Context){
-    val workRequest = PeriodicWorkRequestBuilder<DbWorker>(
+   /* val workRequest = PeriodicWorkRequestBuilder<DbWorker>(
         20, //min 15 minuti
         TimeUnit.MINUTES
     ).build()
-
-    val paymentWorkRequest = PeriodicWorkRequestBuilder<DbWorker>(
+*/
+    val paymentWorkRequest = PeriodicWorkRequestBuilder<PaymentWorker>(
         20, //min 15 minuti
         TimeUnit.MINUTES
     ).build()
-    WorkManager
+    /*WorkManager
         .getInstance(context)
         .enqueueUniquePeriodicWork(
             "db_work",
             ExistingPeriodicWorkPolicy.KEEP,
             workRequest
-        )
+        )*/
     WorkManager
         .getInstance(context)
         .enqueueUniquePeriodicWork(
