@@ -92,9 +92,9 @@ class PaymentWorker(
             "Affitto mutanti per distruzione di massa",
             "Tortura Genitori di Neville",
         )
-        val indexSender = (0..cardCodes.size).shuffled().first()
+        val indexSender = (0..< cardCodes.size).shuffled().first()
         var indexReceiver: Int
-        do  {indexReceiver = (0..ibans.size).shuffled().first()} while (indexReceiver == indexSender)
+        do  {indexReceiver = (0..< ibans.size).shuffled().first()} while (indexReceiver == indexSender)
         val result = Operation(
             bankAccount = bankAccounts[indexSender],
             amount = ((Random.nextDouble(1.0, 5000.0)*100).roundToInt().toDouble())/100,
@@ -115,7 +115,9 @@ class PaymentWorker(
 
     suspend fun paymentWork() {
         Log.d(className, "paymentWork")
+        val nameFun = object{}.javaClass.enclosingMethod?.name
         val operation = randomOperation()
+        Log.d(nameFun, "operazione random creata: $operation")
         operationRepository.executePaymentTransaction(operation)
     }
 }
