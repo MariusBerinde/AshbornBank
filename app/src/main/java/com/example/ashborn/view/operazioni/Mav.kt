@@ -133,10 +133,11 @@ fun MavQrCode(
                 iban = arguments[0],
                 recipient = viewModel.codiceMav,
             )
+
             val data = Json { prettyPrint = true }.encodeToString(Operation.serializer(), operation)
             Log.d(nameFun, "Operazione creata: $operation")
             val encodedOperation = Uri.encode(data)
-            //  navController.navigate("mav-manuale/$data")
+            
             navController.navigate("mav-manuale?operazione=$encodedOperation")
         } else {
             Log.d(nameFun, "initiateScanner: ${barcodeResults.value}")
@@ -383,6 +384,7 @@ fun MavManuale(
                         val data = json.encodeToString(Operation.serializer(), operation)
 
                         Log.d(nameFun, "Operazione creata: $operation")
+
                         navController.navigate("riepilogo-operazione/$data")
                     }
                 ),

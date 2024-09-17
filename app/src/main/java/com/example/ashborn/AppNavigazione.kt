@@ -273,8 +273,7 @@ fun AppNavigazione2(
                     val mavViewModel : MavViewModel = viewModel(
                         factory = MavViewModelFactory(applicationContext as Application)
                     )
-                    //val jsonData = it.arguments?.getString("operazione") ?: "No Data"
-                    // val operation: Operation = Json{ prettyPrint = true }.decodeFromString(Operation.serializer(), jsonData)
+                    //val jsonData = it.arguments?.getString("operazione") ?: "No Data
 
                     val jsonData = it.arguments?.getString("operazione")
                     val operation: Operation? = jsonData?.let { data ->
