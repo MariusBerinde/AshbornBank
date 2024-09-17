@@ -77,4 +77,9 @@
     <string name="operazione_confermata">Operazione Confermata</string>
     <string name="operazione_rifiutata">Operazione Rifiutata</string>
     <string name="rifiuto_operazione">Operazione Fallita per eccesso di errori</string>
+    <string name="operazione_eseguita">Operazione Eseguita</string>
+    <string name="notifica">"Autorizzato pagamento con importo "</string>
+    <string name="notifica2">"a beneficio di "</string>
+    <string name="notifica3">" per "</string>
+    <string name="notifica4">" in data "</string>
 </resources>

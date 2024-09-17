@@ -131,8 +131,8 @@ dependencies {
 
     // per workmanager
     implementation(libs.workmanager)
-
-
+    //per richiesta permessi notifica
+    implementation(libs.accompanist.permissions)
 }
 
 kapt {

@@ -1,5 +1,7 @@
 package com.example.ashborn
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -15,7 +17,6 @@ import com.example.ashborn.ui.theme.AshbornTheme
 import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
-
     private lateinit var connectivityObserver: ConnectivityObserver
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,26 +32,24 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
 }
 
 fun setupPeriodicWork(context: Context){
-   /* val workRequest = PeriodicWorkRequestBuilder<DbWorker>(
+    val workRequest = PeriodicWorkRequestBuilder<DbWorker>(
         20, //min 15 minuti
         TimeUnit.MINUTES
     ).build()
-*/
     val paymentWorkRequest = PeriodicWorkRequestBuilder<PaymentWorker>(
         20, //min 15 minuti
         TimeUnit.MINUTES
     ).build()
-    /*WorkManager
+    WorkManager
         .getInstance(context)
         .enqueueUniquePeriodicWork(
             "db_work",
             ExistingPeriodicWorkPolicy.KEEP,
             workRequest
-        )*/
+        )
     WorkManager
         .getInstance(context)
         .enqueueUniquePeriodicWork(
@@ -58,8 +57,6 @@ fun setupPeriodicWork(context: Context){
             ExistingPeriodicWorkPolicy.KEEP,
             paymentWorkRequest
         )
-
-
 }
 
 

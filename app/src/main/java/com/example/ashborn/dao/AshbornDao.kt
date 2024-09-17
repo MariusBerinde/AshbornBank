@@ -70,7 +70,7 @@ interface AshbornDao {
    @Query(" update carte set statoCarta=:nuovoStato where nrCarta=:idCarta")
    suspend fun aggiornaStatoCarta(idCarta:Long,nuovoStato:Stato)
 
-   @Query("select * from operations where cardCode=:idCarta AND dateO >= :from AND dateO <= :upTo AND operationStatus <> 'CANCELED' LIMIT :limit OFFSET :offset")
+   @Query("select * from operations where cardCode=:idCarta AND dateO >= :from AND dateO <= :upTo AND operationStatus <> 'CANCELED' ORDER BY dateO DESC  LIMIT :limit OFFSET :offset")
    fun getOperazioniCarta(idCarta:Long,from: LocalDateTime, upTo: LocalDateTime, offset: Int, limit: Int) : Flow<MutableList<Operation>>
 
    @Query("SELECT * FROM operations WHERE bankAccount = :codConto AND dateO >= :from AND dateO <= :upTo AND operationStatus <> 'CANCELED' ORDER BY dateO DESC LIMIT :limit OFFSET :offset")

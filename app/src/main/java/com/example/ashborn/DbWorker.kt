@@ -1,7 +1,14 @@
 package com.example.ashborn
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
+import androidx.compose.ui.res.stringResource
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.ashborn.dao.AshbornDao
@@ -11,7 +18,13 @@ import com.example.ashborn.data.OperationType
 import com.example.ashborn.data.TransactionType
 import com.example.ashborn.db.AshbornDb
 import com.example.ashborn.repository.OperationRepository
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.PermissionStatus
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
@@ -118,6 +131,40 @@ class PaymentWorker(
         val nameFun = object{}.javaClass.enclosingMethod?.name
         val operation = randomOperation()
         Log.d(nameFun, "operazione random creata: $operation")
+
+        val notificationHandler = NotificationHandler(context)
         operationRepository.executePaymentTransaction(operation)
+        if (
+            ContextCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS)
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.d(nameFun, "mando notifica")
+            notificationHandler.showSimpleNotification(operation)
+        }
+    }
+}
+
+class NotificationHandler(private val context: Context) {
+    private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    private val notificationChannelID = "notification_channel_id"
+    private val notificationChannel = NotificationChannel(notificationChannelID,"payment", NotificationManager.IMPORTANCE_HIGH)
+
+    // SIMPLE NOTIFICATION
+    fun showSimpleNotification(operation: Operation) {
+        notificationManager.createNotificationChannel(notificationChannel)
+        val notification = NotificationCompat.Builder(context, notificationChannelID)
+            .setContentTitle(context.resources.getString(R.string.operazione_eseguita))
+            .setContentText("""
+                ${context.resources.getString(R.string.notifica)}${operation.amount}
+                ${context.resources.getString(R.string.notifica2)}${operation.recipient}
+                ${context.resources.getString(R.string.notifica3)}${operation.description}
+                ${context.resources.getString(R.string.notifica4)}${operation.dateO.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))}
+            """.trimIndent())
+            .setSmallIcon(R.drawable.bank)
+            .setPriority(NotificationManager.IMPORTANCE_HIGH)
+            .setAutoCancel(true)
+            .build()  // finalizes the creation
+
+        notificationManager.notify(Random.nextInt(), notification)
     }
 }
