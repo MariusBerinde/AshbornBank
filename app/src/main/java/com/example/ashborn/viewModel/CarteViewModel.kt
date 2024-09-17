@@ -33,6 +33,7 @@ class CarteViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
+    private var indiceCartaMostrata by mutableStateOf(0)
     private val userRepository: OfflineUserRepository = OfflineUserRepository(ashbornDao)
     private val cardRepository: CardRepository = CardRepository(ashbornDao)
 
@@ -41,7 +42,7 @@ class CarteViewModel(application: Application): AndroidViewModel(application) {
     var listaCarte by mutableStateOf(_listaCarte)
 
     var cartaMostrata by mutableStateOf(
-        if(_listaCarte.isEmpty()) null  else _listaCarte.get(0)
+        if(_listaCarte.isEmpty()) null  else _listaCarte.get(indiceCartaMostrata)
     )
     private var _operazioniCarta = runBlocking{
         cartaMostrata?.let { getOperationsCarta(cartaMostrata!!) }
@@ -92,6 +93,18 @@ class CarteViewModel(application: Application): AndroidViewModel(application) {
 
         }
         return dati
+    }
+
+    fun cartaSuccessiva() {
+        indiceCartaMostrata = if (indiceCartaMostrata > 0) indiceCartaMostrata - 1 else listaCarte.size - 1
+        cartaMostrata = listaCarte.get(indiceCartaMostrata)
+        operazioni = runBlocking{ cartaMostrata?.let {  getOperationsCarta(cartaMostrata!!) } }
+    }
+
+    fun cartaPrecedente() {
+        indiceCartaMostrata = if (indiceCartaMostrata < listaCarte.size - 1) indiceCartaMostrata + 1 else 0
+        cartaMostrata = listaCarte.get(indiceCartaMostrata)
+        operazioni = runBlocking{ cartaMostrata?.let {  getOperationsCarta(cartaMostrata!!) } }
     }
 
 }

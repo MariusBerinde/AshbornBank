@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 3,
-    "identityHash": "ee55304410cdaaa68b2d2234162b68af",
+    "version": 4,
+    "identityHash": "28add1e0d886599b8073ac729789c973",
     "entities": [
       {
         "tableName": "users",
@@ -50,7 +50,7 @@
       },
       {
         "tableName": "operations",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `clientCode` TEXT NOT NULL, `dateO` TEXT NOT NULL, `dateV` TEXT NOT NULL, `description` TEXT NOT NULL, `recipient` TEXT NOT NULL, `amount` REAL NOT NULL, `transactionType` TEXT NOT NULL, `bankAccount` TEXT NOT NULL, `iban` TEXT NOT NULL, `cardCode` INTEGER, `operationType ` TEXT NOT NULL DEFAULT 'WIRE_TRANSFER', `operationStatus` TEXT NOT NULL DEFAULT 'DONE', FOREIGN KEY(`clientCode`) REFERENCES `users`(`clientCode`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`bankAccount`) REFERENCES `conti`(`codConto`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`cardCode`) REFERENCES `carte`(`nrCarta`) ON UPDATE CASCADE ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `clientCode` TEXT NOT NULL, `dateO` TEXT NOT NULL, `dateV` TEXT NOT NULL, `description` TEXT NOT NULL, `recipient` TEXT NOT NULL, `amount` REAL NOT NULL, `transactionType` TEXT NOT NULL, `bankAccount` TEXT NOT NULL, `iban` TEXT NOT NULL, `cardCode` INTEGER, `operationType` TEXT NOT NULL DEFAULT 'WIRE_TRANSFER', `operationStatus` TEXT NOT NULL DEFAULT 'DONE', FOREIGN KEY(`clientCode`) REFERENCES `users`(`clientCode`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`bankAccount`) REFERENCES `conti`(`codConto`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`cardCode`) REFERENCES `carte`(`nrCarta`) ON UPDATE CASCADE ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
@@ -120,7 +120,7 @@
           },
           {
             "fieldPath": "operationType",
-            "columnName": "operationType ",
+            "columnName": "operationType",
             "affinity": "TEXT",
             "notNull": true,
             "defaultValue": "'WIRE_TRANSFER'"
@@ -244,7 +244,7 @@
       },
       {
         "tableName": "carte",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`nrCarta` INTEGER NOT NULL, `dataScadenza` TEXT NOT NULL, `cvc` TEXT NOT NULL, `codUtente` TEXT NOT NULL, `codConto` TEXT NOT NULL, `saldo` REAL NOT NULL, `statoCarta` TEXT NOT NULL, `platfond` REAL NOT NULL, PRIMARY KEY(`nrCarta`), FOREIGN KEY(`codUtente`) REFERENCES `users`(`clientCode`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`codConto`) REFERENCES `conti`(`codConto`) ON UPDATE CASCADE ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`nrCarta` INTEGER NOT NULL, `dataScadenza` TEXT NOT NULL, `cvc` TEXT NOT NULL, `codUtente` TEXT NOT NULL, `codConto` TEXT NOT NULL, `saldo` REAL NOT NULL, `statoCarta` TEXT NOT NULL, `plafond` REAL NOT NULL, PRIMARY KEY(`nrCarta`), FOREIGN KEY(`codUtente`) REFERENCES `users`(`clientCode`) ON UPDATE CASCADE ON DELETE NO ACTION , FOREIGN KEY(`codConto`) REFERENCES `conti`(`codConto`) ON UPDATE CASCADE ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "nrCarta",
@@ -289,8 +289,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "platfond",
-            "columnName": "platfond",
+            "fieldPath": "plafond",
+            "columnName": "plafond",
             "affinity": "REAL",
             "notNull": true
           }
@@ -403,7 +403,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ee55304410cdaaa68b2d2234162b68af')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '28add1e0d886599b8073ac729789c973')"
     ]
   }
 }

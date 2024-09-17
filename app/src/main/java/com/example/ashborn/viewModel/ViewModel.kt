@@ -227,7 +227,7 @@ open class AshbornViewModel(
 
                 transactionType = TransactionType.WITHDRAWAL,
                 bankAccount = "42",
-                cardCode = "1111222233334444",
+                cardCode = 1111222233334444,
                 iban = "",
                 recipient = "",
                 operationType = OperationType.WIRE_TRANSFER

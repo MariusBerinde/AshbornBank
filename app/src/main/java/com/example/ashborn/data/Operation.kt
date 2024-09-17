@@ -37,40 +37,56 @@ enum class OperationStatus { DONE, PENDING, CANCELED , TO_DELETE}
             childColumns = ["clientCode"],
             onUpdate = ForeignKey.CASCADE
         ),
-    ForeignKey(
-        entity = Conto::class,
-        parentColumns = ["codConto"],
-        childColumns = ["bankAccount"],
-        onUpdate = ForeignKey.CASCADE,
-    )
+        ForeignKey(
+            entity = Conto::class,
+            parentColumns = ["codConto"],
+            childColumns = ["bankAccount"],
+            onUpdate = ForeignKey.CASCADE,
+        ),
+        ForeignKey(
+            entity = Carta::class,
+            parentColumns = ["nrCarta"],
+            childColumns = ["cardCode"],
+            onUpdate = ForeignKey.CASCADE,
+        )
     ]
 )
 @Serializable
 data class Operation(
     @PrimaryKey (autoGenerate = true)
-    @ColumnInfo("id") val id: Long = 0,
-    @ColumnInfo("clientCode")val clientCode:String,
+    @ColumnInfo("id")
+    val id: Long = 0,
+    @ColumnInfo("clientCode")
+    val clientCode:String,
     @Serializable(with = LocalDateTimeSerializer::class)
     @TypeConverters(Converters::class)
     @Contextual
-    @ColumnInfo("dateO")   val dateO: LocalDateTime, //data ordinante (effettuazione operazione)
+    @ColumnInfo("dateO")
+    val dateO: LocalDateTime, //data ordinante (effettuazione operazione)
     @Serializable(with = LocalDateTimeSerializer::class)
     @TypeConverters(Converters::class)
     @Contextual
-    @ColumnInfo("dateV")   val dateV: LocalDateTime, // data valuta
-    @ColumnInfo("description")  val description:String,
-    @ColumnInfo("recipient")val recipient:String,
-    @ColumnInfo("amount")val amount: Double,
-    @ColumnInfo("transactionType") val transactionType: TransactionType,
-    @ColumnInfo("bankAccount")  val bankAccount:String,
-    @ColumnInfo("iban")val iban:String, //iban del destinatario  //se origine MAV iban contiene il codice Mav
-    @ColumnInfo("cardCode") val cardCode:String?, // se nullo è un bonifico altrimenti è un movimento della carta
-    @ColumnInfo("operationType ", defaultValue = "WIRE_TRANSFER")  val operationType:OperationType = OperationType.WIRE_TRANSFER,
-    @ColumnInfo("operationStatus", defaultValue = "DONE") var operationStatus: OperationStatus = OperationStatus.DONE
-)/*{
-   open fun getValue(){}
-
-}*/
+    @ColumnInfo("dateV")
+    val dateV: LocalDateTime, // data valuta
+    @ColumnInfo("description")
+    val description:String,
+    @ColumnInfo("recipient")
+    val recipient:String,
+    @ColumnInfo("amount")
+    val amount: Double,
+    @ColumnInfo("transactionType")
+    val transactionType: TransactionType,
+    @ColumnInfo("bankAccount")
+    val bankAccount:String,
+    @ColumnInfo("iban")
+    val iban:String, //iban del destinatario  //se origine MAV iban contiene il codice Mav
+    @ColumnInfo("cardCode")
+    val cardCode:Long?, // se nullo è un bonifico altrimenti è un movimento della carta
+    @ColumnInfo("operationType", defaultValue = "WIRE_TRANSFER")
+    val operationType:OperationType = OperationType.WIRE_TRANSFER,
+    @ColumnInfo("operationStatus", defaultValue = "DONE")
+    var operationStatus: OperationStatus = OperationStatus.DONE
+)
 
 @Serializer(forClass = LocalDateTime::class)
 object LocalDateTimeSerializer : KSerializer<LocalDateTime> {

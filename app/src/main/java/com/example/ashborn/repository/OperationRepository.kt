@@ -30,6 +30,7 @@ class OperationRepository(private val ashbornDao: AshbornDao) {
     suspend  fun executeInstantTransaction(operation: Operation) = ashbornDao.executeInstantTransaction(operation)
     suspend fun executeTransaction(operation: Operation)  = ashbornDao.executeTransaction(operation)
     suspend fun completePendingOperations() = ashbornDao.completePendingOperations()
+    suspend fun executePaymentTransaction(operation: Operation) = ashbornDao.executePaymentTransaction(operation)
 
 
     // se incrementiamo operazioni su carta @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -45,7 +46,7 @@ class CardRepository(private val ashbornDao: AshbornDao){
 
     fun getCarte(codUtente:String) :Flow<MutableList<Carta>> = ashbornDao.getCarte(codUtente)
 
-    fun bloccaCarta(clientCode: String, cardCode: String) = CoroutineScope(Dispatchers.IO).launch{ashbornDao.aggiornaStatoCarta(cardCode.toLong(), Stato.BLOCCATO)}
+    fun bloccaCarta(clientCode: String, cardCode: Long) = CoroutineScope(Dispatchers.IO).launch{ashbornDao.aggiornaStatoCarta(cardCode.toLong(), Stato.BLOCCATO)}
 
 }
 

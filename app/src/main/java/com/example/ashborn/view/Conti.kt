@@ -3,7 +3,6 @@ package com.example.ashborn.view
 import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,9 +10,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,53 +38,69 @@ fun Conti(
     viewModel: ContiViewModel
 ) {
     if(viewModel.contoMostrato != null){
-        Column(modifier = Modifier) {
-            Row(modifier = Modifier) {
-                Box(modifier = Modifier.padding(MediumPadding)) {
-                    Card(modifier = Modifier.padding(MediumPadding)) {
-                        Column {
-                            Row(modifier = Modifier.padding(MediumPadding)) {
+        Column(
+            modifier = Modifier,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Row(modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally)) {
+                IconButton(
+                    modifier = Modifier.padding(top = 70.dp),
+                    onClick = {viewModel.contoPrecedente()}
+                ) {
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "precedente")
+                }
+                Card {
+                    Column {
+                        Row(modifier = Modifier.padding(MediumPadding)) {
+                            Text(
+                                text = stringResource(id = R.string.conto) + ": " + viewModel.contoMostrato?.codConto,
+                                modifier = Modifier
+                            )
+                        }
+                        Row(modifier = Modifier.padding(MediumPadding)) {
+                            Column(modifier = Modifier.align(Alignment.CenterVertically)) {
                                 Text(
-                                    text = stringResource(id = R.string.conto) + ": " + viewModel.contoMostrato?.codConto,
+                                    text = stringResource(id = R.string.saldo) + ": " + viewModel.contoMostrato?.saldo,
+                                    fontSize = 20.sp
+                                )
+                            }
+                            Spacer(modifier = Modifier.padding(start = 60.dp))
+                            Column {
+                                IconButton(onClick = { }, modifier = Modifier) {
+                                    Icon(Icons.Filled.Info, contentDescription = "mostra saldo")
+                                }
+                            }
+                        }
+                        Row(modifier = Modifier.padding(MediumPadding)) {
+                            Column(modifier = Modifier.align(Alignment.CenterVertically)) {
+                                Text(
+                                    text = "IBAN: " + viewModel.contoMostrato?.iban,
+                                    fontSize = 12.sp,
                                     modifier = Modifier
                                 )
                             }
-                            Row(modifier = Modifier.padding(MediumPadding)) {
-                                Column(modifier = Modifier.align(Alignment.CenterVertically)) {
-                                    Text(
-                                        text = stringResource(id = R.string.saldo) + ": " + viewModel.contoMostrato?.saldo,
-                                        fontSize = 20.sp
-                                    )
-                                }
-                                Spacer(modifier = Modifier.padding(start = 160.dp))
-                                Column {
-                                    IconButton(onClick = { }, modifier = Modifier) {
-                                        Icon(Icons.Filled.Info, contentDescription = "mostra saldo")
-                                    }
-                                }
-                            }
-                            Row(modifier = Modifier.padding(MediumPadding)) {
-                                Column(modifier = Modifier.align(Alignment.CenterVertically)) {
-                                    Text(
-                                        text = "IBAN: " + viewModel.contoMostrato?.iban,
-                                        fontSize = 12.sp,
-                                        modifier = Modifier
-                                    )
-                                }
-                                Spacer(modifier = Modifier.padding(start = 20.dp))
-                                Column {
-                                    Share(
-                                        text = viewModel.contoMostrato?.iban ?: "",
-                                        context = LocalContext.current
-                                    )
-                                }
+                            Spacer(modifier = Modifier.padding(start = 10.dp))
+                            Column {
+                                Share(
+                                    text = viewModel.contoMostrato?.iban ?: "",
+                                    context = LocalContext.current
+                                )
                             }
                         }
                     }
                 }
+                IconButton(
+                    modifier = Modifier.padding(top = 70.dp),
+                    onClick = {viewModel.contoSuccessivo()}
+                ) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = "successivo"
+                    )
+                }
             }
             Spacer(modifier = Modifier.padding(SmallPadding))
-            Row {
+            Row (modifier = Modifier.fillMaxWidth()){
                 Column(modifier = Modifier.padding(SmallPadding)) {
                     ListaOperazioniFatteConti(navController, viewModel)
                 }

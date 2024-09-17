@@ -1,4 +1,5 @@
 package com.example.ashborn.dao
+import android.graphics.Path.Op
 import android.util.Log
 import androidx.room.Dao
 import androidx.room.Delete
@@ -12,6 +13,7 @@ import com.example.ashborn.data.Carta
 import com.example.ashborn.data.Conto
 import com.example.ashborn.data.Operation
 import com.example.ashborn.data.OperationStatus
+import com.example.ashborn.data.OperationType
 import com.example.ashborn.data.Stato
 import com.example.ashborn.data.StatoAvviso
 import com.example.ashborn.data.TransactionType
@@ -68,7 +70,7 @@ interface AshbornDao {
    @Query(" update carte set statoCarta=:nuovoStato where nrCarta=:idCarta")
    suspend fun aggiornaStatoCarta(idCarta:Long,nuovoStato:Stato)
 
-   @Query("select * from operations where cardCode=:idCarta AND dateO >= :from AND dateO <= :upTo AND operationStatus <> 'CANCELED' LIMIT :limit OFFSET :offset")
+   @Query("select * from operations where cardCode=:idCarta AND dateO >= :from AND dateO <= :upTo AND operationStatus <> 'CANCELED' ORDER BY dateO DESC  LIMIT :limit OFFSET :offset")
    fun getOperazioniCarta(idCarta:Long,from: LocalDateTime, upTo: LocalDateTime, offset: Int, limit: Int) : Flow<MutableList<Operation>>
 
    @Query("SELECT * FROM operations WHERE bankAccount = :codConto AND dateO >= :from AND dateO <= :upTo AND operationStatus <> 'CANCELED' ORDER BY dateO DESC LIMIT :limit OFFSET :offset")
@@ -112,7 +114,6 @@ interface AshbornDao {
 
    @Transaction
    suspend fun executeInstantTransaction(operation: Operation) {
-
       val nameFun = object {}.javaClass.enclosingMethod?.name
       Log.d(nameFun, "Enter")
       aggiornaSaldo(operation.clientCode, operation.bankAccount, -operation.amount)
@@ -144,6 +145,52 @@ interface AshbornDao {
       Log.d(nameFun, "Exit")
 
    }
+
+   @Transaction
+   suspend fun executePaymentTransaction(operation: Operation) {
+      val nameFun = object {}.javaClass.enclosingMethod?.name
+      Log.d(nameFun, "Enter")
+      if(operation.cardCode != null && isAshbornCard(operation.cardCode.toLong())){
+         Log.d(nameFun,"is valid payment")
+         val carta:Carta = getCardByCardNumber(operation.cardCode)
+         insertOperation(operation)
+         aggiornaSaldoConto(carta.codConto, operation.amount)
+         aggiornaSaldoCarta(operation.cardCode, operation.amount)
+         if (isAshbornIban(operation.iban)){
+            val conto = getContoByIban(operation.iban)
+            val newOp = Operation(
+               clientCode = conto.codCliente,
+               iban = conto.iban,
+               dateO = LocalDateTime.now(),
+               dateV = LocalDateTime.now(),
+               transactionType = TransactionType.DEPOSIT,
+               operationType = OperationType.CARD,
+               operationStatus = OperationStatus.DONE,
+               bankAccount = conto.codConto,
+               cardCode = null,
+               recipient = operation.recipient,
+               description = operation.description,
+               amount = operation.amount,
+            )
+            insertOperation(newOp)
+            aggiornaSaldo(conto.codCliente, conto.codConto, operation.amount)
+         }
+      }
+      Log.d(nameFun, "Exit")
+
+   }
+
+   @Query("UPDATE conti SET saldo = saldo + :amount WHERE codConto = :codConto")
+   fun aggiornaSaldoConto(codConto: String, amount: Double)
+
+   @Query("SELECT * FROM carte WHERE nrCarta = :cardCode")
+   fun getCardByCardNumber(cardCode: Long): Carta
+
+   @Query("UPDATE carte SET saldo = saldo + :amount WHERE nrCarta = :cardCode")
+   fun aggiornaSaldoCarta(cardCode: Long, amount: Double)
+
+   @Query("select exists (select nrCarta from carte where nrCarta = :cardCode)")
+   fun isAshbornCard(cardCode: Long): Boolean
 
    @Query("select * from conti where iban = :iban")
    fun getContoByIban(iban: String): Conto
@@ -181,7 +228,7 @@ interface AshbornDao {
                operationType = op.operationType,
                bankAccount = codContoDest,
                iban = op.iban,
-               cardCode = null,
+               cardCode = op.cardCode,
                operationStatus = OperationStatus.DONE
             )
             insertOperation(newOp)

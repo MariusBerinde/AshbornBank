@@ -16,7 +16,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -66,23 +65,33 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun Mav(
-    navController: NavHostController,
-    //viewModel: MavViewModel,
-){
-    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
-        Row (modifier = Modifier
-            .fillMaxWidth()
-            .padding(LargePadding)) {
-            Button(onClick = { navController.navigate("scan-qrcode") }) {
+fun Mav(navController: NavHostController) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Row (
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(LargePadding),
+        ) {
+            Button(
+                onClick = { navController.navigate("scan-qrcode") },
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Text(text = stringResource(id = R.string.scan_qrcode))
             }
         }
         Spacer(modifier = Modifier.padding(LargePadding))
-        Row (modifier = Modifier
-            .fillMaxWidth()
-            .padding(LargePadding)) {
-            Button(onClick = { navController.navigate("mav-manuale") }) {
+        Row (
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(LargePadding)
+        ) {
+            Button(
+                onClick = { navController.navigate("mav-manuale") },
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Text(text = stringResource(id = R.string.inserisci_a_mano))
             }
         }
@@ -98,7 +107,6 @@ fun MavQrCode(
 ) {
     val nameFun = object {}.javaClass.enclosingMethod?.name
     val barcodeResults = viewModel.barcodeResults.collectAsState(null)
-
     val json = Json { prettyPrint = true }
 
     ScanBarcode(
@@ -126,21 +134,16 @@ fun MavQrCode(
                 recipient = viewModel.codiceMav,
             )
 
-           // val data = json.encodeToString(Operation.serializer(), operation)
             val data = Json { prettyPrint = true }.encodeToString(Operation.serializer(), operation)
             Log.d(nameFun, "Operazione creata: $operation")
-               val encodedOperation = Uri.encode(data)
-          //  navController.navigate("mav-manuale/$data")
+            val encodedOperation = Uri.encode(data)
+            
             navController.navigate("mav-manuale?operazione=$encodedOperation")
         } else {
             Log.d(nameFun, "initiateScanner: ${barcodeResults.value}")
             navController.popBackStack()
         }
     }
-
-
-
-
 }
 @Composable
 private fun ScanBarcode(

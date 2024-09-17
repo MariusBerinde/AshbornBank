@@ -10,10 +10,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.ashborn.data.Avviso
 import com.example.ashborn.data.Operation
 import com.example.ashborn.view.AnnullaOperazione
@@ -58,6 +60,7 @@ import com.example.ashborn.viewModel.UtenteViewModelFactory
 import com.example.ashborn.viewModel.WelcomeViewModel
 import com.example.ashborn.viewModel.WelcomeViewModelFactory
 import kotlinx.serialization.json.Json
+import kotlin.reflect.typeOf
 
 @Composable
 fun AppNavigazione2(
@@ -68,8 +71,8 @@ fun AppNavigazione2(
     val navController = rememberNavController()
     val networkConnectivityObserver = NetworkConnectivityObserver.getInstance(applicationContext)
     val connectionStatus by networkConnectivityObserver.observe().collectAsState(initial = ConnectivityObserver.Status.Unavailable)
+    val json = Json { prettyPrint = true }
 
-    //val startDest = startDest
     NavHost(
         navController = navController,
         startDestination = startDest
@@ -82,7 +85,6 @@ fun AppNavigazione2(
                 val viewModel: WelcomeViewModel = viewModel(
                     factory = WelcomeViewModelFactory(applicationContext as Application)
                 )
-                //  Welcome(viewModel = viewModel)
                 ErroreConnessione(connectionStatus = connectionStatus) {
                     Welcome(navController = navController, viewModel = viewModel)
                 }
@@ -95,8 +97,7 @@ fun AppNavigazione2(
                     AskPIN(
                         navController = navController,
                         viewModel = viewModel,
-                        operation = null
-                        //connectionStatus = connectionStatus
+                        operation = null,
                     )
                 }
             }
@@ -108,7 +109,6 @@ fun AppNavigazione2(
                     Registrazione(
                         navController = navController,
                         viewModel = viewModel,
-                        //connectionStatus = connectionStatus
                     )
                 }
             }
@@ -121,7 +121,7 @@ fun AppNavigazione2(
                         factory = AskPinViewModelFactory(applicationContext as Application)
                     )
                     val jsonData = it.arguments?.getString("operazione") ?: "No Data"
-                    val operation: Operation = Json{ prettyPrint = true }.decodeFromString(Operation.serializer(), jsonData)
+                    val operation: Operation = json.decodeFromString(Operation.serializer(), jsonData)
                     ErroreConnessione(connectionStatus = connectionStatus) {
                         AskPIN(
                             navController = navController,
@@ -186,7 +186,7 @@ fun AppNavigazione2(
                     route = "dettagli-operazione/{operazione}",
                 ) {
                     val jsonData = it.arguments?.getString("operazione") ?: "No Data"
-                    val operation: Operation = Json{ prettyPrint = true }.decodeFromString(Operation.serializer(), jsonData)
+                    val operation: Operation = json.decodeFromString(Operation.serializer(), jsonData)
                     val dettagliOperazioneViewModel : DettagliOperazioneViewModel = viewModel(
                         factory = DettagliOperazioneViewModelFactory(applicationContext as Application)
                     )
@@ -210,7 +210,7 @@ fun AppNavigazione2(
                 }
                 composable("dettagli-avviso/{avviso}") {
                     val jsonData = it.arguments?.getString("avviso") ?: "No Data"
-                    val avviso = Json{ prettyPrint = true }.decodeFromString(Avviso.serializer(), jsonData)
+                    val avviso = json.decodeFromString(Avviso.serializer(), jsonData)
                     ErroreConnessione(connectionStatus = connectionStatus) {
                         DettagliAvviso(
                             navController =  navController,
@@ -242,7 +242,6 @@ fun AppNavigazione2(
                         )
                     }
                 }
-
                 composable("bonifico") {
                     val bonificoViewModel : BonificoViewModel = viewModel(
                         factory = BonificoViewModelFactory(applicationContext as Application)
@@ -255,14 +254,8 @@ fun AppNavigazione2(
                     }
                 }
                 composable("mav") {
-                    /*val mavViewModel : MavViewModel = viewModel(
-                        factory = MavViewModelFactory(applicationContext as Application)
-                    )*/
                     ErroreConnessione(connectionStatus = connectionStatus) {
-                        Mav(
-                            navController = navController,
-                            //viewModel = mavViewModel//operationViewModel
-                        )
+                        Mav(navController = navController)
                     }
                 }
                 composable("scan-qrcode") {
@@ -280,8 +273,7 @@ fun AppNavigazione2(
                     val mavViewModel : MavViewModel = viewModel(
                         factory = MavViewModelFactory(applicationContext as Application)
                     )
-                    //val jsonData = it.arguments?.getString("operazione") ?: "No Data"
-                   // val operation: Operation = Json{ prettyPrint = true }.decodeFromString(Operation.serializer(), jsonData)
+                    //val jsonData = it.arguments?.getString("operazione") ?: "No Data
 
                     val jsonData = it.arguments?.getString("operazione")
                     val operation: Operation? = jsonData?.let { data ->
@@ -298,7 +290,7 @@ fun AppNavigazione2(
                 }
                 composable("riepilogo-operazione/{operazione}") {
                     val jsonData = it.arguments?.getString("operazione") ?: "No Data"
-                    val operation: Operation = Json{ prettyPrint = true }.decodeFromString(Operation.serializer(), jsonData)
+                    val operation: Operation = json.decodeFromString(Operation.serializer(), jsonData)
                     RiepilogoOperazione(
                         navController = navController,
                         operation = operation,
@@ -312,7 +304,7 @@ fun AppNavigazione2(
                 }
                 composable("annulla-operazione/{operation}"){
                     val jsonData = it.arguments?.getString("operation") ?: "No Data"
-                    val operation: Operation = Json{ prettyPrint = true }.decodeFromString(Operation.serializer(), jsonData)
+                    val operation: Operation = json.decodeFromString(Operation.serializer(), jsonData)
                     AnnullaOperazione(
                         navController = navController,
                         operazion = operation
