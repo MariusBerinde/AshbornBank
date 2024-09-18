@@ -64,7 +64,8 @@ class BonificoViewModel(application: Application): AndroidViewModel(application)
     }
 
     fun setImportoX(importo: String) {
-        this.importo = importo
+
+        this.importo = importo.replace(",",".")
     }
 
     fun setCausaleX(causale: String) {

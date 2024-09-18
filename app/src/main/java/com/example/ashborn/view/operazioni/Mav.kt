@@ -211,7 +211,10 @@ fun MavManuale(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = {
-                navController.popBackStack()
+                if(operation == null)
+                    navController.popBackStack()
+                else
+                    navController.navigate("mav")
             }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,

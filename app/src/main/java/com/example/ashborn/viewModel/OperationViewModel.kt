@@ -53,7 +53,7 @@ class OperationViewModel(application: Application): AndroidViewModel(application
     var pin by mutableStateOf((""))
         private set // Optional: restrict external modification
 
-    private val ashbornDao: AshbornDao
+    private val ashbornDao: AshbornDao/
     private val operationRepository: OperationRepository
     init {
         ashbornDao = AshbornDb.getDatabase(application).ashbornDao()
@@ -66,7 +66,7 @@ class OperationViewModel(application: Application): AndroidViewModel(application
     fun setCodContoX(codConto: String) { this.codConto = codConto}
     fun setBeneficiarioX(beneficiario: String) { this.beneficiario = beneficiario}
     fun setIbanX(iban: String) { this.iban = iban}
-    fun setImportoX(importo: String) { this.importo = importo}
+    fun setImportoX(importo: String) { this.importo = importo.replace(",",".")}
     fun setCausaleX(causale: String) { this.causale = causale}
     fun setDataAccreditoX(dataAccredito: String) { this.dataAccredito = dataAccredito}
     fun setPinX(pin: String) { this.pin = pin }

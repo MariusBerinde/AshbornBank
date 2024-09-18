@@ -1,5 +1,6 @@
 package com.example.ashborn.view.operazioni
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,10 +28,13 @@ import androidx.navigation.compose.rememberNavController
 import com.example.ashborn.R
 import com.example.ashborn.ui.theme.AshbornTheme
 import com.example.ashborn.ui.theme.MediumPadding
-import com.example.ashborn.viewModel.OperationViewModel
 
 @Composable
 fun OperazioneConfermata(navController : NavHostController) {
+    BackHandler(enabled = true) {
+        // Non fare nulla, in questo modo blocca l'azione "back"
+        // Puoi anche gestire un'azione specifica qui
+    }
     Column(
         modifier = Modifier
             .padding(MediumPadding)
@@ -38,7 +42,7 @@ fun OperazioneConfermata(navController : NavHostController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row (modifier = Modifier.align(Alignment.CenterHorizontally)) {
-            Text(text = stringResource(id = R.string.operazione_confermata), fontSize = 40.sp)
+            Text(text = stringResource(id = R.string.operazione_confermata), fontSize = 32.sp)
         }
         Spacer(modifier = Modifier.padding(top = 150.dp))
         Row () {
@@ -53,7 +57,7 @@ fun OperazioneConfermata(navController : NavHostController) {
         }
         Row () {
             Button(onClick = { navController.navigate("bonifico") }, modifier = Modifier.fillMaxWidth()) {
-                Text(text = stringResource(id = R.string.altro_bonifico))
+                Text(text = stringResource(id = R.string.altra_operazione))
             }
         }
         Row () {
@@ -66,6 +70,10 @@ fun OperazioneConfermata(navController : NavHostController) {
 
 @Composable
 fun OperazioneRifiutata(navController: NavHostController) {
+    BackHandler(enabled = true) {
+        // Non fare nulla, in questo modo blocca l'azione "back"
+        // Puoi anche gestire un'azione specifica qui
+    }
     Column(
         modifier = Modifier
             .padding(MediumPadding)
@@ -73,7 +81,7 @@ fun OperazioneRifiutata(navController: NavHostController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row (modifier = Modifier.align(Alignment.CenterHorizontally)) {
-            Text(text = stringResource(id = R.string.operazione_rifiutata), fontSize = 40.sp)
+            Text(text = stringResource(id = R.string.operazione_rifiutata), fontSize = 32.sp)
         }
         Spacer(modifier = Modifier.padding(top = 150.dp))
         Row () {
@@ -88,7 +96,7 @@ fun OperazioneRifiutata(navController: NavHostController) {
         }
         Row () {
             Button(onClick = { navController.navigate("bonifico") }, modifier = Modifier.fillMaxWidth()) {
-                Text(text = stringResource(id = R.string.altro_bonifico))
+                Text(text = stringResource(id = R.string.altra_operazione))
             }
         }
         Row () {

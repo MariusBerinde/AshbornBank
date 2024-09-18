@@ -63,7 +63,7 @@ class MavViewModel  (
     }
 
     fun setImportoMavX(importoMav: String) {
-        this.importoMav = importoMav
+        this.importoMav = importoMav.replace(",",".")
     }
 
     fun setCodiceMavX(codiceMav: String) {

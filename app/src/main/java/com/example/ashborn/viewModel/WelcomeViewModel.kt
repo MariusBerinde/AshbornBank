@@ -3,6 +3,7 @@ package com.example.ashborn.viewModel
 import android.app.Application
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
 class  WelcomeViewModel(application: Application): AndroidViewModel(application){
+    var remaingTime by mutableLongStateOf(11)
     var dt= DataStoreManager.getInstance(application)
     var userName = ""
     fun getUsername():String{
