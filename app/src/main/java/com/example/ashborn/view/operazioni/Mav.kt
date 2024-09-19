@@ -42,6 +42,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -345,12 +346,16 @@ fun MavManuale(
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(focusRequester2),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                //keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Next
+                ),
                 keyboardActions = KeyboardActions(
                     onNext = { focusRequester3.requestFocus() }
                 ),
                 label = { Text(stringResource(id = R.string.importo)) },
-                value = viewModel.importoMav,
+                value = if(!viewModel.importoMav.contains(".")) viewModel.importoMav+".00" else viewModel.importoMav,
                 onValueChange = { viewModel.setImportoMavX(it) }
             )
         }

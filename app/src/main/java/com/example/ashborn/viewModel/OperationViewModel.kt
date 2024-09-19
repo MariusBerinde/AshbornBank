@@ -53,7 +53,7 @@ class OperationViewModel(application: Application): AndroidViewModel(application
     var pin by mutableStateOf((""))
         private set // Optional: restrict external modification
 
-    private val ashbornDao: AshbornDao/
+    private val ashbornDao: AshbornDao
     private val operationRepository: OperationRepository
     init {
         ashbornDao = AshbornDb.getDatabase(application).ashbornDao()

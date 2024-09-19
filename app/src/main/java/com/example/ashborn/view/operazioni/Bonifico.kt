@@ -203,7 +203,7 @@ fun Bonifico(
             }
             Row() {
                 OutlinedTextField(
-                    value = viewModel.importo,
+                    value = if(!viewModel.importo.contains(".")) viewModel.importo+".00" else viewModel.importo,
                     onValueChange = { viewModel.setImportoX(it) },
                     label = { Text(stringResource(id = R.string.importo)) },
                     colors = OutlinedTextFieldDefaults.colors(

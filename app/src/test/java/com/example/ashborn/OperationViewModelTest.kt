@@ -18,8 +18,10 @@ class OperationViewModelTest {
     @Test
     fun formatoBeneficiarioValidoTest(){
 
-        val formato1="Marius"
-        val formato2="Giorgio"
+        val formato1 = "Palpatine"
+        val formato2 = "Dooku"
+        val formato3 = "Anakin Skywalker"
+        val formato4 = "Preacher Harry Powell"
         val formato1Sbagliato="__Giorgio__"
         val formato2Sbagliato="!Giorgio"
         val formato3Sbagliato="#Giorgio"
@@ -31,6 +33,8 @@ class OperationViewModelTest {
 
         assertTrue("formato1Nome ", viewModel.formatoBeneficiarioValido(formato1))
         assertTrue("formato2Nome ", viewModel.formatoBeneficiarioValido(formato2))
+        assertTrue("formato3Nome ", viewModel.formatoBeneficiarioValido(formato3))
+        assertTrue("formato4Nome ", viewModel.formatoBeneficiarioValido(formato4))
         assertFalse("formato1Sbabliato ", viewModel.formatoBeneficiarioValido(formato1Sbagliato))
         assertFalse("formato2Sbabliato ", viewModel.formatoBeneficiarioValido(formato2Sbagliato))
         assertFalse("formato3Sbabliato ", viewModel.formatoBeneficiarioValido(formato3Sbagliato))
