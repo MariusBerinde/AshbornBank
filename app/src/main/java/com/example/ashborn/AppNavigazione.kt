@@ -1,21 +1,15 @@
 package com.example.ashborn
 
 import android.app.Application
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.example.ashborn.data.Avviso
 import com.example.ashborn.data.Operation
 import com.example.ashborn.view.AnnullaOperazione
@@ -41,6 +35,8 @@ import com.example.ashborn.view.operazioni.OperazioneRifiutata
 import com.example.ashborn.view.operazioni.RiepilogoOperazione
 import com.example.ashborn.viewModel.AltroViewModel
 import com.example.ashborn.viewModel.AltroViewModelFactory
+import com.example.ashborn.viewModel.AskPinViewModel
+import com.example.ashborn.viewModel.AskPinViewModelFactory
 import com.example.ashborn.viewModel.AvvisiViewModel
 import com.example.ashborn.viewModel.AvvisiViewModelFactory
 import com.example.ashborn.viewModel.BonificoViewModel
@@ -60,7 +56,6 @@ import com.example.ashborn.viewModel.UtenteViewModelFactory
 import com.example.ashborn.viewModel.WelcomeViewModel
 import com.example.ashborn.viewModel.WelcomeViewModelFactory
 import kotlinx.serialization.json.Json
-import kotlin.reflect.typeOf
 
 @Composable
 fun AppNavigazione2(
