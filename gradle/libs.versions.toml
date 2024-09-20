@@ -30,6 +30,7 @@ gpsCoroutines = "1.6.4"
 
 # per workmanager
 workmanger = "2.8.0"
+lifecycleProcess = "2.8.6"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
@@ -78,6 +79,7 @@ mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockkVersion" }
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockkVersion" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 workmanager = {module = "androidx.work:work-runtime-ktx", version.ref = "workmanger"}
+androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycleProcess" }
 [plugins]
 
 androidApplication = { id = "com.android.application", version.ref = "agp" }

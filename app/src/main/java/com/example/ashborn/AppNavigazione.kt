@@ -4,10 +4,15 @@ import android.app.Application
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -59,6 +64,7 @@ import com.example.ashborn.viewModel.UtenteViewModel
 import com.example.ashborn.viewModel.UtenteViewModelFactory
 import com.example.ashborn.viewModel.WelcomeViewModel
 import com.example.ashborn.viewModel.WelcomeViewModelFactory
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlin.reflect.typeOf
 
@@ -72,6 +78,28 @@ fun AppNavigazione2(
     val networkConnectivityObserver = NetworkConnectivityObserver.getInstance(applicationContext)
     val connectionStatus by networkConnectivityObserver.observe().collectAsState(initial = ConnectivityObserver.Status.Unavailable)
     val json = Json { prettyPrint = true }
+    // Inizializza il CoroutineScope per lanciare coroutine
+    val scope = rememberCoroutineScope()
+    LaunchedEffect(Unit) {
+        // Aggiungi un observer per monitorare quando l'app ritorna in foreground
+        ProcessLifecycleOwner.get().lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onStart(owner: LifecycleOwner) {
+                // Quando l'app ritorna in foreground, naviga alla schermata del PIN
+                val currentDestination = navController.currentDestination?.route
+                if( currentDestination != "welcome"){
+                    scope.launch {
+                        navController.navigate("login") // Naviga alla schermata del PIN
+                    }
+                }
+
+
+            }
+
+            override fun onStop(owner: LifecycleOwner) {
+                // Quando l'app va in background, puoi aggiungere altra logica qui se necessario
+            }
+        })
+    }
 
     NavHost(
         navController = navController,
