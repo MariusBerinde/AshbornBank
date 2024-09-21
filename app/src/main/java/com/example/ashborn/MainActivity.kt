@@ -19,15 +19,7 @@ import androidx.work.WorkManager
 import com.example.ashborn.ui.theme.AshbornTheme
 import java.util.concurrent.TimeUnit
 
-class AppLifecycleObserver(private val onAppForeground:()->Unit):DefaultLifecycleObserver{
-    override fun onStart(owner: LifecycleOwner){
-        onAppForeground()
-    }
 
-    override fun onStop(owner: LifecycleOwner){
-
-    }
-}
 
 
 class MainActivity : ComponentActivity() {

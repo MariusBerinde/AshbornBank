@@ -40,17 +40,20 @@ import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.ui.theme.SmallVerticalSpacing
 
+
 @Composable
 fun AskPIN(
     navController: NavHostController,
     viewModel: AskPinViewModel,
     operation: Operation?,
-    //connectionStatus: ConnectivityObserver.Status
+    prev:Boolean = false,
+    prevPos:String? = null,
 ) {
     Log.i("AskPIN", "renderizzo AskPIN")
     val networkConnectivityObserver = NetworkConnectivityObserver.getInstance(LocalContext.current.applicationContext)
     val connectionStatus by networkConnectivityObserver.observe().collectAsState(initial = ConnectivityObserver.Status.Unavailable)
     val navigationState by viewModel.navigationState.observeAsState()
+
     Column(
         modifier = Modifier
             .padding(MediumPadding)
@@ -70,13 +73,11 @@ fun AskPIN(
             )
         }
         Spacer(modifier = Modifier.height(MediumPadding))
-        //Row (modifier = Modifier.align(Alignment.CenterHorizontally)) {
 
-
-        for (i in (0..2)) {
+        // Creazione dei pulsanti per i numeri
+        for (i in 0..2) {
             Row {
-                for (j in (0..2)) {
-
+                for (j in 0..2) {
                     Spacer(modifier = Modifier.width(SmallVerticalSpacing))
                     Button(
                         modifier = Modifier.size(70.dp, 40.dp),
@@ -89,17 +90,14 @@ fun AskPIN(
                     }
                 }
             }
-
-
             Spacer(modifier = Modifier.padding(SmallPadding))
-
         }
+
         Row {
             Spacer(modifier = Modifier.width(SmallVerticalSpacing))
             Button(
                 modifier = Modifier.size(70.dp, 40.dp),
                 onClick = {
-
                     viewModel.validatePin()
                 }
             ) {
@@ -128,40 +126,65 @@ fun AskPIN(
             ) {
                 Icon(Icons.Filled.Clear, contentDescription = "icona cancellazione")
             }
-            //FIXME: capire perché non mostra l'overlay
+
+            // Osserva il cambio di stato di navigazione
             LaunchedEffect(navigationState) {
-                Log.i("AskPIN","valore navigazione= ${navigationState.toString()}")
-                when(navigationState){
+                Log.i("AskPIN", "valore navigazione= ${navigationState.toString()}")
+                when (navigationState) {
                     NavigationEvent.NavigateToNext -> {
                         viewModel.resetWrongAttempts()
+                       /* if (prev ){
+                            Log.d("AskPin","sto lanciando onPinEntered")
+                           // onPinEntered() // Chiama il callback qui per indicare che il PIN è stato inserito correttamente
+                            navController.popBackStack()
+                        }*/
+                        if(prevPos != null){
+                            Log.d("AskPin","navigo verso $prevPos")
+
+                            navController.navigate(prevPos.toString())
+                        }
+
+
+
                         if (operation == null) {
                             navController.navigate("conti")
                         } else {
-                            if ( operation.operationStatus == OperationStatus.TO_DELETE )
-                               viewModel.revocaOperazione(operation)
-                            else if(operation.operationType == OperationType.WIRE_TRANSFER)
-                                viewModel.executeTransaction(operation)
-                            else
-                                viewModel.executeInstantTransaction(operation)
-                            navController.navigate("operazioneConfermata")
+                            when (operation.operationStatus) {
+                                OperationStatus.TO_DELETE -> {
+                                    viewModel.revocaOperazione(operation)
+                                    navController.navigate("operazioneConfermata")
+                                }
+                                else -> {
+                                    when (operation.operationType) {
+                                        OperationType.WIRE_TRANSFER -> {
+                                            viewModel.executeTransaction(operation)
+                                            navController.navigate("operazioneConfermata")
+                                        }
+                                        else -> {
+                                            viewModel.executeInstantTransaction(operation)
+                                            navController.navigate("operazioneConfermata")
+                                        }
+                                    }
+                                }
+                            }
                         }
-
                     }
                     NavigationEvent.NavigateToError, NavigationEvent.NavigateToErrorAlt -> {
                         Log.i("AskPIN", "errore e numero di tentativi ${viewModel.wrongAttempts}")
-                        if(viewModel.wrongAttempts > 3 ) {
+                        if (viewModel.wrongAttempts > 3) {
                             if (operation == null) {
                                 navController.popBackStack()
                             } else {
                                 navController.navigate("operazioneRifiutata")
                             }
-
                         }
                     }
-                    else->{}
+                    else -> {}
                 }
-
             }
         }
     }
 }
+
+
+
