@@ -60,7 +60,7 @@ fun Conti(
                         Row(modifier = Modifier.padding(MediumPadding)) {
                             Column(modifier = Modifier.align(Alignment.CenterVertically)) {
                                 Text(
-                                    text = stringResource(id = R.string.saldo) + ": " + viewModel.contoMostrato?.saldo,
+                                    text = stringResource(id = R.string.saldo) + ": " + "%.2f".format(viewModel.contoMostrato?.saldo),
                                     fontSize = 20.sp
                                 )
                             }

@@ -18,20 +18,16 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.ashborn.AskPinViewModel
-import com.example.ashborn.ConnectivityObserver
 import com.example.ashborn.NavigationEvent
-import com.example.ashborn.NetworkConnectivityObserver
 import com.example.ashborn.R
 import com.example.ashborn.data.Operation
 import com.example.ashborn.data.OperationStatus
@@ -46,12 +42,9 @@ fun AskPIN(
     navController: NavHostController,
     viewModel: AskPinViewModel,
     operation: Operation?,
-    prev:Boolean = false,
     prevPos:String? = null,
 ) {
     Log.i("AskPIN", "renderizzo AskPIN")
-    val networkConnectivityObserver = NetworkConnectivityObserver.getInstance(LocalContext.current.applicationContext)
-    val connectionStatus by networkConnectivityObserver.observe().collectAsState(initial = ConnectivityObserver.Status.Unavailable)
     val navigationState by viewModel.navigationState.observeAsState()
 
     Column(

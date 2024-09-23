@@ -6,10 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -65,10 +62,13 @@ import com.example.ashborn.viewModel.WelcomeViewModelFactory
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
+const val SOGLIA = 300000 // 5 minuti
+
 @Composable
 fun AppNavigazione2(
     startDest:String,
 ){
+
     val nameFun = object {}.javaClass.enclosingMethod?.name
     val applicationContext = LocalContext.current.applicationContext
     val navController = rememberNavController()
@@ -89,7 +89,6 @@ fun AppNavigazione2(
                Log.d(nameFun,"posizione dove mi sveglio${currentPos}")
                 val actualTime = System.currentTimeMillis()
                 val tempoInBack = actualTime - lastBackgroundTime
-                val SOGLIA = 300000 // 5 minuti
                 Log.d(nameFun,"tempoInBack = $tempoInBack")
                 if(tempoInBack > SOGLIA) {
                     if (currentDestination != "welcome") {
@@ -178,13 +177,13 @@ fun AppNavigazione2(
                         factory = ContiViewModelFactory(applicationContext as Application)
                     )
                     val carteViewModel: CarteViewModel = viewModel(
-                        factory = CarteViewModelFactory(applicationContext as Application)
+                        factory = CarteViewModelFactory(applicationContext )
                     )
                     val altroViewModel: AltroViewModel = viewModel(
-                        factory = AltroViewModelFactory(applicationContext as Application)
+                        factory = AltroViewModelFactory(applicationContext )
                     )
                     val operationViewModel: OperationViewModel = viewModel(
-                        factory = OperationViewModelFactory(applicationContext as Application)
+                        factory = OperationViewModelFactory(applicationContext )
                     )
                     ErroreConnessione(connectionStatus = connectionStatus) {
                         Pagine(
@@ -196,7 +195,7 @@ fun AppNavigazione2(
                         )
                     }
                 }
-                composable(route = "dettagli-operazione/{operazione}",) {
+                composable(route = "dettagli-operazione/{operazione}") {
                     val jsonData = it.arguments?.getString("operazione") ?: "No Data"
                     val operation: Operation = json.decodeFromString(Operation.serializer(), jsonData)
                     val dettagliOperazioneViewModel : DettagliOperazioneViewModel = viewModel(
@@ -296,7 +295,7 @@ fun AppNavigazione2(
                 val jsonData = it.arguments?.getString("operazione")
                 val operation: Operation? = jsonData?.let { data ->
                     // Decodifica JSON in un oggetto Operation
-                    Json { prettyPrint = true }.decodeFromString(Operation.serializer(), data)
+                    json.decodeFromString(Operation.serializer(), data)
                 }
                 ErroreConnessione(connectionStatus = connectionStatus) {
                     MavManuale(
