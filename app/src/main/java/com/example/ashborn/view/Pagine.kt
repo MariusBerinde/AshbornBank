@@ -34,6 +34,7 @@ fun Pagine(
     viewModelCarte: CarteViewModel,
     viewModelAltro: AltroViewModel,
     viewModelOperazioni: OperationViewModel,
+    indice:Int=0
 ) {
     val tabList: ArrayList<String> = arrayListOf(
         stringResource(R.string.conti),
@@ -42,7 +43,7 @@ fun Pagine(
         stringResource(R.string.parla),
         stringResource(R.string.altro),
     )
-    var selectedItem by remember { mutableIntStateOf(0) }
+    var selectedItem by remember { mutableIntStateOf(indice) }
     val icons: ArrayList<ImageVector>  = arrayListOf(
         ImageVector.vectorResource(R.drawable.bank),
         ImageVector.vectorResource(R.drawable.credit_card_outline),

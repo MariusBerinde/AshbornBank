@@ -2,6 +2,7 @@ package com.example.ashborn.view.operazioni
 
 import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,6 +41,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -68,10 +70,16 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun Mav(navController: NavHostController) {
+
+    val dest =  integerResource(R.integer.Operazioni)
+    BackHandler(enabled = true) {
+        navController.navigate("conti?index=$dest")
+    }
     Column(
         modifier = Modifier.fillMaxSize(),
        // verticalArrangement = Arrangement.Center,
     ) {
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -80,7 +88,9 @@ fun Mav(navController: NavHostController) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(onClick = {
-                navController.popBackStack()
+
+                navController.navigate("conti?index=$dest")
+
             }) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
@@ -210,6 +220,9 @@ fun MavManuale(
     viewModel: MavViewModel,
     operation: Operation?,
 ) {
+    BackHandler(enabled = true) {
+        navController.navigate("mav")
+    }
     val isOpen = remember { mutableStateOf(false) }
     val focusRequester1 = remember { FocusRequester() }
     val focusRequester2 = remember { FocusRequester() }
@@ -235,10 +248,12 @@ fun MavManuale(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = {
-                if(operation == null)
+               /* if(operation == null)
                     navController.popBackStack()
                 else
-                    navController.navigate("mav")
+                    navController.navigate("mav")*/
+
+                navController.navigate("mav")
             }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,

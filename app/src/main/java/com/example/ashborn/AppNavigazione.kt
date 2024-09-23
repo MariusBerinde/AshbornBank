@@ -172,7 +172,9 @@ fun AppNavigazione2(
                         )
                     }
                 }
-                composable("conti") {
+                composable("conti?index={index}") {
+
+                        backStackEntry -> val index = backStackEntry.arguments?.getString("index")?.toInt()?:0
                     val contiViewmodel: ContiViewModel = viewModel(
                         factory = ContiViewModelFactory(applicationContext as Application)
                     )
@@ -192,6 +194,7 @@ fun AppNavigazione2(
                             viewModelCarte = carteViewModel,
                             viewModelOperazioni = operationViewModel,
                             viewModelAltro = altroViewModel,
+                            indice = index,
                         )
                     }
                 }
