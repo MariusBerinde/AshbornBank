@@ -1,21 +1,24 @@
 package com.example.ashborn
 
 import android.app.Application
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.example.ashborn.data.Avviso
 import com.example.ashborn.data.Operation
 import com.example.ashborn.view.AnnullaOperazione
@@ -59,8 +62,8 @@ import com.example.ashborn.viewModel.UtenteViewModel
 import com.example.ashborn.viewModel.UtenteViewModelFactory
 import com.example.ashborn.viewModel.WelcomeViewModel
 import com.example.ashborn.viewModel.WelcomeViewModelFactory
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
-import kotlin.reflect.typeOf
 
 @Composable
 fun AppNavigazione2(
@@ -72,6 +75,40 @@ fun AppNavigazione2(
     val networkConnectivityObserver = NetworkConnectivityObserver.getInstance(applicationContext)
     val connectionStatus by networkConnectivityObserver.observe().collectAsState(initial = ConnectivityObserver.Status.Unavailable)
     val json = Json { prettyPrint = true }
+    // Inizializza il CoroutineScope per lanciare coroutine
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        // Aggiungi un observer per monitorare quando l'app ritorna in foreground
+         var lastBackgroundTime: Long = 0
+        ProcessLifecycleOwner.get().lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onStart(owner: LifecycleOwner) {
+                // Quando l'app ritorna in foreground, naviga alla schermata del PIN
+                val currentDestination = navController.currentDestination?.route
+                val currentPos = navController.currentBackStackEntry?.destination?.route
+               Log.d(nameFun,"posizione dove mi sveglio${currentPos}")
+                val actualTime = System.currentTimeMillis()
+                val tempoInBack = actualTime - lastBackgroundTime
+                val SOGLIA = 300000 // 5 minuti
+                Log.d(nameFun,"tempoInBack = $tempoInBack")
+                if(tempoInBack > SOGLIA) {
+                    if (currentDestination != "welcome") {
+                        scope.launch {
+                            //    navController.navigate("login") // Naviga alla schermata del PIN
+                            navController.navigate("login?prev=$currentPos")
+                        }
+                    }
+                }
+
+
+            }
+
+            override fun onStop(owner: LifecycleOwner) {
+                lastBackgroundTime = System.currentTimeMillis()
+                // Quando l'app va in background, puoi aggiungere altra logica qui se necessario
+            }
+        })
+    }
 
     NavHost(
         navController = navController,
@@ -89,7 +126,9 @@ fun AppNavigazione2(
                     Welcome(navController = navController, viewModel = viewModel)
                 }
             }
-            composable("login") {
+            composable("login?prev={prev}") {
+                //    backStackEntry -> val prev = backStackEntry.arguments?.getString("prev").toBoolean()
+                backStackEntry -> val prev = backStackEntry.arguments?.getString("prev")
                 val viewModel: AskPinViewModel = viewModel(
                     factory = AskPinViewModelFactory(applicationContext as Application)
                 )
@@ -98,6 +137,7 @@ fun AppNavigazione2(
                         navController = navController,
                         viewModel = viewModel,
                         operation = null,
+                        prevPos = prev
                     )
                 }
             }
@@ -299,6 +339,7 @@ fun AppNavigazione2(
                         navController = navController,
                         viewModel = viewModel,
                         operation = operation,
+
                     )
                 }
             }

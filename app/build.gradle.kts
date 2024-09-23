@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.androidx.junit.ktx)
     implementation(libs.androidx.ui.test.junit4.android)
     implementation(libs.androidx.room.common)
+    implementation(libs.androidx.lifecycle.process)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

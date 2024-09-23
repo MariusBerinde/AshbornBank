@@ -87,7 +87,9 @@ fun Bonifico(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = {
-                navController.popBackStack()
+
+               // navController.popBackStack()
+                navController.navigateUp()
             }) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
