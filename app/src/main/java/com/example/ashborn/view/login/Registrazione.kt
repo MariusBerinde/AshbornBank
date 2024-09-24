@@ -34,7 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.ashborn.NavigationEvent
+import com.example.ashborn.viewModel.NavigationEvent
 import com.example.ashborn.R
 import com.example.ashborn.RegistrazioneViewModel
 import com.example.ashborn.ui.theme.LargePadding

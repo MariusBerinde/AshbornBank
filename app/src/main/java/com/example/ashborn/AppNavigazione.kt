@@ -41,6 +41,8 @@ import com.example.ashborn.view.operazioni.OperazioneRifiutata
 import com.example.ashborn.view.operazioni.RiepilogoOperazione
 import com.example.ashborn.viewModel.AltroViewModel
 import com.example.ashborn.viewModel.AltroViewModelFactory
+import com.example.ashborn.viewModel.AskPinViewModel
+import com.example.ashborn.viewModel.AskPinViewModelFactory
 import com.example.ashborn.viewModel.AvvisiViewModel
 import com.example.ashborn.viewModel.AvvisiViewModelFactory
 import com.example.ashborn.viewModel.BonificoViewModel

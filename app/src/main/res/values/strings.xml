@@ -82,4 +82,5 @@
     <string name="notifica2">"a beneficio di "</string>
     <string name="notifica3">" per "</string>
     <string name="notifica4">" in data "</string>
+    <string name="timer">"Tempo di attesa rimanente "</string>
 </resources>

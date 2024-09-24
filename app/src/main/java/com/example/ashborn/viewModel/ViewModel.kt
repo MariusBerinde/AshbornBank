@@ -11,7 +11,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.ashborn.NavigationEvent
 import com.example.ashborn.dao.AshbornDao
 import com.example.ashborn.data.Carta
 import com.example.ashborn.data.Conto
@@ -33,7 +32,6 @@ import com.example.ashborn.viewModel.TimeFormatExt.timeFormat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.ashborn.data.User
@@ -15,12 +16,22 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore("settings"
 
 class DataStoreManager private constructor(private val context: Context) {
 
+
+
     // Chiavi per le preferenze
     private val USERNAME_KEY = stringPreferencesKey("username_key")
     private val COGNOME_KEY = stringPreferencesKey("cognome_key")
     private val COD_CLIENTE_KEY = stringPreferencesKey("cod_cliente_key")
+    private val WRONG_ATTEMPTS_KEY = longPreferencesKey("wrong_attempts_key")
+    private val TIMER_KEY = longPreferencesKey("timer_key")
 
     // Flow per la lettura delle preferenze
+    val timerFlow: Flow<Long> = context.dataStore.data.map { preferences ->
+        preferences[TIMER_KEY] ?: 0L
+    }
+    val wrongAttemptsFlow: Flow<Long> = context.dataStore.data.map { preferences ->
+        preferences[WRONG_ATTEMPTS_KEY] ?: 0L
+    }
     val usernameFlow: Flow<String> = context.dataStore.data.map { preferences ->
         preferences[USERNAME_KEY] ?: ""
     }
@@ -41,6 +52,18 @@ class DataStoreManager private constructor(private val context: Context) {
     suspend fun writeCognome(cognome: String) {
         context.dataStore.edit { settings ->
             settings[COGNOME_KEY] = cognome
+        }
+    }
+
+    suspend fun writeTimer(timeSeconds: Long) {
+        context.dataStore.edit { settings ->
+            settings[TIMER_KEY] = timeSeconds
+        }
+    }
+
+    suspend fun writeWrongAttempts(wrongAttempts: Long) {
+        context.dataStore.edit { settings ->
+            settings[WRONG_ATTEMPTS_KEY] = wrongAttempts
         }
     }
 

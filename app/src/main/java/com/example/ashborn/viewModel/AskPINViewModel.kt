@@ -1,9 +1,9 @@
-package com.example.ashborn
+package com.example.ashborn.viewModel
 
 import android.app.Application
 import android.util.Log
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.text.isDigitsOnly
@@ -13,37 +13,73 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.ashborn.data.Operation
-import com.example.ashborn.data.User
 import com.example.ashborn.db.AshbornDb
 import com.example.ashborn.model.DataStoreManager
-import com.example.ashborn.repository.ContoRepository
 import com.example.ashborn.repository.OfflineUserRepository
 import com.example.ashborn.repository.OperationRepository
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 class AskPinViewModel( application: Application): AndroidViewModel(application) {
-    val nameClass = AskPinViewModel::class.simpleName
-    var wrongAttempts by mutableIntStateOf(0)
+    private val nameClass = AskPinViewModel::class.simpleName
+    val dsm = DataStoreManager.getInstance(application)
+    var wrongAttempts by mutableLongStateOf(runBlocking { dsm.wrongAttemptsFlow.first() })
         private set
     private val _navigationEvent = MutableLiveData<NavigationEvent>()
     val navigationState: LiveData<NavigationEvent> = _navigationEvent
-    val dsm = DataStoreManager.getInstance(application)
     val ashbornDao = AshbornDb.getDatabase(application).ashbornDao()
-    val userRepository = OfflineUserRepository(ashbornDao)
-    val operationRepository = OperationRepository(ashbornDao)
-    val contoRepository = ContoRepository(ashbornDao)
+    private val userRepository = OfflineUserRepository(ashbornDao)
+    private val operationRepository = OperationRepository(ashbornDao)
+    var remainingTime: Long by mutableLongStateOf(/*0L*/runBlocking { dsm.timerFlow.first() })
+        private set
+    var timerIsRunning: Boolean by mutableStateOf(false)
+        private set
+
+    fun startTimer() {
+        if(!timerIsRunning && wrongAttempts > 3){
+            isBlocked = true
+            Log.d(nameClass, "start timer view model")
+            if(remainingTime <= 0L) remainingTime = calcWaitTime()
+            viewModelScope.launch(Dispatchers.Default) {
+                timerIsRunning = true
+                while (remainingTime > 0) {
+                    remainingTime -= 1
+                    delay(1000)
+                }
+                stopTimer()
+            }
+        }
+    }
+    var isBlocked: Boolean by mutableStateOf(remainingTime > 0L)
+        private set
     val codCliente = run {
-        var ris = ""
+        var ris: String
         runBlocking(Dispatchers.IO) {
             dsm.codClienteFlow.first().also { ris = it }
         }
-        Log.d(nameClass,"valore di codCliente = $ris")
-        ris.toString()
+        ris
+    }
+
+    private suspend fun stopTimer() {
+        timerIsRunning = false
+        isBlocked = false
+        dsm.writeTimer(0L)
+    }
+
+    private fun calcWaitTime(): Long {
+        val timesPerWrongAttempts = arrayListOf(60L, 120L, 240L, 480L, 960L, 1920L)
+        return if (wrongAttempts <= 3) 0
+            else if (wrongAttempts <= 5) timesPerWrongAttempts[0] * (wrongAttempts - 3)
+            else if (wrongAttempts <= 10) timesPerWrongAttempts[1] * (wrongAttempts - 5)
+            else if (wrongAttempts <= 30) timesPerWrongAttempts[2] * (wrongAttempts - 10)
+            else if (wrongAttempts <= 50) timesPerWrongAttempts[3] * (wrongAttempts - 30)
+            else if (wrongAttempts <= 100) timesPerWrongAttempts[4] * (wrongAttempts - 50)
+            else timesPerWrongAttempts[timesPerWrongAttempts.size - 1] * (wrongAttempts - 100)
     }
 
 
@@ -54,15 +90,16 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
         this.pin = pin
     }
 
-    fun checkPin(): Boolean {
+    private fun checkPin(): Boolean {
         return this.pin.length == 8 && this.pin.isDigitsOnly()
     }
 
     fun validatePin() {
         if (!checkPin()) {
             wrongAttempts++
+            writeWrongAttempts()
             Log.i("ViewModel", "formato pin sbagliato: $wrongAttempts")
-            if (wrongAttempts % 2 == 0)
+            if (wrongAttempts % 2L == 0L)
                 _navigationEvent.value = NavigationEvent.NavigateToError
             else
                 _navigationEvent.value = NavigationEvent.NavigateToErrorAlt
@@ -71,36 +108,22 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
                 if (!userRepository.isPinCorrect(codCliente, pin.hashCode().toString()).first()) {
                     Log.i("ViewModel", " pin sbagliato")
                     wrongAttempts++
-                    if (wrongAttempts % 2 == 0)
+                    if (wrongAttempts % 2L == 0L)
                         _navigationEvent.value = NavigationEvent.NavigateToError
                     else
                         _navigationEvent.value = NavigationEvent.NavigateToErrorAlt
                 } else {
+                    resetWrongAttempts()
+                    viewModelScope.launch(Dispatchers.IO) { dsm.writeTimer(0L) }
                     _navigationEvent.value = NavigationEvent.NavigateToNext
                 }
             }
         }
-
-        suspend fun getUserByClientCode(clientCode: String): User? {
-            var result: User? = null
-            Log.d(nameClass,"getUserbyClient valore di client code : $clientCode")
-            result = CoroutineScope(Dispatchers.IO).async {
-                return@async userRepository.getUserByClientCode(clientCode).first()
-            }.await()
-            Log.d("ViewModel", "getUserByClientCode ${result}")
-            return result
-        }
-
-
     }
 
     fun resetWrongAttempts() {
         this.wrongAttempts = 0
-    }
-    fun saveOperation(operation: Operation) {
-        viewModelScope.launch(Dispatchers.IO) {
-            operationRepository.insertOperation(operation)
-        }
+        writeWrongAttempts()
     }
 
     fun executeTransaction(operation: Operation){
@@ -120,6 +143,15 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
             operationRepository.deleteOperation(operation)
         }
     }
+
+    fun writeWrongAttempts() {
+        viewModelScope.launch { dsm.writeWrongAttempts(wrongAttempts) }
+    }
+
+    fun formatRemainingTime(): String = "${(remainingTime).toDuration(DurationUnit.SECONDS)}"
+    fun writeRemainingTime() {
+        viewModelScope.launch(Dispatchers.IO) { dsm.writeTimer(remainingTime) }
+    }
 }
 @Suppress("UNCHECKED_CAST")
 class AskPinViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
@@ -132,8 +164,8 @@ class AskPinViewModelFactory(private val application: Application) : ViewModelPr
 }
 
 sealed class NavigationEvent {
-    object NavigateToNext: NavigationEvent()
-    object NavigateToError: NavigationEvent()
-    object NavigateToErrorAlt: NavigationEvent()
-    object NavigateToPin: NavigationEvent()
+    data object NavigateToNext: NavigationEvent()
+    data object NavigateToError: NavigationEvent()
+    data object NavigateToErrorAlt: NavigationEvent()
+    data object NavigateToPin: NavigationEvent()
 }
