@@ -35,7 +35,7 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
     val ashbornDao = AshbornDb.getDatabase(application).ashbornDao()
     private val userRepository = OfflineUserRepository(ashbornDao)
     private val operationRepository = OperationRepository(ashbornDao)
-    var remainingTime: Long by mutableLongStateOf(0L/*runBlocking { dsm.timerFlow.first() }*/)
+    var remainingTime: Long by mutableLongStateOf(/*0L*/runBlocking { dsm.timerFlow.first() })
         private set
     var timerIsRunning: Boolean by mutableStateOf(false)
         private set
@@ -49,7 +49,6 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
                 timerIsRunning = true
                 while (remainingTime > 0) {
                     remainingTime -= 1
-                    dsm.writeTimer(remainingTime)
                     delay(1000)
                 }
                 stopTimer()
@@ -66,11 +65,10 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
         ris
     }
 
-
-
-    private fun stopTimer() {
+    private suspend fun stopTimer() {
         timerIsRunning = false
         isBlocked = false
+        dsm.writeTimer(0L)
     }
 
     private fun calcWaitTime(): Long {
@@ -99,6 +97,7 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
     fun validatePin() {
         if (!checkPin()) {
             wrongAttempts++
+            writeWrongAttempts()
             Log.i("ViewModel", "formato pin sbagliato: $wrongAttempts")
             if (wrongAttempts % 2L == 0L)
                 _navigationEvent.value = NavigationEvent.NavigateToError
@@ -114,20 +113,13 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
                     else
                         _navigationEvent.value = NavigationEvent.NavigateToErrorAlt
                 } else {
+                    resetWrongAttempts()
+                    viewModelScope.launch(Dispatchers.IO) { dsm.writeTimer(0L) }
                     _navigationEvent.value = NavigationEvent.NavigateToNext
                 }
             }
         }
     }
-
-    /*suspend fun getUserByClientCode(clientCode: String): User? {
-        Log.d(nameClass,"getUserbyClient valore di client code : $clientCode")
-        val result: User? = CoroutineScope(Dispatchers.IO).async {
-            return@async userRepository.getUserByClientCode(clientCode).first()
-        }.await()
-        Log.d("ViewModel", "getUserByClientCode $result")
-        return result
-    }*/
 
     fun resetWrongAttempts() {
         this.wrongAttempts = 0
@@ -157,6 +149,9 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
     }
 
     fun formatRemainingTime(): String = "${(remainingTime).toDuration(DurationUnit.SECONDS)}"
+    fun writeRemainingTime() {
+        viewModelScope.launch(Dispatchers.IO) { dsm.writeTimer(remainingTime) }
+    }
 }
 @Suppress("UNCHECKED_CAST")
 class AskPinViewModelFactory(private val application: Application) : ViewModelProvider.Factory {

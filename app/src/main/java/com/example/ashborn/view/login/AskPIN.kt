@@ -1,6 +1,7 @@
 package com.example.ashborn.view.login
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,13 +29,18 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.navigation.NavHostController
 import com.example.ashborn.viewModel.AskPinViewModel
 import com.example.ashborn.viewModel.NavigationEvent
@@ -46,8 +52,6 @@ import com.example.ashborn.ui.theme.LargePadding
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.ui.theme.SmallVerticalSpacing
-import kotlin.time.DurationUnit
-import kotlin.time.toDuration
 
 @Composable
 fun AskPIN(
@@ -56,10 +60,32 @@ fun AskPIN(
     operation: Operation?,
 ) {
     val nameFun = object{}.javaClass.enclosingMethod?.name
-    Log.d(nameFun, "renderizzo AskPIN")
     val navigationState by viewModel.navigationState.observeAsState()
     val isBlocked = viewModel.isBlocked
+    LaunchedEffect(Unit) {
+        ProcessLifecycleOwner.get().lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onStart(owner: LifecycleOwner) {
+                Log.d(nameFun, """
+                                ON_START
+                                time remaining: ${viewModel.formatRemainingTime()}
+                                wrong attempts: ${viewModel.wrongAttempts}
+                                isBlocked: ${viewModel.isBlocked}
+                            """.trimMargin())
 
+                if(viewModel.isBlocked && !viewModel.timerIsRunning && viewModel.wrongAttempts > 3) {
+                    viewModel.startTimer()
+                }
+            }
+
+            override fun onStop(owner: LifecycleOwner) {
+                Log.d(nameFun,"Sono in OnStop")
+                viewModel.writeWrongAttempts()
+                if (viewModel.wrongAttempts > 3)
+                    viewModel.writeRemainingTime()
+            }
+        })
+    }
+    BackHandler(enabled = true){}
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -85,7 +111,8 @@ fun AskPIN(
             Row(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .fillMaxWidth().padding(start = LargePadding, end = LargePadding, )
+                    .fillMaxWidth()
+                    .padding(start = LargePadding, end = LargePadding,)
             ) {
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
@@ -110,14 +137,13 @@ fun AskPIN(
                                 if (viewModel.pin.length <= 8) {
                                     viewModel.setPinX(viewModel.pin + (3 * i + j + 1).toString())
                                 }
-                            }) {
+                            }
+                        ) {
                             Text(text = (3 * i + j + 1).toString(), fontWeight = FontWeight.Bold, fontSize = 20.sp)
                         }
                     }
                 }
-
                 Spacer(modifier = Modifier.padding(SmallPadding))
-
             }
             Row {
                 Spacer(modifier = Modifier.width(SmallVerticalSpacing))
@@ -151,15 +177,13 @@ fun AskPIN(
                         }
                     }
                 ) {
-                    Icon(Icons.Filled.Clear, contentDescription = "icona cancellazione")
+                    Icon(ImageVector.vectorResource(R.drawable.backspace_outline), contentDescription = "icona cancellazione")
                 }
-                //FIXME: capire perché non mostra l'overlay
 
                 LaunchedEffect(navigationState) {
                     Log.i(nameFun,"valore navigazione= ${navigationState.toString()}")
                     when(navigationState){
                         NavigationEvent.NavigateToNext -> {
-                            viewModel.resetWrongAttempts()
                             if (operation == null) {
                                 navController.navigate("conti")
                             } else {
@@ -171,19 +195,11 @@ fun AskPIN(
                                     viewModel.executeInstantTransaction(operation)
                                 navController.navigate("operazioneConfermata")
                             }
-
                         }
                         NavigationEvent.NavigateToError, NavigationEvent.NavigateToErrorAlt -> {
-                            Log.i(nameFun, "errore e numero di tentativi ${viewModel.wrongAttempts}")
-                            viewModel.writeWrongAttempts()
-                            if(viewModel.remainingTime > 0 && !viewModel.timerIsRunning)
-                                viewModel.startTimer()
                             if(viewModel.wrongAttempts > 3 ) {
                                 if (operation == null) {
-                                    //navController.popBackStack()
                                     viewModel.startTimer()
-                                    Log.d(nameFun, "start timer askpin")
-
                                 } else {
                                     navController.navigate("operazioneRifiutata")
                                 }
@@ -196,7 +212,6 @@ fun AskPIN(
                 }
             }
         }
-        Log.d(nameFun, "isBlocked: $isBlocked")
         if (isBlocked) {
             Surface(
                 modifier = Modifier
