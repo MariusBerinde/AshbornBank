@@ -19,9 +19,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class  WelcomeViewModel(application: Application): AndroidViewModel(application){
+  
     var dsm= DataStoreManager.getInstance(application)
     var userName = ""
-
+  
     fun getUsername():String{
         var ris: String
         runBlocking(Dispatchers.IO) { ris = dsm.usernameFlow.first() }

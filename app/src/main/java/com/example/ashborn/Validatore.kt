@@ -98,7 +98,8 @@ class Validatore {
      */
     fun formatoBeneficiarioValido(beneficiario: String): Boolean {
         var ris:Boolean = false
-        val regex = Regex("[^a-zA-Z]")
+        //val regex = Regex("[^a-zA-Z]")
+        val regex = Regex("[^a-zA-Z\\s]")
 
         val caratteri_speciali = regex.containsMatchIn(beneficiario)
         if ( beneficiario.length > 2 && beneficiario.length < 100 ){

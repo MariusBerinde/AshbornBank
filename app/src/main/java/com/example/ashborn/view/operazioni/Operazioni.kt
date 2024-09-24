@@ -55,19 +55,7 @@ fun Operazioni(
                 ImageVector.vectorResource(R.drawable.dots_horizontal)
             )
             val index = 0
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = {
-                    navController.popBackStack()
-                }) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                }
-            }
+
             Row(
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {

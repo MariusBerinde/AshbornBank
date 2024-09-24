@@ -1,7 +1,5 @@
 package com.example.ashborn
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -16,23 +14,31 @@ import androidx.work.WorkManager
 import com.example.ashborn.ui.theme.AshbornTheme
 import java.util.concurrent.TimeUnit
 
+
+
+
 class MainActivity : ComponentActivity() {
-    private lateinit var connectivityObserver: ConnectivityObserver
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupPeriodicWork(applicationContext)
+
         setContent {
             AshbornTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
+
+
                     AppNavigazione2(startDest = "init")
+
                 }
             }
         }
     }
 }
+
+
 
 fun setupPeriodicWork(context: Context){
     val workRequest = PeriodicWorkRequestBuilder<DbWorker>(

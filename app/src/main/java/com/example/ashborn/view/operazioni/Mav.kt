@@ -2,6 +2,7 @@ package com.example.ashborn.view.operazioni
 
 import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -39,9 +41,11 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -66,10 +70,40 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun Mav(navController: NavHostController) {
+
+    val dest =  integerResource(R.integer.Operazioni)
+    BackHandler(enabled = true) {
+        navController.navigate("conti?index=$dest")
+    }
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
+       // verticalArrangement = Arrangement.Center,
     ) {
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            IconButton(onClick = {
+
+                navController.navigate("conti?index=$dest")
+
+            }) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+            }
+            Spacer(modifier = Modifier.padding( horizontal = 55.dp))
+            Text(
+                text = stringResource(R.string.mav),
+                fontWeight = FontWeight.Bold,
+                fontSize = 28.sp,
+                textAlign = TextAlign.Center,
+//                modifier = Modifier.width(50.dp)
+                )
+        }
+        Spacer(modifier = Modifier.padding(bottom = 250.dp))
         Row (
             modifier = Modifier
                 .fillMaxWidth()
@@ -100,6 +134,7 @@ fun Mav(navController: NavHostController) {
 }
 
 
+
 @Composable
 fun MavQrCode(
     navController: NavHostController,
@@ -108,16 +143,15 @@ fun MavQrCode(
     val nameFun = object {}.javaClass.enclosingMethod?.name
     val barcodeResults = viewModel.barcodeResults.collectAsState(null)
     val json = Json { prettyPrint = true }
-
     ScanBarcode(
         viewModel.barcodeScanner::startScan,
         barcodeResults.value,
     )
 
-    Log.d(nameFun,"risultato scan ${barcodeResults.value}")
+//    Log.d(nameFun,"risultato scan ${barcodeResults.value}")
     if (!barcodeResults.value.isNullOrBlank()) {
 
-        Log.d(nameFun,"risultato scan valido=${barcodeResults.value}")
+ //       Log.d(nameFun,"risultato scan valido=${barcodeResults.value}")
         val arguments = barcodeResults.value?.split("|") ?: emptyList()
         if (arguments.size == 3) {
             val operation = Operation(
@@ -134,7 +168,7 @@ fun MavQrCode(
                 recipient = viewModel.codiceMav,
             )
 
-            val data = Json { prettyPrint = true }.encodeToString(Operation.serializer(), operation)
+            val data = json.encodeToString(Operation.serializer(), operation)
             Log.d(nameFun, "Operazione creata: $operation")
             val encodedOperation = Uri.encode(data)
             
@@ -186,12 +220,15 @@ fun MavManuale(
     viewModel: MavViewModel,
     operation: Operation?,
 ) {
+    BackHandler(enabled = true) {
+        navController.navigate("mav")
+    }
     val isOpen = remember { mutableStateOf(false) }
     val focusRequester1 = remember { FocusRequester() }
     val focusRequester2 = remember { FocusRequester() }
     val focusRequester3 = remember { FocusRequester() }
     val nameFun = object {}.javaClass.enclosingMethod?.name
-    val focusManager = LocalFocusManager.current
+   // val focusManager = LocalFocusManager.current
     val json = Json { prettyPrint = true }
     if(operation != null) {
         viewModel.setCodiceMavX(operation.iban)
@@ -211,7 +248,12 @@ fun MavManuale(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = {
-                navController.popBackStack()
+               /* if(operation == null)
+                    navController.popBackStack()
+                else
+                    navController.navigate("mav")*/
+
+                navController.navigate("mav")
             }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -342,12 +384,16 @@ fun MavManuale(
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(focusRequester2),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                //keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Next
+                ),
                 keyboardActions = KeyboardActions(
                     onNext = { focusRequester3.requestFocus() }
                 ),
                 label = { Text(stringResource(id = R.string.importo)) },
-                value = viewModel.importoMav,
+                value = if(!viewModel.importoMav.contains(".")) viewModel.importoMav+".00" else viewModel.importoMav,
                 onValueChange = { viewModel.setImportoMavX(it) }
             )
         }

@@ -1,6 +1,7 @@
 package com.example.ashborn.view.operazioni
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -35,6 +36,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -73,7 +75,14 @@ fun Bonifico(
     val isOpen = remember { mutableStateOf(false) }
     val isChecked = remember { mutableStateOf(false) }
     val nameFun = object {}.javaClass.enclosingMethod?.name
+    val dest =  integerResource(R.integer.Operazioni)
+    BackHandler(enabled = true) {
+        // Non fare nulla, in questo modo blocca l'azione "back"
+        // Puoi anche gestire un'azione specifica qui
 
+        navController.navigate("conti?index=$dest")
+
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -86,9 +95,7 @@ fun Bonifico(
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = {
-                navController.popBackStack()
-            }) {
+            IconButton(onClick = { navController.navigate("conti?index=$dest") }) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
         }
@@ -203,7 +210,7 @@ fun Bonifico(
             }
             Row() {
                 OutlinedTextField(
-                    value = viewModel.importo,
+                    value = if(!viewModel.importo.contains(".")) viewModel.importo+".00" else viewModel.importo,
                     onValueChange = { viewModel.setImportoX(it) },
                     label = { Text(stringResource(id = R.string.importo)) },
                     colors = OutlinedTextFieldDefaults.colors(

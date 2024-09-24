@@ -11,18 +11,15 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavHostController
-import com.example.ashborn.ConnectivityObserver
-import com.example.ashborn.NetworkConnectivityObserver
 import com.example.ashborn.R
 import com.example.ashborn.view.operazioni.Operazioni
 import com.example.ashborn.viewModel.AltroViewModel
@@ -37,11 +34,16 @@ fun Pagine(
     viewModelCarte: CarteViewModel,
     viewModelAltro: AltroViewModel,
     viewModelOperazioni: OperationViewModel,
-    //viewModel: AshbornViewModel,
-    //connectionStatus: ConnectivityObserver.Status
+    indice:Int=0
 ) {
-    val tabList: ArrayList<String> = arrayListOf("conti", "carte", "operazioni", "parla con noi", "altro")
-    var selectedItem by remember { mutableIntStateOf(0) }
+    val tabList: ArrayList<String> = arrayListOf(
+        stringResource(R.string.conti),
+        stringResource(R.string.carte),
+        stringResource(R.string.operazioni),
+        stringResource(R.string.parla),
+        stringResource(R.string.altro),
+    )
+    var selectedItem by remember { mutableIntStateOf(indice) }
     val icons: ArrayList<ImageVector>  = arrayListOf(
         ImageVector.vectorResource(R.drawable.bank),
         ImageVector.vectorResource(R.drawable.credit_card_outline),
@@ -49,8 +51,6 @@ fun Pagine(
         ImageVector.vectorResource(R.drawable.chat_outline),
         ImageVector.vectorResource(R.drawable.dots_horizontal)
     )
-    val networkConnectivityObserver = NetworkConnectivityObserver.getInstance(LocalContext.current.applicationContext)
-    val connectionStatus by networkConnectivityObserver.observe().collectAsState(initial = ConnectivityObserver.Status.Unavailable)
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -105,19 +105,3 @@ fun Pagine(
     }
 }
 
-/*@Preview(showBackground = true)
-@Composable
-fun DettagliPreview() {
-    val viewModel = AshbornViewModel()
-    val navController = rememberNavController()
-    AshbornTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            //DettagliOperazione(0,navController,viewModel = viewModel)
-            //Altro(navController, viewModel)
-            Pagine(navController = navController, viewModel = viewModel, connectionStatus = ConnectivityObserver.Status.Lost)
-        }
-    }
-}*/

@@ -53,11 +53,13 @@ import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.ui.theme.SmallVerticalSpacing
 
+
 @Composable
 fun AskPIN(
     navController: NavHostController,
     viewModel: AskPinViewModel,
     operation: Operation?,
+   prevPos:String? = null,
 ) {
     val nameFun = object{}.javaClass.enclosingMethod?.name
     val navigationState by viewModel.navigationState.observeAsState()
@@ -99,6 +101,8 @@ fun AskPIN(
                     .align(Alignment.CenterHorizontally)
                     .fillMaxWidth()
                     .padding(start = LargePadding, end = LargePadding),
+
+   
             ) {
                 Text(
                     text = stringResource(id = R.string.pin),
@@ -184,6 +188,11 @@ fun AskPIN(
                     Log.i(nameFun,"valore navigazione= ${navigationState.toString()}")
                     when(navigationState){
                         NavigationEvent.NavigateToNext -> {
+           
+                        if(prevPos != null){
+                            Log.d("AskPin","navigo verso $prevPos")
+                            navController.navigate(prevPos.toString())
+                          }  
                             if (operation == null) {
                                 navController.navigate("conti")
                             } else {
@@ -195,6 +204,7 @@ fun AskPIN(
                                     viewModel.executeInstantTransaction(operation)
                                 navController.navigate("operazioneConfermata")
                             }
+
                         }
                         NavigationEvent.NavigateToError, NavigationEvent.NavigateToErrorAlt -> {
                             if(viewModel.wrongAttempts > 3 ) {
@@ -205,9 +215,11 @@ fun AskPIN(
                                 }
 
                             }
+
                         }
                         else->{}
                     }
+
 
                 }
             }
@@ -241,7 +253,14 @@ fun AskPIN(
                         )
                     }
                 }
+
+                    
+                //}
+
             }
         }
     }
 }
+
+
+

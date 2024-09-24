@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="Altro">4</integer>
+    <integer name="Carte">1</integer>
+    <integer name="Conti">0</integer>
+    <integer name="Operazioni">2</integer>
+    <integer name="Parla">3</integer>
+</resources>

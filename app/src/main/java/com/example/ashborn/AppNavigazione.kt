@@ -1,10 +1,16 @@
 package com.example.ashborn
 
 import android.app.Application
+import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -55,18 +61,55 @@ import com.example.ashborn.viewModel.UtenteViewModel
 import com.example.ashborn.viewModel.UtenteViewModelFactory
 import com.example.ashborn.viewModel.WelcomeViewModel
 import com.example.ashborn.viewModel.WelcomeViewModelFactory
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+
+const val SOGLIA = 300000 // 5 minuti
 
 @Composable
 fun AppNavigazione2(
     startDest:String,
 ){
+
     val nameFun = object {}.javaClass.enclosingMethod?.name
     val applicationContext = LocalContext.current.applicationContext
     val navController = rememberNavController()
     val networkConnectivityObserver = NetworkConnectivityObserver.getInstance(applicationContext)
     val connectionStatus by networkConnectivityObserver.observe().collectAsState(initial = ConnectivityObserver.Status.Unavailable)
     val json = Json { prettyPrint = true }
+    // Inizializza il CoroutineScope per lanciare coroutine
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        // Aggiungi un observer per monitorare quando l'app ritorna in foreground
+         var lastBackgroundTime: Long = 0
+        ProcessLifecycleOwner.get().lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onStart(owner: LifecycleOwner) {
+                // Quando l'app ritorna in foreground, naviga alla schermata del PIN
+                val currentDestination = navController.currentDestination?.route
+                val currentPos = navController.currentBackStackEntry?.destination?.route
+               Log.d(nameFun,"posizione dove mi sveglio${currentPos}")
+                val actualTime = System.currentTimeMillis()
+                val tempoInBack = actualTime - lastBackgroundTime
+                Log.d(nameFun,"tempoInBack = $tempoInBack")
+                if(tempoInBack > SOGLIA) {
+                    if (currentDestination != "welcome") {
+                        scope.launch {
+                            //    navController.navigate("login") // Naviga alla schermata del PIN
+                            navController.navigate("login?prev=$currentPos")
+                        }
+                    }
+                }
+
+
+            }
+
+            override fun onStop(owner: LifecycleOwner) {
+                lastBackgroundTime = System.currentTimeMillis()
+                // Quando l'app va in background, puoi aggiungere altra logica qui se necessario
+            }
+        })
+    }
 
     NavHost(
         navController = navController,
@@ -84,7 +127,9 @@ fun AppNavigazione2(
                     Welcome(navController = navController, viewModel = viewModel)
                 }
             }
-            composable("login") {
+            composable("login?prev={prev}") {
+                //    backStackEntry -> val prev = backStackEntry.arguments?.getString("prev").toBoolean()
+                backStackEntry -> val prev = backStackEntry.arguments?.getString("prev")
                 val viewModel: AskPinViewModel = viewModel(
                     factory = AskPinViewModelFactory(applicationContext as Application)
                 )
@@ -93,6 +138,7 @@ fun AppNavigazione2(
                         navController = navController,
                         viewModel = viewModel,
                         operation = null,
+                        prevPos = prev
                     )
                 }
             }
@@ -107,37 +153,11 @@ fun AppNavigazione2(
                     )
                 }
             }
-            navigation(
-                startDestination = "riepilogo-operazione",
-                route = "operazioni",
-            ) {
-                composable("pin/{operazione}") {
-                    val viewModel: AskPinViewModel = viewModel(
-                        factory = AskPinViewModelFactory(applicationContext as Application)
-                    )
-                    val jsonData = it.arguments?.getString("operazione") ?: "No Data"
-                    val operation: Operation = json.decodeFromString(Operation.serializer(), jsonData)
-                    ErroreConnessione(connectionStatus = connectionStatus) {
-                        AskPIN(
-                            navController = navController,
-                            viewModel = viewModel,
-                            operation = operation,
-                        )
-                    }
-                }
-                composable("operazioneConfermata") {
-                    ErroreConnessione(connectionStatus = connectionStatus) {
-                        OperazioneConfermata(
-                            navController = navController,
-                        )
-                    }
-                }
-                composable("operazioneRifiutata"){
-                    ErroreConnessione(connectionStatus = connectionStatus) {
-                        OperazioneRifiutata(navController = navController)
-                    }
-                }
-            }
+        }
+
+
+
+
             navigation(
                 startDestination = "conti",
                 route = "principale"
@@ -154,18 +174,20 @@ fun AppNavigazione2(
                         )
                     }
                 }
-                composable("conti") {
+                composable("conti?index={index}") {
+
+                        backStackEntry -> val index = backStackEntry.arguments?.getString("index")?.toInt()?:0
                     val contiViewmodel: ContiViewModel = viewModel(
                         factory = ContiViewModelFactory(applicationContext as Application)
                     )
                     val carteViewModel: CarteViewModel = viewModel(
-                        factory = CarteViewModelFactory(applicationContext as Application)
+                        factory = CarteViewModelFactory(applicationContext )
                     )
                     val altroViewModel: AltroViewModel = viewModel(
-                        factory = AltroViewModelFactory(applicationContext as Application)
+                        factory = AltroViewModelFactory(applicationContext )
                     )
                     val operationViewModel: OperationViewModel = viewModel(
-                        factory = OperationViewModelFactory(applicationContext as Application)
+                        factory = OperationViewModelFactory(applicationContext )
                     )
                     ErroreConnessione(connectionStatus = connectionStatus) {
                         Pagine(
@@ -174,12 +196,11 @@ fun AppNavigazione2(
                             viewModelCarte = carteViewModel,
                             viewModelOperazioni = operationViewModel,
                             viewModelAltro = altroViewModel,
+                            indice = index,
                         )
                     }
                 }
-                composable(
-                    route = "dettagli-operazione/{operazione}",
-                ) {
+                composable(route = "dettagli-operazione/{operazione}") {
                     val jsonData = it.arguments?.getString("operazione") ?: "No Data"
                     val operation: Operation = json.decodeFromString(Operation.serializer(), jsonData)
                     val dettagliOperazioneViewModel : DettagliOperazioneViewModel = viewModel(
@@ -237,76 +258,109 @@ fun AppNavigazione2(
                         )
                     }
                 }
-                composable("bonifico") {
-                    val bonificoViewModel : BonificoViewModel = viewModel(
-                        factory = BonificoViewModelFactory(applicationContext as Application)
-                    )
-                    ErroreConnessione(connectionStatus = connectionStatus) {
-                        Bonifico(
-                            navController = navController,
-                            viewModel = bonificoViewModel,
-                        )
-                    }
-                }
-                composable("mav") {
-                    ErroreConnessione(connectionStatus = connectionStatus) {
-                        Mav(navController = navController)
-                    }
-                }
-                composable("scan-qrcode") {
-                    val mavViewModel : MavViewModel = viewModel(
-                        factory = MavViewModelFactory(applicationContext as Application)
-                    )
-                    ErroreConnessione(connectionStatus = connectionStatus) {
-                        MavQrCode(
-                            navController = navController,
-                            viewModel = mavViewModel
-                        )
-                    }
-                }
-                composable("mav-manuale?operazione={operazione}") {
-                    val mavViewModel : MavViewModel = viewModel(
-                        factory = MavViewModelFactory(applicationContext as Application)
-                    )
-                    //val jsonData = it.arguments?.getString("operazione") ?: "No Data
 
-                    val jsonData = it.arguments?.getString("operazione")
-                    val operation: Operation? = jsonData?.let { data ->
-                        // Decodifica JSON in un oggetto Operation
-                        Json { prettyPrint = true }.decodeFromString(Operation.serializer(), data)
-                    }
-                    ErroreConnessione(connectionStatus = connectionStatus) {
-                        MavManuale(
-                            navController = navController,
-                            viewModel = mavViewModel,
-                            operation = operation,
-                        )
-                    }
-                }
-                composable("riepilogo-operazione/{operazione}") {
-                    val jsonData = it.arguments?.getString("operazione") ?: "No Data"
-                    val operation: Operation = json.decodeFromString(Operation.serializer(), jsonData)
-                    RiepilogoOperazione(
+            }
+        navigation(
+            startDestination = "bonifico",
+            route = "operazioni"
+        ){
+            composable("bonifico") {
+                val bonificoViewModel : BonificoViewModel = viewModel(
+                    factory = BonificoViewModelFactory(applicationContext as Application)
+                )
+                ErroreConnessione(connectionStatus = connectionStatus) {
+                    Bonifico(
                         navController = navController,
-                        operation = operation,
-                    )
-                }
-                composable("disconosci-operazione"){
-
-                    IstruzioniDisconiscimento(
-                        navController = navController,
-                        )
-                }
-                composable("annulla-operazione/{operation}"){
-                    val jsonData = it.arguments?.getString("operation") ?: "No Data"
-                    val operation: Operation = json.decodeFromString(Operation.serializer(), jsonData)
-                    AnnullaOperazione(
-                        navController = navController,
-                        operazion = operation
+                        viewModel = bonificoViewModel,
                     )
                 }
             }
+            composable("mav") {
+                ErroreConnessione(connectionStatus = connectionStatus) {
+                    Mav(navController = navController)
+                }
+            }
+            composable("scan-qrcode") {
+                val mavViewModel : MavViewModel = viewModel(
+                    factory = MavViewModelFactory(applicationContext as Application)
+                )
+                ErroreConnessione(connectionStatus = connectionStatus) {
+                    MavQrCode(
+                        navController = navController,
+                        viewModel = mavViewModel
+                    )
+                }
+            }
+            composable("mav-manuale?operazione={operazione}") {
+                val mavViewModel : MavViewModel = viewModel(
+                    factory = MavViewModelFactory(applicationContext as Application)
+                )
+                //val jsonData = it.arguments?.getString("operazione") ?: "No Data
+
+                val jsonData = it.arguments?.getString("operazione")
+                val operation: Operation? = jsonData?.let { data ->
+                    // Decodifica JSON in un oggetto Operation
+                    json.decodeFromString(Operation.serializer(), data)
+                }
+                ErroreConnessione(connectionStatus = connectionStatus) {
+                    MavManuale(
+                        navController = navController,
+                        viewModel = mavViewModel,
+                        operation = operation,
+                    )
+                }
+            }
+            composable("riepilogo-operazione/{operazione}") {
+                val jsonData = it.arguments?.getString("operazione") ?: "No Data"
+                val operation: Operation = json.decodeFromString(Operation.serializer(), jsonData)
+                RiepilogoOperazione(
+                    navController = navController,
+                    operation = operation,
+                )
+            }
+            composable("disconosci-operazione"){
+
+                IstruzioniDisconiscimento(
+                    navController = navController,
+                )
+            }
+            composable("annulla-operazione/{operation}"){
+                val jsonData = it.arguments?.getString("operation") ?: "No Data"
+                val operation: Operation = json.decodeFromString(Operation.serializer(), jsonData)
+                AnnullaOperazione(
+                    navController = navController,
+                    operazion = operation
+                )
+            }
+            composable("pin/{operazione}") {
+                val viewModel: AskPinViewModel = viewModel(
+                    factory = AskPinViewModelFactory(applicationContext as Application)
+                )
+                val jsonData = it.arguments?.getString("operazione") ?: "No Data"
+                val operation: Operation = json.decodeFromString(Operation.serializer(), jsonData)
+                ErroreConnessione(connectionStatus = connectionStatus) {
+                    AskPIN(
+                        navController = navController,
+                        viewModel = viewModel,
+                        operation = operation,
+
+                    )
+                }
+            }
+            composable("operazioneConfermata") {
+                ErroreConnessione(connectionStatus = connectionStatus) {
+                    OperazioneConfermata(
+                        navController = navController,
+                    )
+                }
+            }
+            composable("operazioneRifiutata"){
+                ErroreConnessione(connectionStatus = connectionStatus) {
+                    OperazioneRifiutata(navController = navController)
+                }
+            }
         }
+
     }
 }
 

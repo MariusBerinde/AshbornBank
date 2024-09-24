@@ -1,8 +1,7 @@
 package com.example.ashborn.view.operazioni
 
-import android.content.Context
-import android.content.Intent
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -28,17 +26,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavHostController
 import com.example.ashborn.R
 import com.example.ashborn.data.Operation
 import com.example.ashborn.data.OperationStatus
 import com.example.ashborn.data.TransactionType
-import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.view.Share
 import com.example.ashborn.viewModel.DettagliOperazioneViewModel
 import kotlinx.serialization.json.Json
@@ -58,6 +55,15 @@ fun DettagliOperazione(
     Log.d("DettagliOperazione","Operazione = $operation")
     val nameFun = object {}.javaClass.enclosingMethod?.name
     Log.d(nameFun, "operazione arrivata: $operation")
+
+    val dest = if(operation.cardCode == null) integerResource(R.integer.Conti) else integerResource(R.integer.Carte)
+    BackHandler(enabled = true) {
+        // Non fare nulla, in questo modo blocca l'azione "back"
+        // Puoi anche gestire un'azione specifica qui
+
+            navController.navigate("conti?index=$dest")
+
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -71,7 +77,7 @@ fun DettagliOperazione(
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { navController.popBackStack() }) {
+            IconButton(onClick = { navController.navigate("conti?index=$dest") }) {
                 Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = "Back")
             }
         }

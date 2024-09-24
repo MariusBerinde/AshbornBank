@@ -1,6 +1,6 @@
 <resources>
     <string name="altro">altro</string>
-    <string name="altro_bonifico">Fai un altro bonifico</string>
+    <string name="altra_operazione">Fai un altra operazione</string>
     <string name="app_name">Ashborn bank</string>
     <string name="archivio">Archivio</string>
     <string name="assist">Se hai bisogno di assistenza chiama il nostro numero verde:</string>
