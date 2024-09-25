@@ -95,6 +95,8 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
     }
 
     fun validatePin() {
+
+        Log.i("ViewModel", "Pin inserito $pin")
         if (!checkPin()) {
             wrongAttempts++
             writeWrongAttempts()
