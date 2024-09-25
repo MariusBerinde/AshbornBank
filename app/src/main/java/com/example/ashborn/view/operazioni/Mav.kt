@@ -228,7 +228,6 @@ fun MavManuale(
     val focusRequester2 = remember { FocusRequester() }
     val focusRequester3 = remember { FocusRequester() }
     val nameFun = object {}.javaClass.enclosingMethod?.name
-   // val focusManager = LocalFocusManager.current
     val json = Json { prettyPrint = true }
     if(operation != null) {
         viewModel.setCodiceMavX(operation.iban)
@@ -248,11 +247,6 @@ fun MavManuale(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = {
-               /* if(operation == null)
-                    navController.popBackStack()
-                else
-                    navController.navigate("mav")*/
-
                 navController.navigate("mav")
             }) {
                 Icon(

@@ -5,4 +5,5 @@
     <integer name="Conti">0</integer>
     <integer name="Operazioni">2</integer>
     <integer name="Parla">3</integer>
+    <integer name="timeout">300000</integer>
 </resources>

@@ -1,5 +1,6 @@
 package com.example.ashborn
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.MotionEvent
@@ -11,8 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -30,8 +29,7 @@ import java.util.concurrent.TimeUnit
 
 
 class MainActivity : ComponentActivity() {
-    private var inactivityJob:Job? =null
-    private val timeout = 1*60*1000L
+    private var inactivityJob: Job? = null
     private lateinit var navController: NavHostController
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,8 +55,8 @@ class MainActivity : ComponentActivity() {
             }
         }
         setupTouchListener()
-
     }
+    @SuppressLint("ClickableViewAccessibility")
     private fun setupTouchListener(){
         val rootView : View = findViewById(android.R.id.content)
         rootView.setOnTouchListener{
@@ -73,10 +71,9 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun resetInactivityTimeout() {
-
         inactivityJob?.cancel()
-        inactivityJob = CoroutineScope(Dispatchers.Main).launch {
-            delay(timeout)
+        inactivityJob = CoroutineScope(Dispatchers.Main.immediate).launch {
+            delay(300000L)
             navController.navigate("welcome"){
                 popUpTo(navController.graph.startDestinationId){ inclusive = true }
             }

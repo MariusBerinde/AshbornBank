@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,10 +47,10 @@ fun ListaOperazioniFatteConti(
     viewModel: ContiViewModel,
 ) {
     val nameFun = object {}.javaClass.enclosingMethod?.name
-    var ordineInversoData = remember { mutableStateOf(true) }
-    var ordineInversoDescrizione = remember { mutableStateOf(true) }
-    var ordineInversoImporto = remember { mutableStateOf(true) }
-    var voci = viewModel.operazioni
+    val ordineInversoData = remember { mutableStateOf(true) }
+    val ordineInversoDescrizione = remember { mutableStateOf(true) }
+    val ordineInversoImporto = remember { mutableStateOf(true) }
+    val voci = viewModel.operazioni
     LazyColumn(
         modifier = Modifier
             .padding(SmallPadding)
@@ -57,17 +58,17 @@ fun ListaOperazioniFatteConti(
             .fillMaxWidth()
             .height(450.dp)
     ) {
-        if (voci != null && !voci.isEmpty()) {
+        if (!voci.isNullOrEmpty()) {
             item {
                 Row(modifier = Modifier.padding(SmallPadding)) {
                     Button(
                         onClick = {
                             if (ordineInversoData.value) {
                                 viewModel.operazioni =
-                                    ArrayList(voci?.sortedByDescending { it.dateO })
+                                    ArrayList(voci.sortedByDescending { it.dateO })
                                 ordineInversoData.value = !ordineInversoData.value
                             } else {
-                                viewModel.operazioni = ArrayList(voci?.sortedBy { it.dateO })
+                                viewModel.operazioni = ArrayList(voci.sortedBy { it.dateO })
                                 ordineInversoData.value = !ordineInversoData.value
                             }
                         }
@@ -83,10 +84,10 @@ fun ListaOperazioniFatteConti(
                         onClick = {
                             if (ordineInversoDescrizione.value) {
                                 viewModel.operazioni =
-                                    ArrayList(voci?.sortedByDescending { it.description })
+                                    ArrayList(voci.sortedByDescending { it.description })
                                 ordineInversoData.value = !ordineInversoData.value
                             } else {
-                                viewModel.operazioni = ArrayList(voci?.sortedBy { it.description })
+                                viewModel.operazioni = ArrayList(voci.sortedBy { it.description })
                                 ordineInversoDescrizione.value = !ordineInversoDescrizione.value
                             }
                         }
@@ -101,10 +102,10 @@ fun ListaOperazioniFatteConti(
                         onClick = {
                             if (ordineInversoImporto.value) {
                                 viewModel.operazioni =
-                                    ArrayList(voci?.sortedByDescending { it.amount })
+                                    ArrayList(voci.sortedByDescending { it.amount })
                                 ordineInversoImporto.value = !ordineInversoImporto.value
                             } else {
-                                viewModel.operazioni = ArrayList(voci?.sortedBy { it.amount })
+                                viewModel.operazioni = ArrayList(voci.sortedBy { it.amount })
                                 ordineInversoImporto.value = !ordineInversoImporto.value
                             }
                         }
@@ -138,48 +139,68 @@ fun ListaOperazioniFatteConti(
             }
         } else {
             for (i in voci) {
+                val rosso = Color(0xFF8B0000)
+                val verdeSmeraldo = Color(0xFF50C878)
+
                 item {
                     Card(
                         modifier = Modifier
                             .padding(SmallPadding)
                             .height(60.dp)
-                            .fillMaxWidth()
+                            .fillMaxWidth(),
                     ) {
                         Row(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .clickable {
-                                    Log.d(nameFun, "operazione inviata: ${i}")
+                                    Log.d(nameFun, "operazione inviata: $i")
                                     val json = Json { prettyPrint = true }
                                     val data = json.encodeToString(Operation.serializer(), i)
                                     navController.navigate("dettagli-operazione/$data")
                                 },
-                            horizontalArrangement = Arrangement.SpaceEvenly
+                            horizontalArrangement = Arrangement.SpaceEvenly,
                         ) {
-                            val width = 90.dp
-                            Column(modifier = Modifier
-                                .width(width)
-                                .align(Alignment.CenterVertically)
-                                .padding(
-                                    SmallPadding
-                                )) {
+                            val width = 92.dp
+                            Column(
+                                modifier = Modifier
+                                    .width(width-10.dp)
+                                    .align(Alignment.CenterVertically)
+                                    .padding(
+                                        start = SmallPadding-5.dp,
+                                        top = SmallPadding,
+                                        bottom = SmallPadding,
+                                    ),
+                            ) {
                                 Text(
-                                    text = i.dateO.toLocalDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                                    text = i
+                                        .dateO
+                                        .toLocalDate()
+                                        .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                                     fontSize = 13.sp,
+                                    fontWeight = FontWeight.Bold,
                                 )
                             }
-                            Column(modifier = Modifier
-                                .width(190.dp)
-                                .align(Alignment.CenterVertically)) {
+                            Column(
+                                modifier = Modifier
+                                    .width(185.dp)
+                                    .align(Alignment.CenterVertically),
+                            ) {
+                                val description = i.description.substring(
+                                    0,
+                                    if(i.description.length > 25) 25
+                                    else i.description.length
+                                ) + if(i.description.length > 25) "..." else ""
                                 Text(
-                                    text = i.description.substring(0, if(i.description.length > 25) 25 else i.description.length) +
-                                            if(i.description.length > 25) "..." else "",
+                                    text = description,
                                     fontSize = 13.sp,
+                                    fontWeight = FontWeight.Bold,
                                 )
                             }
-                            Column(modifier = Modifier
-                                .width(width)
-                                .align(Alignment.CenterVertically)) {
+                            Column(
+                                modifier = Modifier
+                                    .width(width-22.dp)
+                                    .align(Alignment.CenterVertically),
+                            ) {
                                 Text(
                                     text = if (i.transactionType == TransactionType.WITHDRAWAL) {
                                             "-"
@@ -187,6 +208,9 @@ fun ListaOperazioniFatteConti(
                                             "+"
                                         } + i.amount.toString() + "€",
                                     fontSize = 13.sp,
+                                    color = if(i.transactionType == TransactionType.WITHDRAWAL) rosso
+                                            else verdeSmeraldo,
+                                    fontWeight = FontWeight.Bold
                                 )
                             }
                         }
@@ -203,16 +227,16 @@ fun ListaOperazioniFatteCarte(
     viewModel: CarteViewModel,
 ) {
     val nameFun = object {}.javaClass.enclosingMethod?.name
-    var ordineInversoData = remember { mutableStateOf(true) }
-    var ordineInversoDescrizione = remember { mutableStateOf(true) }
-    var ordineInversoImporto = remember { mutableStateOf(true) }
-    var voci = viewModel.operazioni
+    val ordineInversoData = remember { mutableStateOf(true) }
+    val ordineInversoDescrizione = remember { mutableStateOf(true) }
+    val ordineInversoImporto = remember { mutableStateOf(true) }
+    val voci = viewModel.operazioni
     LazyColumn(
         modifier = Modifier
             .padding(SmallPadding)
             .border(1.dp, Color.Black, shape = RoundedCornerShape(9.dp))
             .fillMaxWidth()
-            .height(450.dp)
+            .height(450.dp),
     ) {
         if (!voci.isNullOrEmpty()) {
             item {
@@ -221,53 +245,60 @@ fun ListaOperazioniFatteCarte(
                         onClick = {
                             if (ordineInversoData.value) {
                                 viewModel.operazioni =
-                                    ArrayList(voci?.sortedByDescending { it.dateO })
+                                    ArrayList(voci.sortedByDescending { it.dateO })
                                 ordineInversoData.value = !ordineInversoData.value
                             } else {
-                                viewModel.operazioni = ArrayList(voci?.sortedBy { it.dateO })
+                                viewModel.operazioni = ArrayList(voci.sortedBy { it.dateO })
                                 ordineInversoData.value = !ordineInversoData.value
                             }
-                        }
+                        },
                     ) {
                         Text(text = stringResource(id = R.string.data))
                         Icon(
-                            imageVector = if (ordineInversoData.value) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                            contentDescription = if (ordineInversoData.value) "ordine ascendente" else "ordine discendente"
+                            imageVector = if (ordineInversoData.value) Icons.Filled.KeyboardArrowUp
+                                          else Icons.Filled.KeyboardArrowDown,
+                            contentDescription = if (ordineInversoData.value) "ordine ascendente"
+                                                 else "ordine discendente",
                         )
-
                     }
-                    Button(onClick = {
-                        if (ordineInversoDescrizione.value) {
-                            viewModel.operazioni =
-                                ArrayList(voci?.sortedByDescending { it.description })
-                            ordineInversoData.value = !ordineInversoData.value
-                        } else {
-                            viewModel.operazioni = ArrayList(voci?.sortedBy { it.description })
-                            ordineInversoDescrizione.value = !ordineInversoDescrizione.value
-                        }
-                    }) {
-                        Text(text = stringResource(id = R.string.descrizione))
+                    Button(
+                        onClick = {
+                            if (ordineInversoDescrizione.value) {
+                                viewModel.operazioni =
+                                    ArrayList(voci.sortedByDescending { it.description })
+                                ordineInversoData.value = !ordineInversoData.value
+                            } else {
+                                viewModel.operazioni = ArrayList(voci.sortedBy { it.description })
+                                ordineInversoDescrizione.value = !ordineInversoDescrizione.value
+                            }
+                        },
+                    ) {
+                        Text(stringResource(id = R.string.descrizione))
                         Icon(
-                            imageVector = if (ordineInversoDescrizione.value) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                            contentDescription = if (ordineInversoDescrizione.value) "ordine ascendente" else "ordine discendente"
+                            imageVector = if (ordineInversoDescrizione.value) Icons.Filled.KeyboardArrowUp
+                                          else Icons.Filled.KeyboardArrowDown,
+                            contentDescription = if (ordineInversoDescrizione.value) "ordine ascendente"
+                                                 else "ordine discendente"
                         )
                     }
                     Button(
                         onClick = {
                             if (ordineInversoImporto.value) {
                                 viewModel.operazioni =
-                                    ArrayList(voci?.sortedByDescending { it.amount })
+                                    ArrayList(voci.sortedByDescending { it.amount })
                                 ordineInversoImporto.value = !ordineInversoImporto.value
                             } else {
-                                viewModel.operazioni = ArrayList(voci?.sortedBy { it.amount })
+                                viewModel.operazioni = ArrayList(voci.sortedBy { it.amount })
                                 ordineInversoImporto.value = !ordineInversoImporto.value
                             }
                         }
                     ) {
                         Text(text = stringResource(id = R.string.importo))
                         Icon(
-                            imageVector = if (ordineInversoImporto.value) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                            contentDescription = if (ordineInversoImporto.value) "ordine ascendente" else "ordine discendente"
+                            imageVector = if (ordineInversoImporto.value) Icons.Filled.KeyboardArrowUp
+                                          else Icons.Filled.KeyboardArrowDown,
+                            contentDescription = if (ordineInversoImporto.value) "ordine ascendente"
+                                                 else "ordine discendente"
                         )
                     }
                 }
@@ -292,6 +323,9 @@ fun ListaOperazioniFatteCarte(
                 }
             }
         } else {
+            val rosso = Color(0xFF8B0000)
+            val verdeSmeraldo = Color(0xFF50C878)
+
             for (i in voci) {
                 item {
                     Card(
@@ -303,7 +337,7 @@ fun ListaOperazioniFatteCarte(
                         Row(modifier = Modifier
                             .fillMaxSize()
                             .clickable {
-                                Log.d(nameFun, "operazione inviata: ${i}")
+                                Log.d(nameFun, "operazione inviata: $i")
                                 val json = Json { prettyPrint = true }
                                 val data = json.encodeToString(Operation.serializer(), i)
                                 navController.navigate("dettagli-operazione/$data")
@@ -317,22 +351,38 @@ fun ListaOperazioniFatteCarte(
                                     .padding(SmallPadding),
                             ) {
                                 Text(
-                                    text = i.dateO.toLocalDate().format(DateTimeFormatter.ofPattern("dd/M/yyyy")),
+                                    text = i
+                                        .dateO
+                                        .toLocalDate()
+                                        .format(DateTimeFormatter.ofPattern("dd/M/yyyy")),
                                     fontSize = 13.sp,
+                                    fontWeight = FontWeight.Bold,
                                 )
                             }
-                            Column(modifier = Modifier
-                                .width(190.dp)
-                                .align(Alignment.CenterVertically)) {
+                            Column(
+                                modifier = Modifier
+                                    .width(190.dp)
+                                    .align(Alignment.CenterVertically),
+                            ) {
+                                val description = i
+                                    .description
+                                    .substring(
+                                        0,
+                                        if(i.description.length > 25) 25
+                                        else i.description.length
+                                    ) + if(i.description.length > 25) "..."
+                                        else ""
                                 Text(
-                                    text = i.description.substring(0, if(i.description.length > 25) 25 else i.description.length) +
-                                            if(i.description.length > 25) "..." else "",
+                                    text = description,
                                     fontSize = 13.sp,
+                                    fontWeight = FontWeight.Bold,
                                 )
                             }
-                            Column(modifier = Modifier
-                                .width(width)
-                                .align(Alignment.CenterVertically)) {
+                            Column(
+                                modifier = Modifier
+                                    .width(width)
+                                    .align(Alignment.CenterVertically),
+                            ) {
                                 Text(
                                     text = if (i.transactionType == TransactionType.WITHDRAWAL) {
                                         "-"
@@ -340,7 +390,9 @@ fun ListaOperazioniFatteCarte(
                                         "+"
                                     } + i.amount.toString() + "€",
                                     fontSize = 13.sp,
-                                    //modifier = modifier
+                                    fontWeight = FontWeight.Bold,
+                                    color = if(i.transactionType == TransactionType.WITHDRAWAL) rosso
+                                            else verdeSmeraldo,
                                 )
                             }
                         }
