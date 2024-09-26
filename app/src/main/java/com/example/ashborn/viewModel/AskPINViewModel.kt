@@ -39,6 +39,8 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
         private set
     var timerIsRunning: Boolean by mutableStateOf(false)
         private set
+    var errorePin: Boolean by mutableStateOf(false)
+        private set
 
     fun startTimer() {
         if(!timerIsRunning && wrongAttempts > 3){
@@ -91,7 +93,9 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
     }
 
     private fun checkPin(): Boolean {
-        return this.pin.length == 8 && this.pin.isDigitsOnly()
+        val correct = this.pin.length == 8 && this.pin.isDigitsOnly()
+        errorePin = !correct
+        return correct
     }
 
     fun validatePin() {
@@ -110,6 +114,7 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
                 if (!userRepository.isPinCorrect(codCliente, pin.hashCode().toString()).first()) {
                     Log.i("ViewModel", " pin sbagliato")
                     wrongAttempts++
+                    errorePin = true
                     if (wrongAttempts % 2L == 0L)
                         _navigationEvent.value = NavigationEvent.NavigateToError
                     else
@@ -117,6 +122,7 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
                 } else {
                     resetWrongAttempts()
                     viewModelScope.launch(Dispatchers.IO) { dsm.writeTimer(0L) }
+                    errorePin = false
                     _navigationEvent.value = NavigationEvent.NavigateToNext
                 }
             }

@@ -20,8 +20,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -118,6 +120,7 @@ fun AskPIN(
                     .fillMaxWidth()
                     .padding(start = LargePadding, end = LargePadding,)
             ) {
+                Log.d(nameFun, "errore pin: ${viewModel.errorePin}")
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = viewModel.pin,
@@ -126,6 +129,10 @@ fun AskPIN(
                     visualTransformation = PasswordVisualTransformation(),
                     singleLine = true,
                     textStyle = TextStyle.Default.copy(fontSize = 35.sp, textAlign = TextAlign.Center),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = if (viewModel.errorePin) Color.Red else Color.Black,
+                        unfocusedBorderColor = if (viewModel.errorePin) Color.Red else Color.Black
+                    ),
                 )
             }
             Spacer(modifier = Modifier.height(MediumPadding))

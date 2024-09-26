@@ -1,6 +1,7 @@
 package com.example.ashborn.viewModel
 
 import android.app.Application
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -22,6 +23,7 @@ import java.time.LocalDateTime
 class MavViewModel  (
     application: Application,
 ): AndroidViewModel(application) {
+    val className = MavViewModel::class.simpleName
     val barcodeScanner = BarcodeScanner( application )
 
     var codiceMav by mutableStateOf("")
@@ -35,26 +37,20 @@ class MavViewModel  (
 
     private val dsm = DataStoreManager.getInstance(application)
     private val ashbornDao: AshbornDao = AshbornDb.getDatabase(application).ashbornDao()
-    private val operationRepository: OperationRepository = OperationRepository(ashbornDao)
     private val contoRepository: ContoRepository = ContoRepository(ashbornDao)
 
     val codCliente: String = runBlocking { dsm.codClienteFlow.first() }
-    var erroreCausale by mutableStateOf(StatoErrore.NESSUNO)
+    var erroreCodiceMav by mutableStateOf(StatoErrore.NESSUNO)
         private set
-    var erroreBeneficiario by mutableStateOf(StatoErrore.NESSUNO)
+    var erroreDescrizioneMav by mutableStateOf(StatoErrore.NESSUNO)
         private set
-    var erroreIban by mutableStateOf(StatoErrore.NESSUNO)
+    var erroreImportoMav by mutableStateOf(StatoErrore.NESSUNO)
         private set
-    var erroreImporto by mutableStateOf(StatoErrore.NESSUNO)
+    var erroreDataAccreditoMav by mutableStateOf(StatoErrore.NESSUNO)
         private set
-    var erroreDataAccredito by mutableStateOf(StatoErrore.NESSUNO)
-        private set
-    var startDest: String = ""
-        private set
-
     val listaConti = runBlocking { contoRepository.getConti(codCliente).first() }
     var codConto by mutableStateOf(if(!listaConti.isEmpty()) listaConti.get(0).codConto else "")
-
+        private set
     var ordinanteMav by mutableStateOf(if(!listaConti.isEmpty()) listaConti.get(0).codConto else "")
         private set
 
@@ -73,14 +69,41 @@ class MavViewModel  (
     fun setOrdinanteMavX(ordinanteMav: String) {
         this.ordinanteMav = ordinanteMav
     }
-   fun setDataAccreditoMavX(dataAccredito:LocalDateTime) {
-      this.dataAccreditoMav = dataAccredito
-   }
 
-    fun startScan(){
+    fun setDataAccreditoMavX(dataAccredito:LocalDateTime) {
+      this.dataAccreditoMav = dataAccredito
+    }
+
+    /*fun startScan(){
         viewModelScope.launch (Dispatchers.Default){
             barcodeScanner.startScan()
         }
+    }*/
+
+    fun validateMav(): Boolean {
+        val reg = Regex("[a-zA-Z0-9]+")
+        val reg2 = Regex("\\d{1,5}(,|.)?\\d{0,2}")
+        Log.d(className, """
+            codice mav corretto: ${reg.matches(codiceMav)} ${codiceMav.isNotBlank()}
+            importo mav corretto: ${reg.matches(importoMav)} ${importoMav.isNotBlank()}
+            descrizione mav corretta: ${reg.matches(descrizioneMav)} ${descrizioneMav.isNotBlank()}           
+        """.trimMargin())
+        erroreCodiceMav = if(codiceMav.isNotBlank() && reg.matches(codiceMav))
+                              StatoErrore.NESSUNO
+                          else
+                              StatoErrore.FORMATO
+        erroreImportoMav = if(importoMav.isNotBlank() && reg2.matches(importoMav))
+                               StatoErrore.NESSUNO
+                           else
+                               StatoErrore.FORMATO
+        erroreDescrizioneMav = if(descrizioneMav.isNotBlank() && reg.matches(descrizioneMav))
+                                   StatoErrore.NESSUNO
+                               else
+                                   StatoErrore.FORMATO
+
+        return  erroreCodiceMav == StatoErrore.NESSUNO &&
+                erroreImportoMav == StatoErrore.NESSUNO &&
+                erroreDataAccreditoMav == StatoErrore.NESSUNO
     }
 
     var barcodeResults = barcodeScanner.barCodeResults

@@ -1,3 +1,5 @@
+@file:Suppress("NAME_SHADOWING")
+
 package com.example.ashborn.view.operazioni
 
 import android.net.Uri
@@ -11,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -40,7 +41,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -59,6 +59,7 @@ import com.example.ashborn.ui.theme.LargePadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.view.CustomDatePickerDialog
 import com.example.ashborn.view.DateUseCase
+import com.example.ashborn.view.login.StatoErrore
 import com.example.ashborn.viewModel.MavViewModel
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
@@ -76,10 +77,9 @@ fun Mav(navController: NavHostController) {
         navController.navigate("conti?index=$dest")
     }
     Column(
-        modifier = Modifier.fillMaxSize(),
-       // verticalArrangement = Arrangement.Center,
-    ) {
-
+        modifier = Modifier
+            .fillMaxSize(),
+   ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -87,11 +87,7 @@ fun Mav(navController: NavHostController) {
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            IconButton(onClick = {
-
-                navController.navigate("conti?index=$dest")
-
-            }) {
+            IconButton(onClick = { navController.navigate("conti?index=$dest") }) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
             Spacer(modifier = Modifier.padding( horizontal = 55.dp))
@@ -100,8 +96,7 @@ fun Mav(navController: NavHostController) {
                 fontWeight = FontWeight.Bold,
                 fontSize = 28.sp,
                 textAlign = TextAlign.Center,
-//                modifier = Modifier.width(50.dp)
-                )
+            )
         }
         Spacer(modifier = Modifier.padding(bottom = 250.dp))
         Row (
@@ -148,10 +143,7 @@ fun MavQrCode(
         barcodeResults.value,
     )
 
-//    Log.d(nameFun,"risultato scan ${barcodeResults.value}")
     if (!barcodeResults.value.isNullOrBlank()) {
-
- //       Log.d(nameFun,"risultato scan valido=${barcodeResults.value}")
         val arguments = barcodeResults.value?.split("|") ?: emptyList()
         if (arguments.size == 3) {
             val operation = Operation(
@@ -167,11 +159,9 @@ fun MavQrCode(
                 iban = arguments[0],
                 recipient = viewModel.codiceMav,
             )
-
             val data = json.encodeToString(Operation.serializer(), operation)
             Log.d(nameFun, "Operazione creata: $operation")
             val encodedOperation = Uri.encode(data)
-            
             navController.navigate("mav-manuale?operazione=$encodedOperation")
         } else {
             Log.d(nameFun, "initiateScanner: ${barcodeResults.value}")
@@ -192,23 +182,22 @@ private fun ScanBarcode(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-
         Button(
             modifier = Modifier
                 .fillMaxWidth(.85f),
             onClick = {
                 scope.launch {
+                    Log.i(nameFun, "scan qr code")
                     onScanBarcode()
                 }
-            }) {
+            },
+        ) {
             Text(
                 text = "Scan Barcode",
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.displayMedium,
             )
         }
-
-
     }
 }
 
@@ -262,8 +251,7 @@ fun MavManuale(
             fontSize = 18.sp
         )
 
-        Spacer(modifier = Modifier.padding(LargePadding))
-        Row() {
+        Row(modifier = Modifier.padding(top = LargePadding)) {
             var expanded by remember { mutableStateOf(false) }
             val selectedText = viewModel.ordinanteMav
             ExposedDropdownMenuBox(
@@ -305,11 +293,15 @@ fun MavManuale(
             }
 
         }
-        Spacer(modifier = Modifier.padding(LargePadding))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(SmallPadding)
+                .padding(
+                    top = LargePadding*2+SmallPadding,
+                    start = SmallPadding,
+                    end = SmallPadding ,
+                    bottom = SmallPadding
+                ),
         ) {
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
@@ -340,13 +332,10 @@ fun MavManuale(
                             )
                         }
                     },
-                    onCancel = {
-                        isOpen.value = false //close dialog
-                    },
+                    onCancel = { isOpen.value = false /*close dialog*/ },
                     useCase = DateUseCase.MAV
                 )
             }
-            // CustomDatePicker(useCase = DateUseCase.MAV, yearRange = LocalDate.now().year..LocalDate.now().plusYears(2).year)
         }
         Spacer(modifier = Modifier.padding(LargePadding))
         Row(
@@ -365,8 +354,17 @@ fun MavManuale(
                 label = { Text(stringResource(id = R.string.codice_mav)) },
                 value = viewModel.codiceMav,
                 onValueChange = { viewModel.setCodiceMavX(it) },
-
-                )
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = if (viewModel.erroreCodiceMav != StatoErrore.NESSUNO)
+                                             Color.Red
+                                         else
+                                             Color.Black,
+                    unfocusedBorderColor = if (viewModel.erroreCodiceMav != StatoErrore.NESSUNO)
+                                               Color.Red
+                                           else
+                                               Color.Black
+                ),
+            )
         }
         Spacer(modifier = Modifier.padding(LargePadding))
         Row(
@@ -378,7 +376,6 @@ fun MavManuale(
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(focusRequester2),
-                //keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Next
@@ -387,8 +384,22 @@ fun MavManuale(
                     onNext = { focusRequester3.requestFocus() }
                 ),
                 label = { Text(stringResource(id = R.string.importo)) },
-                value = if(!viewModel.importoMav.contains(".")) viewModel.importoMav+".00" else viewModel.importoMav,
-                onValueChange = { viewModel.setImportoMavX(it) }
+                value = if(!viewModel.importoMav.contains(".") && viewModel.importoMav.isNotBlank())
+                            viewModel.importoMav+".00"
+                        else if (viewModel.importoMav == ".00") ""
+                        else
+                            viewModel.importoMav,
+                onValueChange = { viewModel.setImportoMavX(it) },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = if (viewModel.erroreImportoMav != StatoErrore.NESSUNO)
+                                             Color.Red
+                                         else
+                                             Color.Black,
+                    unfocusedBorderColor = if (viewModel.erroreImportoMav != StatoErrore.NESSUNO)
+                                               Color.Red
+                                           else
+                                               Color.Black
+                ),
             )
         }
         Spacer(modifier = Modifier.padding(LargePadding))
@@ -404,40 +415,66 @@ fun MavManuale(
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
                 keyboardActions = KeyboardActions(
                     onSend = {
-                        val limit_today = LocalDateTime.of( LocalDate.now().year, LocalDate.now().month, LocalDate.now().dayOfMonth, 17, 0, 0)
-                        val operation = Operation(
-                            clientCode = viewModel.codCliente,
-                            dateO = viewModel.dataAccreditoMav,
-                            dateV = viewModel.dataAccreditoMav,
-                            transactionType = TransactionType.WITHDRAWAL,
-                            operationType = OperationType.MAV,
-                            amount = viewModel.importoMav.toDouble(),
-                            bankAccount = viewModel.codConto,
-                            description = viewModel.descrizioneMav,
-                            cardCode = null,
-                            iban = viewModel.codiceMav,
-                            recipient = viewModel.codiceMav,
-//                            operationStatus = if (viewModel.dataAccreditoMav == LocalDateTime.now()) OperationStatus.DONE else OperationStatus.PENDING,
 
-                            operationStatus = if(viewModel.dataAccreditoMav <= limit_today)  OperationStatus.DONE else OperationStatus.PENDING,
-                        )
-                        val data = json.encodeToString(Operation.serializer(), operation)
-
-                        Log.d(nameFun, "Operazione creata: $operation")
-
-                        navController.navigate("riepilogo-operazione/$data")
+                        if (viewModel.validateMav()) {
+                            val limitToday = LocalDateTime.of(
+                                LocalDate.now().year,
+                                LocalDate.now().month,
+                                LocalDate.now().dayOfMonth,
+                                17,
+                                0,
+                                0
+                            )
+                            val operation = Operation(
+                                clientCode = viewModel.codCliente,
+                                dateO = viewModel.dataAccreditoMav,
+                                dateV = viewModel.dataAccreditoMav,
+                                transactionType = TransactionType.WITHDRAWAL,
+                                operationType = OperationType.MAV,
+                                amount = viewModel.importoMav.toDouble(),
+                                bankAccount = viewModel.codConto,
+                                description = viewModel.descrizioneMav,
+                                cardCode = null,
+                                iban = viewModel.codiceMav,
+                                recipient = viewModel.codiceMav,
+                                operationStatus = if (viewModel.dataAccreditoMav <= limitToday)
+                                    OperationStatus.DONE
+                                else
+                                    OperationStatus.PENDING,
+                            )
+                            Log.d(nameFun, "Operazione creata: $operation")
+                            val data = json.encodeToString(Operation.serializer(), operation)
+                            navController.navigate("riepilogo-operazione/$data")
+                        }
                     }
                 ),
                 label = { Text(stringResource(id = R.string.descrizione)) },
                 value = viewModel.descrizioneMav,
                 onValueChange = { viewModel.setDescrizioneMavX(it) },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = if (viewModel.erroreDescrizioneMav != StatoErrore.NESSUNO)
+                                             Color.Red
+                                         else
+                                             Color.Black,
+                    unfocusedBorderColor = if (viewModel.erroreDescrizioneMav != StatoErrore.NESSUNO)
+                                               Color.Red
+                                           else
+                                               Color.Black
+                ),
             )
         }
         Spacer(modifier = Modifier.padding(LargePadding))
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-                val limit_today = LocalDateTime.of( LocalDate.now().year, LocalDate.now().month, LocalDate.now().dayOfMonth, 17, 0, 0)
+                val limitToday = LocalDateTime.of(
+                    LocalDate.now().year,
+                    LocalDate.now().month,
+                    LocalDate.now().dayOfMonth,
+                    17,
+                    0,
+                    0
+                )
                 val operation = Operation(
                     clientCode = viewModel.codCliente,
                     dateO = viewModel.dataAccreditoMav,
@@ -450,13 +487,17 @@ fun MavManuale(
                     cardCode = null,
                     iban = viewModel.codiceMav,
                     recipient = viewModel.codiceMav,
-                    operationStatus = if(viewModel.dataAccreditoMav <= limit_today)  OperationStatus.DONE else OperationStatus.PENDING,
+                    operationStatus = if(viewModel.dataAccreditoMav <= limitToday)
+                                          OperationStatus.DONE
+                                      else
+                                          OperationStatus.PENDING,
                 )
 
                 val data = json.encodeToString(Operation.serializer(), operation)
 
                 Log.d(nameFun, "Operazione creata: $operation")
-                navController.navigate("riepilogo-operazione/$data")
+                if(viewModel.validateMav())
+                    navController.navigate("riepilogo-operazione/$data")
             }
         ) {
             Text(text = stringResource(id = R.string.continua))
