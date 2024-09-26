@@ -19,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.ashborn.R
 import com.example.ashborn.view.operazioni.Operazioni
@@ -61,7 +63,13 @@ fun Pagine(
                         selected = selectedItem == index,
                         onClick = { selectedItem = index },
                         icon = { Icon(icons[index], contentDescription = item) },
-                        label = { Text(item) }
+                        label = {
+                            Text(
+                                text = item,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
+                            )
+                        },
                     )
                 }
             }
@@ -87,13 +95,8 @@ fun Pagine(
                         viewModel = viewModelCarte
                     )
                 }
-                2 -> {
-                    Operazioni(
-                        navController = navController,
-                        viewModel = viewModelOperazioni
-                    )
-                }
-                3 -> ParlaConNoi()
+                2 -> Operazioni(navController)
+                3 -> ParlaConNoi(navController)
                 4 -> {
                     Altro(
                         navController = navController,

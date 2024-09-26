@@ -12,6 +12,8 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
@@ -69,11 +71,12 @@ const val SOGLIA = 300000 // 5 minuti
 @Composable
 fun AppNavigazione2(
     startDest:String,
+    navController: NavHostController,
 ){
 
     val nameFun = object {}.javaClass.enclosingMethod?.name
     val applicationContext = LocalContext.current.applicationContext
-    val navController = rememberNavController()
+   // val navController = rememberNavController()
     val networkConnectivityObserver = NetworkConnectivityObserver.getInstance(applicationContext)
     val connectionStatus by networkConnectivityObserver.observe().collectAsState(initial = ConnectivityObserver.Status.Unavailable)
     val json = Json { prettyPrint = true }
@@ -85,6 +88,7 @@ fun AppNavigazione2(
          var lastBackgroundTime: Long = 0
         ProcessLifecycleOwner.get().lifecycle.addObserver(object : DefaultLifecycleObserver {
             override fun onStart(owner: LifecycleOwner) {
+
                 // Quando l'app ritorna in foreground, naviga alla schermata del PIN
                 val currentDestination = navController.currentDestination?.route
                 val currentPos = navController.currentBackStackEntry?.destination?.route

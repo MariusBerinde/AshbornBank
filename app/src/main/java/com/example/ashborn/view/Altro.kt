@@ -25,30 +25,26 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.motionEventSpy
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.ashborn.MainActivity
 import com.example.ashborn.R
 import com.example.ashborn.data.Voice
 import com.example.ashborn.ui.theme.LargePadding
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.viewModel.AltroViewModel
-import com.example.ashborn.viewModel.AshbornViewModel
 
 @Composable
 fun Altro(
@@ -63,13 +59,13 @@ fun Altro(
                     .fillMaxWidth()
                     .padding(MediumPadding)
             ) {
-                Row {
+                Row (modifier = Modifier.fillMaxWidth()){
                     Column(modifier = Modifier.padding(MediumPadding)) {
                         Box(
                             modifier = Modifier
                                 .size(100.dp)
                                 .clip(CircleShape)
-                                .background(Color.Blue)
+                                .background(Color.Black)
                                 .padding(MediumPadding)
                         ) {
                             val text = if(viewModel.userName.isEmpty()) "" else viewModel.userName[0].toString() + if(viewModel.cognome.isEmpty()  ) "" else viewModel.cognome[0].toString()
@@ -83,14 +79,14 @@ fun Altro(
                         }
                     }
 
-                    Column {
+                    Column (modifier = Modifier.padding(top = MediumPadding)){
                         Text(stringResource(id = R.string.profilo))
-                        //Text(viewModel.userName)
+                        Text(viewModel.userName)
                         Text(stringResource(id = R.string.app_name))
 
                     }
                     Column(modifier = Modifier
-                        .padding(horizontal = SmallPadding, vertical = 50.dp)
+                        .padding(horizontal = MediumPadding, vertical = 50.dp)
                         .clickable {
                             navController.navigate("utente")
                         }) {
@@ -99,7 +95,7 @@ fun Altro(
                 }
             }
         }
-        Row {
+        Row (modifier = Modifier.fillMaxWidth()){
             Column(modifier = Modifier.padding(SmallPadding)) {
                 ListaAzioni(navController, viewModel)
             }
@@ -114,17 +110,17 @@ fun ListaAzioni(navController: NavHostController, viewModel: AltroViewModel) {
         padding(SmallPadding)
             .border(1.dp, Color.Black, shape = RoundedCornerShape(9.dp))
             .fillMaxWidth()
-            .height(450.dp)
+            .height(520.dp)
     }
     ) {
         val isOpen = remember { mutableStateOf(false) }
         var confermaEliminazioneSmartphone = remember { mutableStateOf(false) }
 
         val voci: ArrayList<Voice> = arrayListOf(
-            Voice(Icons.Filled.PlayArrow, stringResource(id = R.string.avvisi), "avvisi"),
-            Voice(Icons.Filled.PlayArrow, stringResource(id = R.string.archivio), "archivio"),
-            Voice(Icons.Filled.PlayArrow, stringResource(id = R.string.sicurezza), "sicurezza"),
-            Voice(Icons.Filled.PlayArrow, stringResource(id = R.string.impostazioni), "impostazioni"),
+            Voice(ImageVector.vectorResource(id = R.drawable.information), stringResource(id = R.string.avvisi), "avvisi"),
+            Voice(ImageVector.vectorResource(id = R.drawable.archive), stringResource(id = R.string.archivio), "archivio"),
+            Voice(ImageVector.vectorResource(id = R.drawable.security), stringResource(id = R.string.sicurezza), "sicurezza"),
+            Voice(ImageVector.vectorResource(id = R.drawable.cog), stringResource(id = R.string.impostazioni), "impostazioni"),
         )
         for (i in voci) {
             Card (
@@ -134,14 +130,20 @@ fun ListaAzioni(navController: NavHostController, viewModel: AltroViewModel) {
                     .fillMaxWidth()
                     .align(Alignment.CenterHorizontally)
             ){
-                Row(modifier = Modifier
-                    .fillMaxSize()
-                    .clickable {
-                        Log.i("OperazioniAltro", i.name)
-                        navController.navigate(i.destination)
-                    }
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable {
+                            Log.i("OperazioniAltro", i.name)
+                            navController.navigate(i.destination)
+                        },
+                    verticalAlignment = Alignment.CenterVertically
+
                 ) {
+                    Spacer(modifier = Modifier.padding(horizontal = SmallPadding-3.dp))
+
                     Icon(i.icon, contentDescription = "icona")
+                    Spacer(modifier = Modifier.padding(horizontal = SmallPadding-3.dp))
                     Text(i.name)
                 }
             }
@@ -158,9 +160,12 @@ fun ListaAzioni(navController: NavHostController, viewModel: AltroViewModel) {
                 .clickable {
                     Log.d("OperazioniAltro", "elimina")
                     isOpen.value = !isOpen.value
-                }
+                },
+                verticalAlignment = Alignment.CenterVertically,
             ) {
+                Spacer(modifier = Modifier.padding(horizontal = SmallPadding-3.dp))
                 Icon(Icons.Filled.Delete, contentDescription = "icona")
+                Spacer(modifier = Modifier.padding(horizontal = SmallPadding-3.dp))
                 Text(stringResource(id = R.string.elimina))
             }
         }
@@ -172,7 +177,9 @@ fun ListaAzioni(navController: NavHostController, viewModel: AltroViewModel) {
                         .fillMaxWidth()
                 ){
                     Column (
-                        modifier = Modifier.fillMaxWidth().height(300.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(300.dp),
                         verticalArrangement = Arrangement.Center
                     ){
                         Row (

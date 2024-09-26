@@ -1,7 +1,0 @@
-u-apt-update
-u-apt-upgrade
-u-apt-autoremove
-u-snap-refresh
-u-flatpak-update
-u-brew-update
-u-brew-upgrade
