@@ -31,6 +31,8 @@ import java.util.concurrent.TimeUnit
 class MainActivity : ComponentActivity() {
     private var inactivityJob: Job? = null
     private lateinit var navController: NavHostController
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.setFlags(
@@ -92,17 +94,6 @@ class MainActivity : ComponentActivity() {
     }
 
 }
-
-/*
-fun startInactivityTimer(){
-
-            inactivityJob?.cancel()
-            inactivityJob = lifecycleScope.launch {
-
-            }
-        }
-       startInactivityTimer()
- */
 
 fun setupPeriodicWork(context: Context){
     val workRequest = PeriodicWorkRequestBuilder<DbWorker>(

@@ -12,12 +12,10 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import androidx.navigation.compose.rememberNavController
 import com.example.ashborn.data.Avviso
 import com.example.ashborn.data.Operation
 import com.example.ashborn.view.AnnullaOperazione
@@ -63,11 +61,13 @@ import com.example.ashborn.viewModel.UtenteViewModel
 import com.example.ashborn.viewModel.UtenteViewModelFactory
 import com.example.ashborn.viewModel.WelcomeViewModel
 import com.example.ashborn.viewModel.WelcomeViewModelFactory
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
 const val SOGLIA = 300000 // 5 minuti
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun AppNavigazione2(
     startDest:String,
@@ -76,48 +76,43 @@ fun AppNavigazione2(
 
     val nameFun = object {}.javaClass.enclosingMethod?.name
     val applicationContext = LocalContext.current.applicationContext
-   // val navController = rememberNavController()
     val networkConnectivityObserver = NetworkConnectivityObserver.getInstance(applicationContext)
     val connectionStatus by networkConnectivityObserver.observe().collectAsState(initial = ConnectivityObserver.Status.Unavailable)
     val json = Json { prettyPrint = true }
-    // Inizializza il CoroutineScope per lanciare coroutine
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         // Aggiungi un observer per monitorare quando l'app ritorna in foreground
-         var lastBackgroundTime: Long = 0
-        ProcessLifecycleOwner.get().lifecycle.addObserver(object : DefaultLifecycleObserver {
-            override fun onStart(owner: LifecycleOwner) {
-
-                // Quando l'app ritorna in foreground, naviga alla schermata del PIN
-                val currentDestination = navController.currentDestination?.route
-                val currentPos = navController.currentBackStackEntry?.destination?.route
-               Log.d(nameFun,"posizione dove mi sveglio${currentPos}")
-                val actualTime = System.currentTimeMillis()
-                val tempoInBack = actualTime - lastBackgroundTime
-                Log.d(nameFun,"tempoInBack = $tempoInBack")
-                if(tempoInBack > SOGLIA) {
-                    if (currentDestination != "welcome") {
-                        scope.launch {
-                            //    navController.navigate("login") // Naviga alla schermata del PIN
-                            navController.navigate("login?prev=$currentPos")
+        var lastBackgroundTime: Long = 0
+        ProcessLifecycleOwner.get().lifecycle.addObserver(
+            object : DefaultLifecycleObserver {
+                override fun onStart(owner: LifecycleOwner) {
+                    // Quando l'app ritorna in foreground, naviga alla schermata del PIN
+                    val currentDestination = navController.currentDestination?.route
+                    val currentPos = navController.currentBackStackEntry?.destination?.route
+                    Log.d(nameFun,"posizione dove mi sveglio${currentPos}")
+                    val actualTime = System.currentTimeMillis()
+                    val tempoInBack = actualTime - lastBackgroundTime
+                    Log.d(nameFun,"tempoInBack = $tempoInBack")
+                    if(tempoInBack > SOGLIA) {
+                        if (currentDestination != "welcome") {
+                            scope.launch {
+                                navController.navigate("login?prev=$currentPos")
+                            }
                         }
                     }
                 }
 
-
+                override fun onStop(owner: LifecycleOwner) {
+                    lastBackgroundTime = System.currentTimeMillis()
+                }
             }
-
-            override fun onStop(owner: LifecycleOwner) {
-                lastBackgroundTime = System.currentTimeMillis()
-                // Quando l'app va in background, puoi aggiungere altra logica qui se necessario
-            }
-        })
+        )
     }
 
     NavHost(
         navController = navController,
-        startDestination = startDest
+        startDestination = startDest,
     ){
         navigation(
             startDestination = "welcome",
@@ -142,7 +137,7 @@ fun AppNavigazione2(
                         navController = navController,
                         viewModel = viewModel,
                         operation = null,
-                        prevPos = prev
+                        prevPos = prev,
                     )
                 }
             }
@@ -159,114 +154,107 @@ fun AppNavigazione2(
             }
         }
 
-
-
-
-            navigation(
-                startDestination = "conti",
-                route = "principale"
-            ) {
-                composable("utente") {
-                    val utenteViewModel: UtenteViewModel = viewModel(
-                        factory = UtenteViewModelFactory(applicationContext as Application)
+        navigation(
+            startDestination = "conti",
+            route = "principale",
+        ) {
+            composable("utente") {
+                val utenteViewModel: UtenteViewModel = viewModel(
+                    factory = UtenteViewModelFactory(applicationContext as Application)
+                )
+                ErroreConnessione(connectionStatus = connectionStatus) {
+                    Utente(
+                        navController = navController,
+                        viewModel = utenteViewModel,
                     )
-                    // val viewModel: PreviewAshbornViewModel = PreviewAshbornViewModel(PrevievApp())
-                    ErroreConnessione(connectionStatus = connectionStatus) {
-                        Utente(
-                            navController = navController,
-                            viewModel = utenteViewModel
-                        )
-                    }
                 }
-                composable("conti?index={index}") {
-
-                        backStackEntry -> val index = backStackEntry.arguments?.getString("index")?.toInt()?:0
-                    val contiViewmodel: ContiViewModel = viewModel(
-                        factory = ContiViewModelFactory(applicationContext as Application)
-                    )
-                    val carteViewModel: CarteViewModel = viewModel(
-                        factory = CarteViewModelFactory(applicationContext )
-                    )
-                    val altroViewModel: AltroViewModel = viewModel(
-                        factory = AltroViewModelFactory(applicationContext )
-                    )
-                    val operationViewModel: OperationViewModel = viewModel(
-                        factory = OperationViewModelFactory(applicationContext )
-                    )
-                    ErroreConnessione(connectionStatus = connectionStatus) {
-                        Pagine(
-                            navController = navController,
-                            viewModelConti = contiViewmodel,
-                            viewModelCarte = carteViewModel,
-                            viewModelOperazioni = operationViewModel,
-                            viewModelAltro = altroViewModel,
-                            indice = index,
-                        )
-                    }
-                }
-                composable(route = "dettagli-operazione/{operazione}") {
-                    val jsonData = it.arguments?.getString("operazione") ?: "No Data"
-                    val operation: Operation = json.decodeFromString(Operation.serializer(), jsonData)
-                    val dettagliOperazioneViewModel : DettagliOperazioneViewModel = viewModel(
-                        factory = DettagliOperazioneViewModelFactory(applicationContext as Application)
-                    )
-                    ErroreConnessione(connectionStatus = connectionStatus) {
-                        DettagliOperazione(
-                            operation = operation,
-                            navController = navController, viewModel = dettagliOperazioneViewModel
-                        )
-                    }
-                }
-                composable("avvisi") {
-                    val avvisiOperazioneViewModel : AvvisiViewModel = viewModel(
-                        factory = AvvisiViewModelFactory(applicationContext as Application)
-                    )
-                    ErroreConnessione(connectionStatus = connectionStatus) {
-                        Avvisi(
-                            navController = navController,
-                            viewModel = avvisiOperazioneViewModel
-                        )
-                    }
-                }
-                composable("dettagli-avviso/{avviso}") {
-                    val jsonData = it.arguments?.getString("avviso") ?: "No Data"
-                    val avviso = json.decodeFromString(Avviso.serializer(), jsonData)
-                    ErroreConnessione(connectionStatus = connectionStatus) {
-                        DettagliAvviso(
-                            navController =  navController,
-                            avviso = avviso
-                        )
-                    }
-                }
-                composable("archivio") {
-                    ErroreConnessione(connectionStatus = connectionStatus) {
-                        Archivio(
-                            navController = navController,
-                            //viewModel = viewModel
-                        )
-                    }
-                }
-                composable("sicurezza") {
-                    ErroreConnessione(connectionStatus = connectionStatus) {
-                        Sicurezza(
-                            navController = navController,
-                            //viewModel = viewModel
-                        )
-                    }
-                }
-                composable("impostazioni") {
-                    ErroreConnessione(connectionStatus = connectionStatus) {
-                        Impostazioni(
-                            navController = navController,
-                            //viewModel = viewModel
-                        )
-                    }
-                }
-
             }
+            composable("conti?index={index}") { backStackEntry ->
+                val index = backStackEntry.arguments?.getString("index")?.toInt() ?: 0
+                val contiViewmodel: ContiViewModel = viewModel(
+                    factory = ContiViewModelFactory(applicationContext as Application)
+                )
+                val carteViewModel: CarteViewModel = viewModel(
+                    factory = CarteViewModelFactory(applicationContext )
+                )
+                val altroViewModel: AltroViewModel = viewModel(
+                    factory = AltroViewModelFactory(applicationContext )
+                )
+                val operationViewModel: OperationViewModel = viewModel(
+                    factory = OperationViewModelFactory(applicationContext )
+                )
+                ErroreConnessione(connectionStatus = connectionStatus) {
+                    Pagine(
+                        navController = navController,
+                        viewModelConti = contiViewmodel,
+                        viewModelCarte = carteViewModel,
+                        viewModelOperazioni = operationViewModel,
+                        viewModelAltro = altroViewModel,
+                        indice = index,
+                    )
+                }
+            }
+            composable(route = "dettagli-operazione/{operazione}") {
+                val jsonData = it.arguments?.getString("operazione") ?: "No Data"
+                val operation: Operation = json.decodeFromString(Operation.serializer(), jsonData)
+                val dettagliOperazioneViewModel : DettagliOperazioneViewModel = viewModel(
+                    factory = DettagliOperazioneViewModelFactory(applicationContext as Application)
+                )
+                ErroreConnessione(connectionStatus = connectionStatus) {
+                    DettagliOperazione(
+                        operation = operation,
+                        navController = navController, viewModel = dettagliOperazioneViewModel
+                    )
+                }
+            }
+            composable("avvisi") {
+                val avvisiOperazioneViewModel : AvvisiViewModel = viewModel(
+                    factory = AvvisiViewModelFactory(applicationContext as Application)
+                )
+                ErroreConnessione(connectionStatus = connectionStatus) {
+                    Avvisi(
+                        navController = navController,
+                        viewModel = avvisiOperazioneViewModel,
+                    )
+                }
+            }
+            composable("dettagli-avviso/{avviso}") {
+                val jsonData = it.arguments?.getString("avviso") ?: "No Data"
+                val avviso = json.decodeFromString(Avviso.serializer(), jsonData)
+                ErroreConnessione(connectionStatus = connectionStatus) {
+                    DettagliAvviso(
+                        navController =  navController,
+                        avviso = avviso,
+                    )
+                }
+            }
+            composable("archivio") {
+                ErroreConnessione(connectionStatus = connectionStatus) {
+                    Archivio(
+                        navController = navController,
+                    )
+                }
+            }
+            composable("sicurezza") {
+                ErroreConnessione(connectionStatus = connectionStatus) {
+                    Sicurezza(
+                        navController = navController,
+                    )
+                }
+            }
+            composable("impostazioni") {
+                ErroreConnessione(connectionStatus = connectionStatus) {
+                    Impostazioni(
+                        navController = navController,
+                    )
+                }
+            }
+
+        }
+
         navigation(
             startDestination = "bonifico",
-            route = "operazioni"
+            route = "operazioni",
         ){
             composable("bonifico") {
                 val bonificoViewModel : BonificoViewModel = viewModel(
@@ -291,7 +279,7 @@ fun AppNavigazione2(
                 ErroreConnessione(connectionStatus = connectionStatus) {
                     MavQrCode(
                         navController = navController,
-                        viewModel = mavViewModel
+                        viewModel = mavViewModel,
                     )
                 }
             }
@@ -299,11 +287,8 @@ fun AppNavigazione2(
                 val mavViewModel : MavViewModel = viewModel(
                     factory = MavViewModelFactory(applicationContext as Application)
                 )
-                //val jsonData = it.arguments?.getString("operazione") ?: "No Data
-
                 val jsonData = it.arguments?.getString("operazione")
                 val operation: Operation? = jsonData?.let { data ->
-                    // Decodifica JSON in un oggetto Operation
                     json.decodeFromString(Operation.serializer(), data)
                 }
                 ErroreConnessione(connectionStatus = connectionStatus) {
@@ -323,7 +308,6 @@ fun AppNavigazione2(
                 )
             }
             composable("disconosci-operazione"){
-
                 IstruzioniDisconiscimento(
                     navController = navController,
                 )

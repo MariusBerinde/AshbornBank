@@ -43,6 +43,10 @@ class AltroViewModel(application: Application): AndroidViewModel(application) {
             )
             userName = ""
             cognome = ""
+            dsm.writeTimer(0L)
+            dsm.writeWrongAttempts(0L)
+            dsm.writeHasRequestedPermission(false)
+            dsm.reload()
         }
     }
 }
