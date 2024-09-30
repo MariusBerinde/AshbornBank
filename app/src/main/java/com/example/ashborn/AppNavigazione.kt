@@ -221,10 +221,14 @@ fun AppNavigazione2(
             composable("dettagli-avviso/{avviso}") {
                 val jsonData = it.arguments?.getString("avviso") ?: "No Data"
                 val avviso = json.decodeFromString(Avviso.serializer(), jsonData)
+                val avvisiOperazioneViewModel : AvvisiViewModel = viewModel(
+                    factory = AvvisiViewModelFactory(applicationContext as Application)
+                )
                 ErroreConnessione(connectionStatus = connectionStatus) {
                     DettagliAvviso(
                         navController =  navController,
                         avviso = avviso,
+                        viewModel = avvisiOperazioneViewModel,
                     )
                 }
             }

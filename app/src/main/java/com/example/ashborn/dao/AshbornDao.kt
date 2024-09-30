@@ -242,5 +242,7 @@ interface AshbornDao {
    @Query("SELECT * FROM operations WHERE operationStatus = 'PENDING' AND dateO <= :today")
    fun getAllScheduledPendingOperations(today: LocalDateTime): Flow<MutableList<Operation>>
 
+   @Delete
+   suspend fun rimuoviAvviso(avviso: Avviso)
 
 }

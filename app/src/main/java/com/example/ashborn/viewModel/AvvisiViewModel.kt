@@ -1,5 +1,6 @@
 package com.example.ashborn.viewModel
 
+import android.annotation.SuppressLint
 import android.app.Application
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,15 +18,14 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.time.LocalDateTime
 
+@SuppressLint("MutableCollectionMutableState")
 class AvvisiViewModel(application: Application): AndroidViewModel(application) {
     val nameClass = AvvisiViewModel::class.simpleName
     val dsm = DataStoreManager.getInstance(application)
     val ashbornDao = AshbornDb.getDatabase(application).ashbornDao()
     val codCliente = runBlocking {
-
-        var ris = ""
+        var ris: String
         runBlocking(Dispatchers.IO) {
             dsm.codClienteFlow.first().also { ris = it }
         }
@@ -40,16 +40,18 @@ class AvvisiViewModel(application: Application): AndroidViewModel(application) {
     )
 
     fun getAvvisi():ArrayList<Avviso>{
-        var dati = arrayListOf<Avviso>();
+        var dati = arrayListOf<Avviso>()
         runBlocking (Dispatchers.IO) {
-            var datiDb=viewModelScope.async(Dispatchers.IO) {
-                return@async    avvisiRepository.getAvvisi(codCliente)
+            val datiDb = viewModelScope.async(Dispatchers.IO) {
+                return@async avvisiRepository.getAvvisi(codCliente)
             }.await()
-
-            dati=datiDb.first().toCollection(ArrayList<Avviso>())
-
+            dati = datiDb.first().toCollection(ArrayList())
         }
         return dati
+    }
+
+    fun deleteAvviso(avviso: Avviso) {
+        viewModelScope.launch { avvisiRepository.rimuoviAvviso(avviso) }
     }
 
     fun aggiornaStatoAvviso(id:Long, nuovoStato:StatoAvviso) {
