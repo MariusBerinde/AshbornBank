@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -52,9 +53,8 @@ fun Avvisi(
 ) {
     var avvisi: ArrayList<Avviso> = viewModel.listaAvvisi
     val nameFun = object {}.javaClass.enclosingMethod?.name
-    BackHandler(enabled = true) {
-        navController.navigate("altro")
-    }
+    val dest =  integerResource(R.integer.Altro)
+    BackHandler(enabled = true) { navController.navigate("conti?index=$dest") }
     Column() {
         Spacer(modifier = Modifier.padding(SmallPadding))
         Row(
@@ -62,7 +62,7 @@ fun Avvisi(
             modifier = Modifier.fillMaxWidth()
         ) {
             IconButton(onClick = {
-                navController.popBackStack()
+                navController.navigate("conti?index=$dest")
             }) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }

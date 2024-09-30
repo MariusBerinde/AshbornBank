@@ -1,9 +1,6 @@
 package com.example.ashborn.viewModel
 
 import android.app.Application
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -24,7 +21,7 @@ class AltroViewModel(application: Application): AndroidViewModel(application) {
         }
     }
     var cognome = runBlocking {
-        var ris = ""
+        var ris:String
         runBlocking(Dispatchers.IO) {
             dsm.cognomeFlow.first().also { ris = it }
         }

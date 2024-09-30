@@ -56,11 +56,17 @@ fun ListaOperazioniFatteConti(
             .padding(SmallPadding)
             .border(1.dp, Color.Black, shape = RoundedCornerShape(9.dp))
             .fillMaxWidth()
-            .height(450.dp)
+            .height(450.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         if (!voci.isNullOrEmpty()) {
             item {
-                Row(modifier = Modifier.padding(SmallPadding)) {
+                Row(
+                    modifier = Modifier
+                        .padding(SmallPadding)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                ) {
                     Button(
                         onClick = {
                             if (ordineInversoData.value) {
@@ -152,13 +158,14 @@ fun ListaOperazioniFatteConti(
                         Row(
                             modifier = Modifier
                                 .fillMaxSize()
+                                .align(Alignment.CenterHorizontally)
                                 .clickable {
                                     Log.d(nameFun, "operazione inviata: $i")
                                     val json = Json { prettyPrint = true }
                                     val data = json.encodeToString(Operation.serializer(), i)
                                     navController.navigate("dettagli-operazione/$data")
                                 },
-                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
                             val width = 92.dp
                             Column(
@@ -237,10 +244,16 @@ fun ListaOperazioniFatteCarte(
             .border(1.dp, Color.Black, shape = RoundedCornerShape(9.dp))
             .fillMaxWidth()
             .height(450.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         if (!voci.isNullOrEmpty()) {
             item {
-                Row(modifier = Modifier.padding(SmallPadding)) {
+                Row(
+                    modifier = Modifier
+                        .padding(SmallPadding)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                ) {
                     Button(
                         onClick = {
                             if (ordineInversoData.value) {
@@ -306,13 +319,17 @@ fun ListaOperazioniFatteCarte(
         }
         if (voci.isNullOrEmpty()) {
             item {
-                Column (verticalArrangement = Arrangement.Center) {
+                Column (
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     Row (
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
                             .fillMaxWidth()
                             .padding(SmallPadding),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+
                     ) {
                         Text(
                             modifier = Modifier.fillParentMaxWidth(),
@@ -332,16 +349,21 @@ fun ListaOperazioniFatteCarte(
                         modifier = Modifier
                             .padding(SmallPadding)
                             .height(60.dp)
-                            .fillMaxWidth()
-                    ) {
+                            .fillMaxWidth(),
+
+
+
+                        ) {
                         Row(modifier = Modifier
                             .fillMaxSize()
+                          .align(Alignment.CenterHorizontally)
                             .clickable {
                                 Log.d(nameFun, "operazione inviata: $i")
                                 val json = Json { prettyPrint = true }
                                 val data = json.encodeToString(Operation.serializer(), i)
                                 navController.navigate("dettagli-operazione/$data")
-                            }
+                            },
+                            horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
                             val width = 90.dp
                             Column(

@@ -49,21 +49,12 @@ fun DettagliOperazione(
     navController: NavHostController,
     viewModel: DettagliOperazioneViewModel,
 ) {
-    /*Log.i("Dettagli operazione", "indice operazione $indexOperation")
-    var op=viewModel.operazioniConto.find { e->e.id==indexOperation}
-    Log.i("Dettagli operazione", "Oggetto corrispondente ${op}")*/
     Log.d("DettagliOperazione","Operazione = $operation")
     val nameFun = object {}.javaClass.enclosingMethod?.name
     Log.d(nameFun, "operazione arrivata: $operation")
 
     val dest = if(operation.cardCode == null) integerResource(R.integer.Conti) else integerResource(R.integer.Carte)
-    BackHandler(enabled = true) {
-        // Non fare nulla, in questo modo blocca l'azione "back"
-        // Puoi anche gestire un'azione specifica qui
-
-            navController.navigate("conti?index=$dest")
-
-    }
+    BackHandler(enabled = true) { navController.navigate("conti?index=$dest") }
     Column(
         modifier = Modifier
             .fillMaxSize()

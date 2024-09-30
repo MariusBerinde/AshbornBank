@@ -1,9 +1,12 @@
 package com.example.ashborn.view.operazioni
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,12 +29,16 @@ import com.example.ashborn.ui.theme.SmallPadding
 fun Operazioni(
     navController: NavHostController,
 ) {
-
+    Box(
+      modifier = Modifier.fillMaxHeight(),
+        contentAlignment = Alignment.Center
+    ){
         Column(
             modifier = Modifier
-                //.fillMaxSize()
                 .padding(16.dp)
-                .height(800.dp),
+                .fillMaxHeight(),
+            //    .fillMaxSize(),
+               // .height(800.dp),
             verticalArrangement = Arrangement.Center
         ) {
             // Custom bottom Bar
@@ -106,6 +113,7 @@ fun Operazioni(
                 }
             }
         }
+    }
 
 }
 

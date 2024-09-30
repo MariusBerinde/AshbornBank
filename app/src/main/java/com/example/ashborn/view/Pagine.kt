@@ -79,6 +79,7 @@ fun Pagine(
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
+             //   .fillMaxSize()
                 .padding(innerPadding)
         ) {
 

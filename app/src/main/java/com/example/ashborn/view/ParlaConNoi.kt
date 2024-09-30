@@ -1,9 +1,11 @@
 package com.example.ashborn.view
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -15,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -30,10 +33,13 @@ import com.example.ashborn.ui.theme.SmallPadding
 @Composable
 fun ParlaConNoi(navController: NavHostController) {
 
+    val dest =  integerResource(R.integer.Conti)
+    BackHandler(enabled = true) { navController.navigate("conti?index=$dest") }
     Column(
         modifier = Modifier
             .padding(MediumPadding)
-            .height(600.dp),
+           // .height(600.dp),
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {

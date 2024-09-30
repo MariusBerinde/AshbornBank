@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -25,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -44,16 +46,20 @@ fun Conti(
     viewModel: ContiViewModel
 ) {
     val saldoNascosto = remember {mutableStateOf(true) }
+    val larghezzaSchermo = LocalConfiguration.current.screenWidthDp
+
     if(viewModel.contoMostrato != null){
         Column(
-            modifier = Modifier,
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.CenterHorizontally)
-                    .padding(MediumPadding)
+                    .padding(MediumPadding),
+                horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
                 IconButton(
                     modifier = Modifier.padding(top = 70.dp),
@@ -159,7 +165,10 @@ fun Conti(
                 }
             }
             Spacer(modifier = Modifier.padding(SmallPadding))
-            Row (modifier = Modifier.fillMaxWidth()){
+            Row (
+                modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally)
+
+            ){
                 Column(modifier = Modifier.padding(SmallPadding)) {
                     ListaOperazioniFatteConti(navController, viewModel)
                 }
