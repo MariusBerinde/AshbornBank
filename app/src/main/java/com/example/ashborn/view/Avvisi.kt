@@ -172,8 +172,9 @@ fun DettagliAvviso(
             .padding(SmallPadding)
             .verticalScroll(rememberScrollState()),
         ) {
+        BackHandler(enabled = true) { navController.navigate("avvisi") }
         Row (modifier = Modifier.fillMaxWidth()){
-            IconButton(onClick = { navController.popBackStack() }) {
+            IconButton(onClick = { navController.navigate("avvisi") }) {
                 Icon(
                     Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back"
@@ -221,7 +222,7 @@ fun DettagliAvviso(
             IconButton(
                 onClick = {
                     viewModel.deleteAvviso(avviso)
-                    navController.popBackStack()
+                    navController.navigate("avvisi")
                 },
             ) {
                 Icon(
