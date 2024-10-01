@@ -4,9 +4,7 @@ import android.util.Log
 import com.example.ashborn.Validatore
 import com.example.ashborn.view.login.StatoErrore
 import com.example.ashborn.viewModel.BonificoViewModel
-import com.example.ashborn.viewModel.OperationViewModel
-import java.time.format.DateTimeFormatter
-
+/*
 fun gestisciErroriMav(
     beneficiario: String,
     iban: String,
@@ -21,6 +19,7 @@ fun gestisciErroriMav(
     viewModel.setErroreCausaleX(!Validatore().formatoCausaleValida(causale))
     viewModel.setErroreDataAccreditoX(!Validatore().formatoDataAccreditoValida(dataAccredito))
 }
+*/
 
 fun gestisciErroriBonifico(
     beneficiario: String,

@@ -26,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -46,8 +45,6 @@ fun Conti(
     viewModel: ContiViewModel
 ) {
     val saldoNascosto = remember {mutableStateOf(true) }
-    val larghezzaSchermo = LocalConfiguration.current.screenWidthDp
-
     if(viewModel.contoMostrato != null){
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -97,7 +94,7 @@ fun Conti(
                                 modifier = Modifier
                                     .align(Alignment.CenterVertically),
                             ) {
-                                Row (){
+                                Row {
                                     Text(
                                         text = stringResource(id = R.string.saldo) + ": ",
                                         fontSize = 20.sp,

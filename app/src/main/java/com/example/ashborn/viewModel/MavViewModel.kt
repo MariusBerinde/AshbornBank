@@ -7,23 +7,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import com.example.ashborn.BarcodeScanner
 import com.example.ashborn.dao.AshbornDao
 import com.example.ashborn.db.AshbornDb
 import com.example.ashborn.model.DataStoreManager
 import com.example.ashborn.repository.ContoRepository
-import com.example.ashborn.repository.OperationRepository
 import com.example.ashborn.view.login.StatoErrore
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
-class MavViewModel  (
-    application: Application,
-): AndroidViewModel(application) {
-    val className = MavViewModel::class.simpleName
+class MavViewModel  (application: Application): AndroidViewModel(application) {
+    private val className = MavViewModel::class.simpleName
     val barcodeScanner = BarcodeScanner( application )
 
     var codiceMav by mutableStateOf("")
@@ -32,7 +26,7 @@ class MavViewModel  (
         private set
     var descrizioneMav by mutableStateOf("")
         private set
-    var dataAccreditoMav by mutableStateOf(LocalDateTime.now())
+    var dataAccreditoMav: LocalDateTime by mutableStateOf(LocalDateTime.now())
         private set
 
     private val dsm = DataStoreManager.getInstance(application)
@@ -49,9 +43,9 @@ class MavViewModel  (
     var erroreDataAccreditoMav by mutableStateOf(StatoErrore.NESSUNO)
         private set
     val listaConti = runBlocking { contoRepository.getConti(codCliente).first() }
-    var codConto by mutableStateOf(if(!listaConti.isEmpty()) listaConti.get(0).codConto else "")
+    var codConto by mutableStateOf(if(listaConti.isNotEmpty()) listaConti[0].codConto else "")
         private set
-    var ordinanteMav by mutableStateOf(if(!listaConti.isEmpty()) listaConti.get(0).codConto else "")
+    var ordinanteMav by mutableStateOf(if(listaConti.isNotEmpty()) listaConti[0].codConto else "")
         private set
 
     fun setDescrizioneMavX(descrizioneMav: String) {
@@ -73,12 +67,6 @@ class MavViewModel  (
     fun setDataAccreditoMavX(dataAccredito:LocalDateTime) {
       this.dataAccreditoMav = dataAccredito
     }
-
-    /*fun startScan(){
-        viewModelScope.launch (Dispatchers.Default){
-            barcodeScanner.startScan()
-        }
-    }*/
 
     fun validateMav(): Boolean {
         val reg = Regex("[a-zA-Z0-9]+")

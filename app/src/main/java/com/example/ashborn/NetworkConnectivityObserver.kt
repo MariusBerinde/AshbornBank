@@ -1,18 +1,17 @@
 package com.example.ashborn
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class NetworkConnectivityObserver private constructor(
-    private val context: Context
+    context: Context
 ): ConnectivityObserver {
     private val applicationContext = context.applicationContext
     private val connectivityManager =
@@ -50,6 +49,7 @@ class NetworkConnectivityObserver private constructor(
     }
 
     companion object {
+        @SuppressLint("StaticFieldLeak")
         @Volatile
         private var instance: NetworkConnectivityObserver? = null
 

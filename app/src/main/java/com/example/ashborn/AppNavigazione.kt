@@ -51,8 +51,6 @@ import com.example.ashborn.viewModel.CarteViewModel
 import com.example.ashborn.viewModel.CarteViewModelFactory
 import com.example.ashborn.viewModel.ContiViewModel
 import com.example.ashborn.viewModel.ContiViewModelFactory
-import com.example.ashborn.viewModel.DettagliOperazioneViewModel
-import com.example.ashborn.viewModel.DettagliOperazioneViewModelFactory
 import com.example.ashborn.viewModel.MavViewModel
 import com.example.ashborn.viewModel.MavViewModelFactory
 import com.example.ashborn.viewModel.OperationViewModel
@@ -188,7 +186,6 @@ fun AppNavigazione2(
                         navController = navController,
                         viewModelConti = contiViewmodel,
                         viewModelCarte = carteViewModel,
-                        viewModelOperazioni = operationViewModel,
                         viewModelAltro = altroViewModel,
                         indice = index,
                     )
@@ -197,13 +194,10 @@ fun AppNavigazione2(
             composable(route = "dettagli-operazione/{operazione}") {
                 val jsonData = it.arguments?.getString("operazione") ?: "No Data"
                 val operation: Operation = json.decodeFromString(Operation.serializer(), jsonData)
-                val dettagliOperazioneViewModel : DettagliOperazioneViewModel = viewModel(
-                    factory = DettagliOperazioneViewModelFactory(applicationContext as Application)
-                )
                 ErroreConnessione(connectionStatus = connectionStatus) {
                     DettagliOperazione(
                         operation = operation,
-                        navController = navController, viewModel = dettagliOperazioneViewModel
+                        navController = navController
                     )
                 }
             }

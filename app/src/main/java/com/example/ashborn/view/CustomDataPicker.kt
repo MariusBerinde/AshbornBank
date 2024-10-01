@@ -1,78 +1,23 @@
 package com.example.ashborn.view
 
 import android.util.Log
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import kotlinx.datetime.toKotlinLocalDate
 import java.text.SimpleDateFormat
 import java.time.*
-import java.time.format.DateTimeFormatter
-import java.time.temporal.TemporalAccessor
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
-
-
-@Composable
-fun CustomDatePicker(date: String, useCase: DateUseCase, yearRange: IntRange) {
-    val daten = remember { mutableStateOf(LocalDate.parse(date, DateTimeFormatter.ofPattern("dd/MM/yyyy")))}
-    val isOpen = remember { mutableStateOf(false)}
-
-        OutlinedTextField(
-            readOnly = true,
-            modifier = Modifier.fillMaxWidth(),
-            value = daten.value.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-            label = { Text("Date") },
-            onValueChange = {},
-            trailingIcon = {
-                IconButton(
-                    onClick = { isOpen.value = true } // show de dialog
-                ) {
-                    Icon(imageVector = Icons.Default.DateRange, contentDescription = "Calendar")
-                }
-            }
-        )
-
-
-
-
-    if (isOpen.value) {
-        CustomDatePickerDialog(
-            yearRange = yearRange,
-            onAccept = {
-                isOpen.value = false // close dialog
-
-                if (it != null) { // Set the date
-                    daten.value = Instant
-                        .ofEpochMilli(it)
-                        .atZone(ZoneId.of("UTC"))
-                        .toLocalDate()
-                }
-            },
-            onCancel = {
-                isOpen.value = false //close dialog
-            },
-            useCase = useCase
-        )
-    }
-}
 
 fun convertLongToTimeWithLocale(dateAsMilliSecond: Long?):String{
     if(dateAsMilliSecond == null)
@@ -83,13 +28,12 @@ fun convertLongToTimeWithLocale(dateAsMilliSecond: Long?):String{
         val formattedDateAsDigitMonth = SimpleDateFormat("dd/MM/yyyy", Locale(language))
         return formattedDateAsDigitMonth.format(date)
     }
-
-
 }
 
 enum class DateUseCase {
     NASCITA, BONIFICO, MAV
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomDatePickerDialog(
@@ -99,7 +43,7 @@ fun CustomDatePickerDialog(
     useCase: DateUseCase
 ) {
     val showDatePicker = remember { mutableStateOf(false) }
-    val tag = object {}.javaClass.enclosingMethod.name
+    val tag = object {}.javaClass.enclosingMethod?.name
     val state = rememberDatePickerState(
         initialDisplayedMonthMillis = System.currentTimeMillis(),
         yearRange = yearRange,
@@ -176,6 +120,6 @@ fun CustomDatePickerDialog(
 
         DatePicker(state = state,
             )
-        Log.i("CustomDataPicker","data selezionata = ${convertLongToTimeWithLocale(state.selectedDateMillis)}")
+        Log.d(tag,"data selezionata = ${convertLongToTimeWithLocale(state.selectedDateMillis)}")
     }
 }

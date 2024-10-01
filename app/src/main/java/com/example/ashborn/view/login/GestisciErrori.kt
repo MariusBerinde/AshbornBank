@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.example.ashborn.view.login
 
-import androidx.compose.material3.ExperimentalMaterial3Api
 import com.example.ashborn.RegistrazioneViewModel
 import com.example.ashborn.Validatore
 
@@ -32,29 +29,3 @@ fun gestisciErrori(
     )
 
 }
-/*@Preview(showBackground = true)
-@Composable
- fun Preview() {
-    val viewModel = AshbornViewModel()
-    val navController = rememberNavController()
-    AshbornTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            //Registrazione(navController, viewModel)
-            /*AskPIN(
-                navController = navController,
-                viewModel = viewModel,
-                connectionStatus = ConnectivityObserver.Status.Lost
-            )*/
-            Welcome(
-                navController = navController,
-                viewModel = viewModel,
-                connectionStatus = ConnectivityObserver.Status.Lost
-            )
-        }
-    }
-}
-*/
-

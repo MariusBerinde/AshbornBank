@@ -35,17 +35,4 @@ class BarcodeScanner(
             Log.d(className,"scan error: $e")
         }
     }
-
-    /* alt:
-    scanner.startScan()
-    .addOnSuccessListener { barcode ->
-        // Task completed successfully
-    }
-    .addOnCanceledListener {
-        // Task canceled
-    }
-    .addOnFailureListener { e ->
-        // Task failed with an exception
-    }*/
-
 }

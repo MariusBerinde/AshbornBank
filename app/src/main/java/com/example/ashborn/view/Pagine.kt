@@ -27,7 +27,6 @@ import com.example.ashborn.view.operazioni.Operazioni
 import com.example.ashborn.viewModel.AltroViewModel
 import com.example.ashborn.viewModel.CarteViewModel
 import com.example.ashborn.viewModel.ContiViewModel
-import com.example.ashborn.viewModel.OperationViewModel
 
 @Composable
 fun Pagine(
@@ -35,8 +34,7 @@ fun Pagine(
     viewModelConti: ContiViewModel,
     viewModelCarte: CarteViewModel,
     viewModelAltro: AltroViewModel,
-    viewModelOperazioni: OperationViewModel,
-    indice:Int=0
+    indice: Int = 0
 ) {
     val tabList: ArrayList<String> = arrayListOf(
         stringResource(R.string.conti),

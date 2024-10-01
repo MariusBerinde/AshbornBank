@@ -1,6 +1,7 @@
 package com.example.ashborn.viewModel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -11,8 +12,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
+@Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
 class AltroViewModel(application: Application): AndroidViewModel(application) {
-    val nameClass = ContiViewModel::class.simpleName
+    private val nameClass = ContiViewModel::class.simpleName
     val dsm = DataStoreManager.getInstance(application)
     var userName = runBlocking {
         var ris = ""
@@ -44,6 +46,7 @@ class AltroViewModel(application: Application): AndroidViewModel(application) {
             dsm.writeWrongAttempts(0L)
             dsm.writeHasRequestedPermission(false)
             dsm.reload()
+            Log.i(nameClass, "Smartphone reset")
         }
     }
 }

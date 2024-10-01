@@ -1,6 +1,7 @@
 package com.example.ashborn.view.login
 
 import android.util.Log
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -50,7 +51,7 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun Registrazione(
     navController: NavHostController,
-    viewModel: RegistrazioneViewModel,//AshbornViewModel,
+    viewModel: RegistrazioneViewModel,
 ) {
     val focusRequester1 = remember { FocusRequester() }
     val focusRequester2 = remember { FocusRequester() }
@@ -75,22 +76,22 @@ fun Registrazione(
             readOnly = true,
             modifier = Modifier.fillMaxWidth(),
             value = viewModel.dataNascita,
-            label = { Text("Date") },
+            label = { Text(stringResource(id = R.string.data_nascita)) },
             onValueChange = {viewModel.setDataNascitaX(it)},
             trailingIcon = {
                 IconButton(
-                    onClick = { isOpen.value = true } // show de dialog
+                    onClick = { isOpen.value = true } // show the dialog
                 ) {
                     Icon(imageVector = Icons.Default.DateRange, contentDescription = "Calendar")
                 }
-            }
+            },
+            singleLine = true,
         )
         if (isOpen.value) {
             CustomDatePickerDialog(
                 yearRange = LocalDate.now().minusYears(100).year..LocalDate.now().year,
                 onAccept = {
                     isOpen.value = false // close dialog
-
                     if (it != null) { // Set the date
                         viewModel.setDataNascitaX(
                             Instant
@@ -108,13 +109,18 @@ fun Registrazione(
             )
         }
         Spacer(modifier = Modifier.height(LargePadding))
+        val isDarkMode = isSystemInDarkTheme()
         OutlinedTextField(
             value = viewModel.userName,
             onValueChange = { viewModel.setUserNameX(it) },
             label = { Text(stringResource(id = R.string.inserisci_nome)) },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = if (viewModel.erroreNome != StatoErrore.NESSUNO) Color.Red else Color.Black,
-                unfocusedBorderColor = if (viewModel.erroreNome != StatoErrore.NESSUNO) Color.Red else Color.Black
+                focusedBorderColor = if (viewModel.erroreNome != StatoErrore.NESSUNO) Color.Red
+                                     else if(isDarkMode) Color.White
+                                     else Color.Black,
+                unfocusedBorderColor = if (viewModel.erroreNome != StatoErrore.NESSUNO) Color.Red
+                                       else if(isDarkMode) Color.White
+                                       else Color.Black
             ),
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
             keyboardActions = KeyboardActions(
@@ -122,7 +128,18 @@ fun Registrazione(
             ),
             modifier = Modifier
                 .focusRequester(focusRequester1)
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            singleLine = true,
+        )
+        Text(
+            text = when (viewModel.erroreNome) {
+                StatoErrore.FORMATO -> {
+                    stringResource(id = R.string.errore_nome)}
+                StatoErrore.CONTENUTO -> {
+                    stringResource(id = R.string.errore_nome_contenuto)}
+                StatoErrore.NESSUNO -> ""
+            },
+            color = Color.Red
         )
         Spacer(modifier = Modifier.height(LargePadding))
         OutlinedTextField(
@@ -147,35 +164,55 @@ fun Registrazione(
             ),
             modifier = Modifier
                 .focusRequester(focusRequester2)
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            singleLine = true,
         )
-
+        Text(
+            text = when (viewModel.erroreCognome) {
+                StatoErrore.FORMATO -> {
+                    stringResource(id = R.string.errore_conome)}
+                StatoErrore.CONTENUTO -> {
+                    stringResource(id = R.string.errore_conome_contenuto)}
+                StatoErrore.NESSUNO -> ""
+            },
+            color = Color.Red
+        )
         Spacer(modifier = Modifier.height(LargePadding))
+        val isDark = isSystemInDarkTheme()
         OutlinedTextField(
             value = viewModel.codCliente,
             onValueChange = { viewModel.setCodClienteX(it) },
             label = { Text(stringResource(R.string.inserisci_codice_cliente)) },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = if (viewModel.erroreCodCliente != StatoErrore.NESSUNO) {
+                focusedBorderColor = if (viewModel.erroreCodCliente != StatoErrore.NESSUNO)
                     Color.Red
-                } else {
-                    Color.Black
-                },
-                unfocusedBorderColor = if (viewModel.erroreCodCliente != StatoErrore.NESSUNO) {
+                else if(isDark)
+                    Color.White
+                else
+                    Color.Black,
+                unfocusedBorderColor = if (viewModel.erroreCodCliente != StatoErrore.NESSUNO)
                     Color.Red
-                } else {
+                else if(isDark)
+                    Color.White
+                else
                     Color.Black
-                }
             ),
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
-            keyboardActions = KeyboardActions(
-                onSend = {
-                    viewModel.auth()
-                }
-            ),
+            keyboardActions = KeyboardActions(onSend = { viewModel.auth() }),
             modifier = Modifier
                 .focusRequester(focusRequester3)
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            singleLine = true,
+        )
+        Text(
+            text = when (viewModel.erroreCodCliente) {
+                StatoErrore.FORMATO -> {
+                    stringResource(id = R.string.errore_cod_cliente)}
+                StatoErrore.CONTENUTO -> {
+                    stringResource(id = R.string.errore_cod_cliente_contenuto)}
+                StatoErrore.NESSUNO -> ""
+            },
+            color = Color.Red
         )
         Spacer(modifier = Modifier.height(SmallPadding))
         Button(

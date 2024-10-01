@@ -3,7 +3,6 @@ package com.example.ashborn
 import android.app.Application
 import android.util.Log
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
@@ -44,8 +43,6 @@ class RegistrazioneViewModel( application: Application): AndroidViewModel(applic
         private set
 
     var fistLogin: Boolean = true
-    var wrongAttempts by mutableIntStateOf(0)
-        private set // Optional: restrict external modification
     var codCliente by mutableStateOf("")
         private set
     var userName by mutableStateOf("")
@@ -75,40 +72,38 @@ class RegistrazioneViewModel( application: Application): AndroidViewModel(applic
     fun setCodClienteX(codCliente:String ){
         this.codCliente=codCliente
     }
-    
+
     fun auth() {
         viewModelScope.launch{
-            codCliente=codCliente.replace(" ","")
+            codCliente = codCliente.replace(" ","")
             val userFromDb = getUserByClientCode(codCliente)
-            val validName = userFromDb?.name == userName
-            val validSurname = userFromDb?.surname == cognome
-            val validDate = userFromDb?.dateOfBirth == dataNascita
-            Log.d("ViewModel", "auth")
+            userName = userName.trimEnd().trimStart().replace("  ", " ")
+            cognome = cognome.trimEnd().trimStart().replace("  ", " ")
+            codCliente = codCliente.replace(" ", "")
+            val validName = (userFromDb?.name?.lowercase() ?: "") == userName.lowercase()
+            val validSurname = (userFromDb?.surname?.lowercase() ?: "") == cognome.lowercase()
+            val validDate = (userFromDb?.dateOfBirth ?: "") == dataNascita
             erroreCodCliente = if (userFromDb == null) StatoErrore.CONTENUTO else StatoErrore.NESSUNO
             erroreNome = if (!validName) StatoErrore.CONTENUTO else StatoErrore.NESSUNO
             erroreCognome = if (!validSurname) StatoErrore.CONTENUTO else StatoErrore.NESSUNO
             erroreDataNascita = if(!validDate) StatoErrore.CONTENUTO else StatoErrore.NESSUNO
             if( validName && validSurname && validDate) {
-                Log.d("ViewModel", "auth2")
                 _navigationEvent.value = NavigationEvent.NavigateToPin
-                Log.d("ViewModel", "auth3")
-                //   dataNascita=dataNascita
             } else {
                 _navigationEvent.value = NavigationEvent.NavigateToError
-                Log.d("ViewModel", "auth4")
             }
         }
     }
 
     suspend fun getUserByClientCode(clientCode:String): User? {
-         val nameFun = object {}.javaClass.enclosingMethod.name
-        var  result:User? = null
+        val nameFun = object {}.javaClass.enclosingMethod?.name
+        var  result: User? = null
 
-        Log.d(nameClass+","+nameFun, "codice cliente attuale = $clientCode")
-        result= CoroutineScope(Dispatchers.IO).async{
+        Log.d(nameClass + "," + nameFun, "codice cliente attuale = $clientCode")
+        result = CoroutineScope(Dispatchers.IO).async{
             return@async userRepository.getUserByClientCode(clientCode).first()
         }.await()
-        Log.d(nameClass+","+nameFun, "getUserByClientCode ${result}")
+        Log.d(nameClass + "," + nameFun, "getUserByClientCode ${result}")
         return result
     }
 

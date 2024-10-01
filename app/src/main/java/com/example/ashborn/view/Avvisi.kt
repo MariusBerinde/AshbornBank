@@ -49,11 +49,11 @@ fun Avvisi(
     navController: NavHostController,
     viewModel: AvvisiViewModel,
 ) {
-    var avvisi: ArrayList<Avviso> = viewModel.listaAvvisi
+    val avvisi: ArrayList<Avviso> = viewModel.listaAvvisi
     val nameFun = object {}.javaClass.enclosingMethod?.name
     val dest =  integerResource(R.integer.Altro)
     BackHandler(enabled = true) { navController.navigate("conti?index=$dest") }
-    Column() {
+    Column {
         Spacer(modifier = Modifier.padding(SmallPadding))
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -118,7 +118,7 @@ fun Avvisi(
                             modifier = Modifier
                                 .padding(SmallPadding)
                                 .clickable {
-                                    Log.d(nameFun, "operazione inviata: ${i}")
+                                    Log.d(nameFun, "operazione inviata: $i")
                                     val json = Json { prettyPrint = true }
                                     val data = json.encodeToString(Avviso.serializer(), i)
                                     viewModel.aggiornaStatoAvviso(i.id, StatoAvviso.LETTO)

@@ -227,7 +227,7 @@ fun ListaOperazioniFatteConti(
         }
     }
 }
-//TODO: Aggiusta navigazione back
+
 @Composable
 fun ListaOperazioniFatteCarte(
     navController: NavHostController,
@@ -257,8 +257,7 @@ fun ListaOperazioniFatteCarte(
                     Button(
                         onClick = {
                             if (ordineInversoData.value) {
-                                viewModel.operazioni =
-                                    ArrayList(voci.sortedByDescending { it.dateO })
+                                viewModel.operazioni = ArrayList(voci.sortedByDescending { it.dateO })
                                 ordineInversoData.value = !ordineInversoData.value
                             } else {
                                 viewModel.operazioni = ArrayList(voci.sortedBy { it.dateO })
@@ -277,10 +276,10 @@ fun ListaOperazioniFatteCarte(
                     Button(
                         onClick = {
                             if (ordineInversoDescrizione.value) {
-                                viewModel.operazioni =
-                                    ArrayList(voci.sortedByDescending { it.description })
-                                ordineInversoData.value = !ordineInversoData.value
+                                viewModel.operazioni = ArrayList(voci.sortedByDescending { it.description })
+                                ordineInversoDescrizione.value = !ordineInversoDescrizione.value
                             } else {
+                                Log.d(nameFun, "")
                                 viewModel.operazioni = ArrayList(voci.sortedBy { it.description })
                                 ordineInversoDescrizione.value = !ordineInversoDescrizione.value
                             }
@@ -297,8 +296,7 @@ fun ListaOperazioniFatteCarte(
                     Button(
                         onClick = {
                             if (ordineInversoImporto.value) {
-                                viewModel.operazioni =
-                                    ArrayList(voci.sortedByDescending { it.amount })
+                                viewModel.operazioni = ArrayList(voci.sortedByDescending { it.amount })
                                 ordineInversoImporto.value = !ordineInversoImporto.value
                             } else {
                                 viewModel.operazioni = ArrayList(voci.sortedBy { it.amount })
@@ -350,22 +348,19 @@ fun ListaOperazioniFatteCarte(
                             .padding(SmallPadding)
                             .height(60.dp)
                             .fillMaxWidth(),
-
-
-
                         ) {
                         Row(modifier = Modifier
                             .fillMaxSize()
-                          .align(Alignment.CenterHorizontally)
+                            .align(Alignment.CenterHorizontally)
                             .clickable {
                                 Log.d(nameFun, "operazione inviata: $i")
                                 val json = Json { prettyPrint = true }
                                 val data = json.encodeToString(Operation.serializer(), i)
                                 navController.navigate("dettagli-operazione/$data")
                             },
-                            horizontalArrangement = Arrangement.SpaceEvenly
+                            horizontalArrangement = Arrangement.SpaceEvenly,
                         ) {
-                            val width = 90.dp
+                            val width = 92.dp
                             Column(
                                 modifier = Modifier
                                     .width(width)

@@ -35,8 +35,7 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
     val ashbornDao = AshbornDb.getDatabase(application).ashbornDao()
     private val userRepository = OfflineUserRepository(ashbornDao)
     private val operationRepository = OperationRepository(ashbornDao)
-    var remainingTime: Long by mutableLongStateOf(/*0L*/runBlocking { dsm.timerFlow.first() })
-        private set
+    private var remainingTime: Long by mutableLongStateOf(/*0L*/runBlocking { dsm.timerFlow.first() })
     var timerIsRunning: Boolean by mutableStateOf(false)
         private set
     var errorePin: Boolean by mutableStateOf(false)
@@ -129,7 +128,7 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
         }
     }
 
-    fun resetWrongAttempts() {
+    private fun resetWrongAttempts() {
         this.wrongAttempts = 0
         writeWrongAttempts()
     }

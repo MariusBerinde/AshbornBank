@@ -20,6 +20,7 @@ import com.example.ashborn.ui.theme.LargePadding
 import kotlinx.serialization.json.Json
 import java.time.format.DateTimeFormatter
 
+@Suppress("NAME_SHADOWING")
 @Composable
 fun RiepilogoOperazione(navController : NavHostController, operation: Operation){
     Log.i("RiepilogoBonifico", "Scelta operazione con id")
@@ -30,13 +31,17 @@ fun RiepilogoOperazione(navController : NavHostController, operation: Operation)
         dateV = operation.dateV,
         description = operation.description,
         recipient = operation.recipient,
-        amount  = operation.amount + if (operation.operationType == OperationType.INSTANTANEOUS_WIRE_TRANSFER) operation.amount/20 else 1.0,
         transactionType = operation.transactionType ,
         operationType = operation.operationType,
         bankAccount = operation.bankAccount ,
         iban = operation.iban,
         cardCode = operation.cardCode,
         operationStatus = operation.operationStatus,
+        amount  = operation.amount +
+                if (operation.operationType == OperationType.INSTANTANEOUS_WIRE_TRANSFER)
+                    operation.amount / 20
+                else
+                    1.0,
     )
 
     Column(modifier = Modifier.padding(LargePadding)) {
@@ -55,7 +60,10 @@ fun RiepilogoOperazione(navController : NavHostController, operation: Operation)
 
         when(operation.operationType){
             OperationType.MAV, OperationType.WIRE_TRANSFER, OperationType.INSTANTANEOUS_WIRE_TRANSFER -> {
-                Text(text = stringResource(id = R.string.ordinante), fontWeight = FontWeight.Bold)
+                Text(
+                    text = stringResource(id = R.string.ordinante),
+                    fontWeight = FontWeight.Bold
+                )
                 Text(text = operation.bankAccount)
                 Spacer(modifier = modifier)
             }
@@ -64,7 +72,10 @@ fun RiepilogoOperazione(navController : NavHostController, operation: Operation)
 
         when(operation.operationType){
             OperationType.WIRE_TRANSFER, OperationType.INSTANTANEOUS_WIRE_TRANSFER -> {
-                Text(text = stringResource(id = R.string.beneficiario), fontWeight = FontWeight.Bold)
+                Text(
+                    text = stringResource(id = R.string.beneficiario),
+                    fontWeight = FontWeight.Bold
+                )
                 Text(text = operation.recipient)
                 Spacer(modifier = modifier)
             }
@@ -72,19 +83,31 @@ fun RiepilogoOperazione(navController : NavHostController, operation: Operation)
         }
         when(operation.operationType){
             OperationType.WIRE_TRANSFER, OperationType.INSTANTANEOUS_WIRE_TRANSFER -> {
-                Text(text = stringResource(id = R.string.iban), fontWeight = FontWeight.Bold)
+                Text(
+                    text = stringResource(id = R.string.iban),
+                    fontWeight = FontWeight.Bold
+                )
             }
             OperationType.MAV -> {
-                Text(text = stringResource(id = R.string.codice_mav), fontWeight = FontWeight.Bold)
+                Text(
+                    text = stringResource(id = R.string.codice_mav),
+                    fontWeight = FontWeight.Bold
+                )
             }
             OperationType.CARD -> {
-                Text(text = stringResource(id = R.string.iban), fontWeight = FontWeight.Bold)
+                Text(
+                    text = stringResource(id = R.string.iban),
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
         Text(text = operation.iban)
         Spacer(modifier = modifier)
 
-        Text(text = stringResource(id = R.string.importo), fontWeight = FontWeight.Bold)
+        Text(
+            text = stringResource(id = R.string.importo),
+            fontWeight = FontWeight.Bold
+        )
         Text(
             text = operation.amount.toString() +
                 when(operation.operationType) {

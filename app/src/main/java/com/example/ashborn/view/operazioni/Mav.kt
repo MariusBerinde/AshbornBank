@@ -139,8 +139,9 @@ fun MavQrCode(
     val barcodeResults = viewModel.barcodeResults.collectAsState(null)
     val json = Json { prettyPrint = true }
     ScanBarcode(
-        viewModel.barcodeScanner::startScan,
-        barcodeResults.value,
+        navController = navController,
+        onScanBarcode = viewModel.barcodeScanner::startScan,
+        barcodeValue = barcodeResults.value,
     )
 
     if (!barcodeResults.value.isNullOrBlank()) {
@@ -165,38 +166,70 @@ fun MavQrCode(
             navController.navigate("mav-manuale?operazione=$encodedOperation")
         } else {
             Log.d(nameFun, "initiateScanner: ${barcodeResults.value}")
-            navController.popBackStack()
+            navController.navigate("mav")
         }
     }
 }
+@Suppress("UNUSED_PARAMETER")
 @Composable
 private fun ScanBarcode(
+    navController: NavHostController,
     onScanBarcode: suspend () -> Unit,
     barcodeValue: String?,
 ) {
     val scope = rememberCoroutineScope()
     val nameFun = object {}.javaClass.enclosingMethod?.name
+    BackHandler(enabled = true) { navController.navigate("mav") }
     Column(
         modifier = Modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
     ) {
-        Button(
+        Row(
             modifier = Modifier
-                .fillMaxWidth(.85f),
-            onClick = {
-                scope.launch {
-                    Log.i(nameFun, "scan qr code")
-                    onScanBarcode()
-                }
-            },
+                .fillMaxWidth()
+                .padding(SmallPadding),
+            verticalAlignment = Alignment.CenterVertically
         ) {
+            IconButton(
+                onClick = {navController.navigate("mav")},
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "back"
+                )
+            }    
             Text(
-                text = "Scan Barcode",
+                text = stringResource(id = R.string.scan_qrcode),
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(LargePadding),
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.displayMedium,
             )
+        }
+        Spacer(modifier = Modifier.padding(150.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(SmallPadding),
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth(.85f),
+                onClick = {
+                    scope.launch {
+                        Log.i(nameFun, "scan qr code")
+                        onScanBarcode()
+                    }
+                },
+            ) {
+                Text(
+                    text = stringResource(id = R.string.scan_qrcode),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.displayMedium,
+                )
+            }
         }
     }
 }
@@ -273,7 +306,8 @@ fun MavManuale(
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color.Black,
                         unfocusedBorderColor = Color.Black
-                    )
+                    ),
+                    singleLine = true,
                 )
                 ExposedDropdownMenu(
                     expanded = expanded,
@@ -297,9 +331,9 @@ fun MavManuale(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    top = LargePadding*2+SmallPadding,
+                    top = LargePadding * 2 + SmallPadding,
                     start = SmallPadding,
-                    end = SmallPadding ,
+                    end = SmallPadding,
                     bottom = SmallPadding
                 ),
         ) {
@@ -317,6 +351,7 @@ fun MavManuale(
                         )
                     }
                 },
+                singleLine = true,
             )
             if (isOpen.value) {
                 CustomDatePickerDialog(
@@ -364,6 +399,7 @@ fun MavManuale(
                                            else
                                                Color.Black
                 ),
+                singleLine = true,
             )
         }
         Spacer(modifier = Modifier.padding(LargePadding))
@@ -461,6 +497,7 @@ fun MavManuale(
                                            else
                                                Color.Black
                 ),
+                singleLine = true,
             )
         }
         Spacer(modifier = Modifier.padding(LargePadding))

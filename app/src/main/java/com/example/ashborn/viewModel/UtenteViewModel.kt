@@ -25,7 +25,6 @@ class UtenteViewModel(application: Application): AndroidViewModel(application) {
         }
     }
     var user = runBlocking {
-        var ris = ""
         runBlocking(Dispatchers.IO) {
             userRepository.getUserByClientCode(codCliente).first()
         }

@@ -21,8 +21,10 @@
         />
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="sensorPortrait"
             android:exported="true"
-            android:theme="@style/Theme.Ashborn">
+            android:theme="@style/Theme.Ashborn"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

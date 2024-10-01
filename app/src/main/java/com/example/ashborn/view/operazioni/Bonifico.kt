@@ -2,6 +2,7 @@ package com.example.ashborn.view.operazioni
 
 import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -101,19 +102,20 @@ fun Bonifico(
         }
 
         Text(text = "Bonifico")
-        Column() {
+        Column {
             val modifier = Modifier
                 .padding(SmallPadding)
                 .fillMaxWidth()
-            Row() {
+            Row {
                 var expanded by remember { mutableStateOf(false) }
-                var selectedText = viewModel.codConto
+                val selectedText = viewModel.codConto
                 ExposedDropdownMenuBox(
                     expanded = expanded,
                     onExpandedChange = {
                         expanded = !expanded
                     }
                 ) {
+                    val isDark = isSystemInDarkTheme()
                     OutlinedTextField(
                         value = viewModel.codConto,
                         onValueChange = {viewModel.setCodContoX(selectedText)},
@@ -124,7 +126,11 @@ fun Bonifico(
                             .fillMaxWidth()
                             .menuAnchor(),
                         label = { Text(stringResource(id = R.string.ordinante)) },
-                        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Color.Black, unfocusedBorderColor = Color.Black)
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = if(isDark) Color.White else Color.Black,
+                            unfocusedBorderColor = if(isDark) Color.White else Color.Black
+                        ),
+                        singleLine = true,
                     )
                     ExposedDropdownMenu(
                         expanded = expanded,
@@ -144,7 +150,7 @@ fun Bonifico(
                 }
 
             }
-            Row() {
+            Row {
                 val maxLength = 100
                 OutlinedTextField(
                     value = viewModel.beneficiario,
@@ -173,10 +179,11 @@ fun Bonifico(
                     modifier = Modifier
                         .focusRequester(focusRequester1)
                         .padding(SmallPadding)
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
+                    singleLine = true,
                 )
             }
-            Row() {
+            Row {
                 val maxLength = 27
                 OutlinedTextField(
                     value = viewModel.iban,
@@ -205,10 +212,11 @@ fun Bonifico(
                     modifier = Modifier
                         .focusRequester(focusRequester2)
                         .padding(SmallPadding)
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
+                    singleLine = true,
                 )
             }
-            Row() {
+            Row {
                 OutlinedTextField(
                     value = if(!viewModel.importo.contains(".")) viewModel.importo+".00" else viewModel.importo,
                     onValueChange = { viewModel.setImportoX(it) },
@@ -235,10 +243,11 @@ fun Bonifico(
                     modifier = Modifier
                         .focusRequester(focusRequester3)
                         .padding(SmallPadding)
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
+                    singleLine = true,
                 )
             }
-            Row() {
+            Row {
                 val maxLength = 300
                 OutlinedTextField(
                     value = viewModel.causale,
@@ -267,10 +276,11 @@ fun Bonifico(
                     modifier = Modifier
                         .focusRequester(focusRequester4)
                         .padding(SmallPadding)
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
+                    singleLine = true,
                 )
             }
-            Row() {
+            Row {
                 OutlinedTextField(
                     readOnly = true,
                     value = (viewModel.dataAccredito.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")).toString()),
@@ -344,7 +354,8 @@ fun Bonifico(
                     modifier = Modifier
                         .focusRequester(focusRequester5)
                         .padding(SmallPadding)
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
+                    singleLine = true,
 
                 )
                 if (isOpen.value) {
@@ -379,7 +390,7 @@ fun Bonifico(
                     onCheckedChange = {isChecked.value = !isChecked.value}
                 )
             }
-            Row() {
+            Row {
                 Button(
                     onClick = {
                         if (Validatore().formatoBonificoValido(

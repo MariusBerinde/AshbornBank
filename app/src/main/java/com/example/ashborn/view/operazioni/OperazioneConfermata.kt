@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,10 +32,8 @@ import com.example.ashborn.ui.theme.MediumPadding
 
 @Composable
 fun OperazioneConfermata(navController : NavHostController) {
-    BackHandler(enabled = true) {
-        // Non fare nulla, in questo modo blocca l'azione "back"
-        // Puoi anche gestire un'azione specifica qui
-    }
+    val dest =  integerResource(R.integer.Operazioni)
+    BackHandler(enabled = true) {}
     Column(
         modifier = Modifier
             .padding(MediumPadding)
@@ -45,22 +44,25 @@ fun OperazioneConfermata(navController : NavHostController) {
             Text(text = stringResource(id = R.string.operazione_confermata), fontSize = 32.sp)
         }
         Spacer(modifier = Modifier.padding(top = 150.dp))
-        Row () {
+        Row {
             Text(text = stringResource(id = R.string.conferma_operazione), fontSize = 20.sp)
         }
-        Row () {
+        Row {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.emoticon),
                 modifier = Modifier.size(256.dp),
                 tint = Color.Yellow,
                 contentDescription = "smile")
         }
-        Row () {
-            Button(onClick = { navController.navigate("bonifico") }, modifier = Modifier.fillMaxWidth()) {
+        Row {
+            Button(
+                onClick = {navController.navigate(dest)},
+                modifier = Modifier.fillMaxWidth(),
+            ) {
                 Text(text = stringResource(id = R.string.altra_operazione))
             }
         }
-        Row () {
+        Row {
             Button(onClick = { navController.navigate("conti") }, modifier = Modifier.fillMaxWidth()) {
                 Text(text = stringResource(id = R.string.chiudi))
             }
@@ -84,22 +86,22 @@ fun OperazioneRifiutata(navController: NavHostController) {
             Text(text = stringResource(id = R.string.operazione_rifiutata), fontSize = 32.sp)
         }
         Spacer(modifier = Modifier.padding(top = 150.dp))
-        Row () {
+        Row {
             Text(text = stringResource(id = R.string.rifiuto_operazione), fontSize = 20.sp)
         }
-        Row () {
+        Row {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.emoticon_sad),
                 modifier = Modifier.size(256.dp),
                 tint = Color.Yellow,
                 contentDescription = "smile")
         }
-        Row () {
+        Row {
             Button(onClick = { navController.navigate("bonifico") }, modifier = Modifier.fillMaxWidth()) {
                 Text(text = stringResource(id = R.string.altra_operazione))
             }
         }
-        Row () {
+        Row {
             Button(onClick = { navController.navigate("conti") }, modifier = Modifier.fillMaxWidth()) {
                 Text(text = stringResource(id = R.string.chiudi))
             }

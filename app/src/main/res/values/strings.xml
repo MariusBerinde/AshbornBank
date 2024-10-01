@@ -26,7 +26,7 @@
     <string name="data">Data</string>
     <string name="dataAccredito">Data di accredito dd/mm/yyyy</string>
     <string name="dataO">Data Operazione</string>
-    <string name="data_nascita">"Data di nascita: "</string>
+    <string name="data_nascita">"Data di nascita"</string>
     <string name="descrizione">Descrizione</string>
     <string name="dettagli">Dettagli</string>
     <string name="dettagli_operazione">Dettagli operazione</string>
@@ -84,4 +84,10 @@
     <string name="notifica4">" in data "</string>
     <string name="timer">"Tempo di attesa rimanente "</string>
     <string name="work_in_progress">questa feauture non è ancora disponibile</string>
+    <string name="errore_nome">Il nome può contenere solo lettere a-z A-Z</string>
+    <string name="errore_nome_contenuto">nome errato</string>
+    <string name="errore_conome">il cognome può contenere solo lettere a-z A-Z</string>
+    <string name="errore_conome_contenuto">cognome errato</string>
+    <string name="errore_cod_cliente">il codice cliente può contenere solo caratteri alfanumerici a–z 0–9 ed è lungo 9 caratteri</string>
+    <string name="errore_cod_cliente_contenuto">codice cliente errato</string>
 </resources>

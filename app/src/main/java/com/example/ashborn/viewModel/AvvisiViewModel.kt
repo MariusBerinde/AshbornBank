@@ -39,7 +39,7 @@ class AvvisiViewModel(application: Application): AndroidViewModel(application) {
        _listaAvvisi
     )
 
-    fun getAvvisi():ArrayList<Avviso>{
+    private fun getAvvisi():ArrayList<Avviso>{
         var dati = arrayListOf<Avviso>()
         runBlocking (Dispatchers.IO) {
             val datiDb = viewModelScope.async(Dispatchers.IO) {

@@ -4,9 +4,8 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.PackageManager
-import android.os.Build
 import android.util.Log
-import androidx.compose.ui.res.stringResource
+
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.work.CoroutineWorker
@@ -18,11 +17,6 @@ import com.example.ashborn.data.OperationType
 import com.example.ashborn.data.TransactionType
 import com.example.ashborn.db.AshbornDb
 import com.example.ashborn.repository.OperationRepository
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionState
-import com.google.accompanist.permissions.PermissionStatus
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
@@ -34,16 +28,15 @@ import kotlin.random.Random
  * @param workerParameters parametri per esecuzione servizio
  */
 class DbWorker(
-    context: Context,
+    val context: Context,
     workerParameters: WorkerParameters,
 ): CoroutineWorker(
     context,
     workerParameters,
 ){
-    val context = context
     val ashbornDao: AshbornDao = AshbornDb.getDatabase(context).ashbornDao()
-    val operationRepository = OperationRepository(ashbornDao)
-    val className = DbWorker::class.java.name
+    private val operationRepository = OperationRepository(ashbornDao)
+    private val className = DbWorker::class.java.name
 
     override suspend fun doWork(): Result {
         Log.d(className, "eseguo")
@@ -51,22 +44,21 @@ class DbWorker(
         return Result.success()
     }
 
-    suspend fun dbWork() {
+    private suspend fun dbWork() {
         operationRepository.completePendingOperations()
     }
 }
 
 class PaymentWorker(
-    context: Context,
+    val context: Context,
     workerParameters: WorkerParameters,
 ): CoroutineWorker(
     context,
     workerParameters,
 ){
-    val context = context
     val ashbornDao: AshbornDao = AshbornDb.getDatabase(context).ashbornDao()
-    val operationRepository = OperationRepository(ashbornDao)
-    val className = PaymentWorker::class.java.name
+    private val operationRepository = OperationRepository(ashbornDao)
+    private val className = PaymentWorker::class.java.name
     override suspend fun doWork(): Result {
         Log.d(className, "eseguo payment")
         paymentWork()
@@ -126,7 +118,7 @@ class PaymentWorker(
         return result
     }
 
-    suspend fun paymentWork() {
+    private suspend fun paymentWork() {
         Log.d(className, "paymentWork")
         val nameFun = object{}.javaClass.enclosingMethod?.name
         val operation = randomOperation()

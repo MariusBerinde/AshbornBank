@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
@@ -68,7 +67,11 @@ fun Altro(
                                 .background(Color.Black)
                                 .padding(MediumPadding)
                         ) {
-                            val text = if(viewModel.userName.isEmpty()) "" else viewModel.userName[0].toString() + if(viewModel.cognome.isEmpty()  ) "" else viewModel.cognome[0].toString()
+                            val text = if(viewModel.userName.isEmpty()) ""
+                                       else
+                                           viewModel.userName[0].toString().uppercase() +
+                                                if(viewModel.cognome.isEmpty()) ""
+                                                else viewModel.cognome[0].toString().uppercase()
                             Text(
                                 text = text,
                                 textAlign = TextAlign.Center,
@@ -114,7 +117,7 @@ fun ListaAzioni(navController: NavHostController, viewModel: AltroViewModel) {
     }
     ) {
         val isOpen = remember { mutableStateOf(false) }
-        var confermaEliminazioneSmartphone = remember { mutableStateOf(false) }
+        val confermaEliminazioneSmartphone = remember { mutableStateOf(false) }
 
         val voci: ArrayList<Voice> = arrayListOf(
             Voice(ImageVector.vectorResource(id = R.drawable.information), stringResource(id = R.string.avvisi), "avvisi"),

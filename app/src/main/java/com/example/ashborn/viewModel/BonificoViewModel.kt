@@ -10,7 +10,6 @@ import com.example.ashborn.dao.AshbornDao
 import com.example.ashborn.db.AshbornDb
 import com.example.ashborn.model.DataStoreManager
 import com.example.ashborn.repository.ContoRepository
-import com.example.ashborn.repository.OperationRepository
 import com.example.ashborn.view.login.StatoErrore
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -19,7 +18,6 @@ import java.time.LocalDateTime
 class BonificoViewModel(application: Application): AndroidViewModel(application) {
     private val dsm = DataStoreManager.getInstance(application)
     private val ashbornDao: AshbornDao = AshbornDb.getDatabase(application).ashbornDao()
-    private val operationRepository: OperationRepository = OperationRepository(ashbornDao)
     private val contoRepository: ContoRepository = ContoRepository(ashbornDao)
 
     val codCliente: String = runBlocking { dsm.codClienteFlow.first() }
@@ -33,12 +31,8 @@ class BonificoViewModel(application: Application): AndroidViewModel(application)
         private set
     var erroreDataAccredito by mutableStateOf(StatoErrore.NESSUNO)
         private set
-    var startDest: String = ""
-        private set
-
     val listaConti = runBlocking { contoRepository.getConti(codCliente).first() }
-    var codConto by mutableStateOf(if(!listaConti.isEmpty()) listaConti.get(0).codConto else "")
-
+    var codConto by mutableStateOf(if(listaConti.isNotEmpty()) listaConti[0].codConto else "")
         private set
     var beneficiario by mutableStateOf("")
         private set
@@ -48,7 +42,7 @@ class BonificoViewModel(application: Application): AndroidViewModel(application)
         private set
     var causale by mutableStateOf("")
         private set
-    var dataAccredito by mutableStateOf(LocalDateTime.now())
+    var dataAccredito: LocalDateTime by mutableStateOf(LocalDateTime.now())
         private set
 
     fun setCodContoX(codConto: String) {
@@ -74,12 +68,6 @@ class BonificoViewModel(application: Application): AndroidViewModel(application)
 
     fun setDataAccreditoX(dataAccredito: LocalDateTime) {
         this.dataAccredito = dataAccredito
-    }
-
-    fun set_StartDest(startDest: String) {
-        if (startDest == "init" || startDest == "principale") {
-            this.startDest = startDest
-        }
     }
 
     fun setErroreDataAccreditoX(statoErrore: StatoErrore) {

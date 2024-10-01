@@ -30,7 +30,7 @@ fun ErroreConnessione(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        Log.i("ErroreConnessione","stato connessione ${connectionStatus.toString()}")
+        Log.i("ErroreConnessione","stato connessione $connectionStatus")
         content(this)
         if (connectionStatus == ConnectivityObserver.Status.Lost ||
             connectionStatus == ConnectivityObserver.Status.Unavailable

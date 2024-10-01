@@ -37,7 +37,6 @@ import com.example.ashborn.data.Operation
 import com.example.ashborn.data.OperationStatus
 import com.example.ashborn.data.TransactionType
 import com.example.ashborn.view.Share
-import com.example.ashborn.viewModel.DettagliOperazioneViewModel
 import kotlinx.serialization.json.Json
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -47,7 +46,6 @@ import java.time.format.DateTimeFormatter
 fun DettagliOperazione(
     operation: Operation,
     navController: NavHostController,
-    viewModel: DettagliOperazioneViewModel,
 ) {
     Log.d("DettagliOperazione","Operazione = $operation")
     val nameFun = object {}.javaClass.enclosingMethod?.name
