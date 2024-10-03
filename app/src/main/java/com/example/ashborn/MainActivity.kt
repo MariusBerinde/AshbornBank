@@ -49,10 +49,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background,
                 ) {
                     navController = rememberNavController()
-
-
                     AppNavigazione2(startDest = "init",navController)
-
                 }
             }
         }

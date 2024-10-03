@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -36,6 +37,7 @@ import com.example.ashborn.R
 import com.example.ashborn.data.Operation
 import com.example.ashborn.data.OperationStatus
 import com.example.ashborn.data.TransactionType
+import com.example.ashborn.ui.theme.LargePadding
 import com.example.ashborn.view.Share
 import kotlinx.serialization.json.Json
 import java.time.LocalDate
@@ -69,16 +71,15 @@ fun DettagliOperazione(
             IconButton(onClick = { navController.navigate("conti?index=$dest") }) {
                 Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = "Back")
             }
-        }
-        Row(
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        ) {
             Text(
+                modifier = Modifier.padding(start = LargePadding),
                 text = stringResource(id = R.string.dettagli_operazione),
                 fontSize = 30.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
             )
         }
+
         Spacer(modifier = Modifier.height(16.dp))
         Column(
             modifier = Modifier
@@ -94,21 +95,15 @@ fun DettagliOperazione(
                     .padding(16.dp)
                     .border(1.dp, Color.Gray)
                     .padding(16.dp),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    // Rettangolo per tipoOperazione
-                    Box(
-                        modifier = Modifier
-                            .border(1.dp, Color.Gray, RoundedCornerShape(4.dp))
-                            .padding(8.dp)
-                            .background(Color.LightGray) // Optional: background color
-                    ) {
-                        //Text(text = "Tipo di Operazione: ${op!!.operationType}", fontSize = 20.sp)
-                        Text(text = "Tipo di Operazione: ${operation.operationType}", fontSize = 20.sp)
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    //Text(text = "Ammontare: ${op!!.amount}", fontSize = 24.sp)
+                    Text(
+                        text = (if(operation.transactionType == TransactionType.WITHDRAWAL) "-" else "+" )+ operation.amount + "€",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+
                 }
             }
             // Riquadro B: Contiene Data operazione, descrizione e pulsanti share e delete
@@ -120,21 +115,30 @@ fun DettagliOperazione(
                     .padding(16.dp)
             ) {
                 Column {
-                    //TODO: mettere voci in grassetto sistemare tipo operazione implementare pulsanti correttamente
                     Text(
-                        //text = stringResource(id = R.string.dataO) + op!!.dateO.toLocalDate().toString(),
-                        text = stringResource(id = R.string.dataO) + ": \n"+ operation.dateO.toLocalDate().format(
-                            DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                        text = stringResource(id = R.string.dataO) + ": ",
                         fontSize = 18.sp,
-                        modifier = Modifier.padding(bottom = 8.dp)
+                        modifier = Modifier.padding(bottom = 8.dp),
+                        fontWeight = FontWeight.Bold,
                     )
                     Text(
-                        //text = stringResource(id = R.string.descrizione) + op.description,
-                        text = stringResource(id = R.string.descrizione) + "\n" + operation.description,
+                        text =  operation.dateO.toLocalDate().format(
+                                DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                         fontSize = 18.sp,
-                        modifier = Modifier.padding(bottom = 16.dp)
+                        modifier = Modifier.padding(bottom = 8.dp),
                     )
 
+                    Text(
+                        text = stringResource(id = R.string.descrizione),
+                        fontSize = 18.sp,
+                        modifier = Modifier.padding(bottom = 16.dp),
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        text = operation.description,
+                        fontSize = 18.sp,
+                        modifier = Modifier.padding(bottom = 16.dp),
+                    )
                     Row(
                         horizontalArrangement = Arrangement.SpaceEvenly,
                         modifier = Modifier.fillMaxWidth()

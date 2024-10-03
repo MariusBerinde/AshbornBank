@@ -184,7 +184,7 @@ fun DettagliAvviso(
             Text(
                 text = stringResource(id = R.string.dettagli_avviso),
                 fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
+                fontSize = 24.sp,
             )
         }
         Row (modifier = Modifier.fillMaxWidth()){

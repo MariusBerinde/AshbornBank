@@ -19,7 +19,6 @@ import java.time.LocalDateTime
 class MavViewModel  (application: Application): AndroidViewModel(application) {
     private val className = MavViewModel::class.simpleName
     val barcodeScanner = BarcodeScanner( application )
-
     var codiceMav by mutableStateOf("")
         private set
     var importoMav by mutableStateOf("")
@@ -28,11 +27,9 @@ class MavViewModel  (application: Application): AndroidViewModel(application) {
         private set
     var dataAccreditoMav: LocalDateTime by mutableStateOf(LocalDateTime.now())
         private set
-
     private val dsm = DataStoreManager.getInstance(application)
     private val ashbornDao: AshbornDao = AshbornDb.getDatabase(application).ashbornDao()
     private val contoRepository: ContoRepository = ContoRepository(ashbornDao)
-
     val codCliente: String = runBlocking { dsm.codClienteFlow.first() }
     var erroreCodiceMav by mutableStateOf(StatoErrore.NESSUNO)
         private set
@@ -40,7 +37,7 @@ class MavViewModel  (application: Application): AndroidViewModel(application) {
         private set
     var erroreImportoMav by mutableStateOf(StatoErrore.NESSUNO)
         private set
-    var erroreDataAccreditoMav by mutableStateOf(StatoErrore.NESSUNO)
+    private var erroreDataAccreditoMav by mutableStateOf(StatoErrore.NESSUNO)
         private set
     val listaConti = runBlocking { contoRepository.getConti(codCliente).first() }
     var codConto by mutableStateOf(if(listaConti.isNotEmpty()) listaConti[0].codConto else "")

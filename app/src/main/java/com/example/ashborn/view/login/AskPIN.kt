@@ -3,6 +3,7 @@ package com.example.ashborn.view.login
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -95,14 +96,11 @@ fun AskPIN(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            Row(
-                modifier = Modifier
+            val modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .fillMaxWidth()
-                    .padding(start = LargePadding, end = LargePadding),
-
-   
-            ) {
+                    .padding(start = LargePadding, end = LargePadding)
+            Row(modifier = modifier) {
                 Text(
                     text = stringResource(id = R.string.pin),
                     modifier = Modifier.fillMaxWidth(),
@@ -111,13 +109,9 @@ fun AskPIN(
                     fontWeight = FontWeight.Bold,
                 )
             }
-            Row(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .fillMaxWidth()
-                    .padding(start = LargePadding, end = LargePadding)
-            ) {
+            Row(modifier = modifier) {
                 Log.d(nameFun, "errore pin: ${viewModel.errorePin}")
+                val isDark = isSystemInDarkTheme()
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = viewModel.pin,
@@ -125,11 +119,40 @@ fun AskPIN(
                     readOnly = true,
                     visualTransformation = PasswordVisualTransformation(),
                     singleLine = true,
-                    textStyle = TextStyle.Default.copy(fontSize = 35.sp, textAlign = TextAlign.Center),
+                    textStyle = TextStyle
+                        .Default
+                        .copy(fontSize = 35.sp, textAlign = TextAlign.Center),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = if (viewModel.errorePin) Color.Red else Color.Black,
-                        unfocusedBorderColor = if (viewModel.errorePin) Color.Red else Color.Black
+                        focusedBorderColor = if (viewModel.errorePin != StatoErrore.NESSUNO)
+                                                 Color.Red
+                                             else if(isDark)
+                                                 Color.White
+                                             else
+                                                 Color.Black,
+                        unfocusedBorderColor = if (viewModel.errorePin != StatoErrore.NESSUNO)
+                                                   Color.Red
+                                               else if(isDark)
+                                                   Color.White
+                                               else
+                                                   Color.Black,
                     ),
+                )
+            }
+            Row (
+                modifier = modifier,
+                horizontalArrangement = Arrangement.Center
+            ){
+                Text(
+                    modifier = Modifier.padding(top = SmallPadding),
+                    text = when(viewModel.errorePin) {
+                        StatoErrore.NESSUNO -> ""
+                        StatoErrore.FORMATO -> stringResource(id = R.string.errore_pin_formato)
+                        StatoErrore.CONTENUTO -> stringResource(id = R.string.errore_pin_contenuto)
+                    },
+                    color = Color.Red,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+
                 )
             }
             Spacer(modifier = Modifier.height(MediumPadding))

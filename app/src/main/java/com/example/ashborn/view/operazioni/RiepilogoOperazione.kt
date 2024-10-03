@@ -2,12 +2,18 @@ package com.example.ashborn.view.operazioni
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,17 +51,28 @@ fun RiepilogoOperazione(navController : NavHostController, operation: Operation)
     )
 
     Column(modifier = Modifier.padding(LargePadding)) {
-        Text(
-            text = stringResource(
-                id = when(operation.operationType){
-                    OperationType.MAV -> R.string.riepilogo_mav
-                    OperationType.WIRE_TRANSFER, OperationType.INSTANTANEOUS_WIRE_TRANSFER -> R.string.bonifico
-                    OperationType.CARD -> R.string.carta
-                }
-            ),
-            fontSize = 40.sp,
-            fontWeight = FontWeight.Bold,
-        )
+        Row (
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ){
+            IconButton(onClick = {navController.popBackStack()}) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back"
+                )
+            }
+            Text(
+                modifier = Modifier.padding(start = LargePadding * 2),
+                text = stringResource(
+                    id = when(operation.operationType){
+                        OperationType.MAV -> R.string.riepilogo_mav
+                        OperationType.WIRE_TRANSFER, OperationType.INSTANTANEOUS_WIRE_TRANSFER -> R.string.riepilogo_bonifico
+                        OperationType.CARD -> R.string.carta
+                    }
+                ),
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+            )
+        }
         Spacer(modifier = modifier)
 
         when(operation.operationType){

@@ -5,6 +5,7 @@ package com.example.ashborn.view.operazioni
 import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,8 +14,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
@@ -251,6 +254,7 @@ fun MavManuale(
     val focusRequester3 = remember { FocusRequester() }
     val nameFun = object {}.javaClass.enclosingMethod?.name
     val json = Json { prettyPrint = true }
+    val isDark = isSystemInDarkTheme()
     if(operation != null) {
         viewModel.setCodiceMavX(operation.iban)
         viewModel.setImportoMavX(operation.amount.toString())
@@ -260,6 +264,7 @@ fun MavManuale(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+            .verticalScroll(rememberScrollState()),
     ) {
         Row(
             modifier = Modifier
@@ -276,22 +281,21 @@ fun MavManuale(
                     contentDescription = "Back"
                 )
             }
+            Text(
+                modifier = Modifier.padding(start = LargePadding * 4),
+                text = stringResource(id = R.string.mav),
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp
+            )
         }
 
-        Text(
-            text = stringResource(id = R.string.mav),
-            fontWeight = FontWeight.Bold,
-            fontSize = 18.sp
-        )
 
         Row(modifier = Modifier.padding(top = LargePadding)) {
             var expanded by remember { mutableStateOf(false) }
             val selectedText = viewModel.ordinanteMav
             ExposedDropdownMenuBox(
                 expanded = expanded,
-                onExpandedChange = {
-                    expanded = !expanded
-                }
+                onExpandedChange = { expanded = !expanded },
             ) {
                 OutlinedTextField(
                     value = viewModel.ordinanteMav,
@@ -303,10 +307,6 @@ fun MavManuale(
                         .fillMaxWidth()
                         .menuAnchor(),
                     label = { Text(stringResource(id = R.string.ordinante)) },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color.Black,
-                        unfocusedBorderColor = Color.Black
-                    ),
                     singleLine = true,
                 )
                 ExposedDropdownMenu(
@@ -392,21 +392,39 @@ fun MavManuale(
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = if (viewModel.erroreCodiceMav != StatoErrore.NESSUNO)
                                              Color.Red
+                                         else if (isDark)
+                                             Color.White
                                          else
                                              Color.Black,
                     unfocusedBorderColor = if (viewModel.erroreCodiceMav != StatoErrore.NESSUNO)
                                                Color.Red
+                                           else if (isDark)
+                                               Color.White
                                            else
                                                Color.Black
                 ),
                 singleLine = true,
             )
         }
-        Spacer(modifier = Modifier.padding(LargePadding))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(SmallPadding)
+                .height(LargePadding * 2),
+        ) {
+            Text(
+                text = when(viewModel.erroreCodiceMav) {
+                    StatoErrore.NESSUNO, StatoErrore.CONTENUTO -> ""
+                    StatoErrore.FORMATO -> stringResource(id = R.string.errore_cod_mav)
+                },
+                textAlign = TextAlign.Center,
+                color = Color.Red,
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(SmallPadding),
         ) {
             OutlinedTextField(
                 modifier = Modifier
@@ -429,16 +447,34 @@ fun MavManuale(
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = if (viewModel.erroreImportoMav != StatoErrore.NESSUNO)
                                              Color.Red
+                                         else if (isDark)
+                                             Color.White
                                          else
                                              Color.Black,
                     unfocusedBorderColor = if (viewModel.erroreImportoMav != StatoErrore.NESSUNO)
                                                Color.Red
+                                           else if (isDark)
+                                               Color.White
                                            else
-                                               Color.Black
+                                               Color.Black,
                 ),
             )
         }
-        Spacer(modifier = Modifier.padding(LargePadding))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(SmallPadding)
+                .height(LargePadding * 2),
+        ) {
+            Text(
+                text = when(viewModel.erroreImportoMav) {
+                    StatoErrore.NESSUNO, StatoErrore.CONTENUTO -> ""
+                    StatoErrore.FORMATO -> stringResource(id = R.string.errore_importo_mav)
+                },
+                textAlign = TextAlign.Center,
+                color = Color.Red,
+            )
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -494,47 +530,63 @@ fun MavManuale(
                                              Color.Black,
                     unfocusedBorderColor = if (viewModel.erroreDescrizioneMav != StatoErrore.NESSUNO)
                                                Color.Red
-                                           else
-                                               Color.Black
-                ),
+                                                    else if (isDark)
+                                                        Color.White
+                                                    else
+                                                        Color.Black,                ),
                 singleLine = true,
             )
         }
-        Spacer(modifier = Modifier.padding(LargePadding))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(SmallPadding)
+                .height(LargePadding * 2),
+        ) {
+            Text(
+                text = when(viewModel.erroreDescrizioneMav) {
+                    StatoErrore.NESSUNO, StatoErrore.CONTENUTO -> ""
+                    StatoErrore.FORMATO -> stringResource(id = R.string.errore_descrizione)
+                },
+                textAlign = TextAlign.Center,
+                color = Color.Red,
+            )
+        }
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-                val limitToday = LocalDateTime.of(
-                    LocalDate.now().year,
-                    LocalDate.now().month,
-                    LocalDate.now().dayOfMonth,
-                    17,
-                    0,
-                    0
-                )
-                val operation = Operation(
-                    clientCode = viewModel.codCliente,
-                    dateO = viewModel.dataAccreditoMav,
-                    dateV = viewModel.dataAccreditoMav,
-                    transactionType = TransactionType.WITHDRAWAL,
-                    operationType = OperationType.MAV,
-                    amount = viewModel.importoMav.toDouble(),
-                    bankAccount = viewModel.codConto,
-                    description = viewModel.descrizioneMav,
-                    cardCode = null,
-                    iban = viewModel.codiceMav,
-                    recipient = viewModel.codiceMav,
-                    operationStatus = if(viewModel.dataAccreditoMav <= limitToday)
-                                          OperationStatus.DONE
-                                      else
-                                          OperationStatus.PENDING,
-                )
+                if(viewModel.validateMav()) {
+                    val limitToday = LocalDateTime.of(
+                        LocalDate.now().year,
+                        LocalDate.now().month,
+                        LocalDate.now().dayOfMonth,
+                        17,
+                        0,
+                        0
+                    )
+                    val operation = Operation(
+                        clientCode = viewModel.codCliente,
+                        dateO = viewModel.dataAccreditoMav,
+                        dateV = viewModel.dataAccreditoMav,
+                        transactionType = TransactionType.WITHDRAWAL,
+                        operationType = OperationType.MAV,
+                        amount = viewModel.importoMav.toDouble(),
+                        bankAccount = viewModel.codConto,
+                        description = viewModel.descrizioneMav,
+                        cardCode = null,
+                        iban = viewModel.codiceMav,
+                        recipient = viewModel.codiceMav,
+                        operationStatus = if (viewModel.dataAccreditoMav <= limitToday)
+                            OperationStatus.DONE
+                        else
+                            OperationStatus.PENDING,
+                    )
 
-                val data = json.encodeToString(Operation.serializer(), operation)
+                    val data = json.encodeToString(Operation.serializer(), operation)
 
-                Log.d(nameFun, "Operazione creata: $operation")
-                if(viewModel.validateMav())
+                    Log.d(nameFun, "Operazione creata: $operation")
                     navController.navigate("riepilogo-operazione/$data")
+                }
             }
         ) {
             Text(text = stringResource(id = R.string.continua))

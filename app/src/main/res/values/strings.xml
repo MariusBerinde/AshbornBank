@@ -84,10 +84,19 @@
     <string name="notifica4">" in data "</string>
     <string name="timer">"Tempo di attesa rimanente "</string>
     <string name="work_in_progress">questa feauture non è ancora disponibile</string>
-    <string name="errore_nome">Il nome può contenere solo lettere a-z A-Z</string>
+    <string name="errore_nome">Il nome può contenere solo lettere</string>
     <string name="errore_nome_contenuto">nome errato</string>
-    <string name="errore_conome">il cognome può contenere solo lettere a-z A-Z</string>
+    <string name="errore_conome">il cognome può contenere solo lettere</string>
     <string name="errore_conome_contenuto">cognome errato</string>
-    <string name="errore_cod_cliente">il codice cliente può contenere solo caratteri alfanumerici a–z 0–9 ed è lungo 9 caratteri</string>
+    <string name="errore_cod_cliente">il codice cliente può contenere solo caratteri alfanumerici ed è lungo 9 caratteri</string>
     <string name="errore_cod_cliente_contenuto">codice cliente errato</string>
+    <string name="errore_pin_formato">Il pin deve essere di 8 cifre</string>
+    <string name="errore_pin_contenuto">pin errato</string>
+    <string name="errore_cod_mav">il codice mav può contenere solo caratteri alfanumerici</string>
+    <string name="errore_importo_mav">inserisci un numero tra 0 e 99999.99</string>
+    <string name="errore_descrizione">può contenere solo caratteri alfanumerici</string>
+    <string name="errore_iban">iban non valido</string>
+    <string name="errore_importo">inserisci un numero tra 0 e 15000</string>
+    <string name="errore_causale">può contenere solo caratteri alfanumerici</string>
+    <string name="errore_beneficiario">può contenere solo valori alfanumerici</string>
 </resources>

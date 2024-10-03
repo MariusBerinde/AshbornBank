@@ -17,6 +17,7 @@ import com.example.ashborn.db.AshbornDb
 import com.example.ashborn.model.DataStoreManager
 import com.example.ashborn.repository.OfflineUserRepository
 import com.example.ashborn.repository.OperationRepository
+import com.example.ashborn.view.login.StatoErrore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
@@ -38,7 +39,7 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
     private var remainingTime: Long by mutableLongStateOf(/*0L*/runBlocking { dsm.timerFlow.first() })
     var timerIsRunning: Boolean by mutableStateOf(false)
         private set
-    var errorePin: Boolean by mutableStateOf(false)
+    var errorePin: StatoErrore by mutableStateOf(StatoErrore.NESSUNO)
         private set
 
     fun startTimer() {
@@ -93,7 +94,7 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
 
     private fun checkPin(): Boolean {
         val correct = this.pin.length == 8 && this.pin.isDigitsOnly()
-        errorePin = !correct
+        errorePin = if(!correct) StatoErrore.FORMATO else StatoErrore.NESSUNO
         return correct
     }
 
@@ -113,7 +114,7 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
                 if (!userRepository.isPinCorrect(codCliente, pin.hashCode().toString()).first()) {
                     Log.i("ViewModel", " pin sbagliato")
                     wrongAttempts++
-                    errorePin = true
+                    errorePin = StatoErrore.CONTENUTO
                     if (wrongAttempts % 2L == 0L)
                         _navigationEvent.value = NavigationEvent.NavigateToError
                     else
@@ -121,7 +122,7 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
                 } else {
                     resetWrongAttempts()
                     viewModelScope.launch(Dispatchers.IO) { dsm.writeTimer(0L) }
-                    errorePin = false
+                    errorePin = StatoErrore.NESSUNO
                     _navigationEvent.value = NavigationEvent.NavigateToNext
                 }
             }

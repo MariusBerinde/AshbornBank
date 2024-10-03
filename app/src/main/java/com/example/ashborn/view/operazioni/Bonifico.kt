@@ -3,6 +3,7 @@ package com.example.ashborn.view.operazioni
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,8 +11,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
@@ -42,7 +45,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.ashborn.R
 import com.example.ashborn.Validatore
@@ -50,6 +55,8 @@ import com.example.ashborn.data.Operation
 import com.example.ashborn.data.OperationStatus
 import com.example.ashborn.data.OperationType
 import com.example.ashborn.data.TransactionType
+import com.example.ashborn.ui.theme.LargePadding
+import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding
 import com.example.ashborn.view.CustomDatePickerDialog
 import com.example.ashborn.view.DateUseCase
@@ -77,31 +84,33 @@ fun Bonifico(
     val isChecked = remember { mutableStateOf(false) }
     val nameFun = object {}.javaClass.enclosingMethod?.name
     val dest =  integerResource(R.integer.Operazioni)
-    BackHandler(enabled = true) {
-        // Non fare nulla, in questo modo blocca l'azione "back"
-        // Puoi anche gestire un'azione specifica qui
-
-        navController.navigate("conti?index=$dest")
-
-    }
+    val isDark = isSystemInDarkTheme()
+    BackHandler(enabled = true) { navController.navigate("conti?index=$dest") }
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+            .verticalScroll(rememberScrollState()),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
                 .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(onClick = { navController.navigate("conti?index=$dest") }) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
+            Text(
+                modifier = Modifier.padding(start = LargePadding * 4),
+                text = stringResource(id = R.string.bonifico),
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp,
+                textAlign = TextAlign.Center,
+            )
         }
 
-        Text(text = "Bonifico")
         Column {
             val modifier = Modifier
                 .padding(SmallPadding)
@@ -111,14 +120,11 @@ fun Bonifico(
                 val selectedText = viewModel.codConto
                 ExposedDropdownMenuBox(
                     expanded = expanded,
-                    onExpandedChange = {
-                        expanded = !expanded
-                    }
+                    onExpandedChange = { expanded = !expanded }
                 ) {
-                    val isDark = isSystemInDarkTheme()
                     OutlinedTextField(
                         value = viewModel.codConto,
-                        onValueChange = {viewModel.setCodContoX(selectedText)},
+                        onValueChange = { viewModel.setCodContoX(selectedText) },
                         readOnly = true,
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                         modifier = Modifier
@@ -127,8 +133,10 @@ fun Bonifico(
                             .menuAnchor(),
                         label = { Text(stringResource(id = R.string.ordinante)) },
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = if(isDark) Color.White else Color.Black,
-                            unfocusedBorderColor = if(isDark) Color.White else Color.Black
+                            focusedBorderColor = if(isDark) Color.White
+                                                 else Color.Black,
+                            unfocusedBorderColor = if(isDark) Color.White
+                                                   else Color.Black,
                         ),
                         singleLine = true,
                     )
@@ -140,7 +148,6 @@ fun Bonifico(
                             DropdownMenuItem(
                                 text = { Text(text = item.codConto) },
                                 onClick = {
-                                    //selectedText = item.codConto
                                     viewModel.setCodContoX(item.codConto)
                                     expanded = false
                                 }
@@ -150,6 +157,7 @@ fun Bonifico(
                 }
 
             }
+            Spacer(modifier = Modifier.padding(top = MediumPadding, bottom = SmallPadding))
             Row {
                 val maxLength = 100
                 OutlinedTextField(
@@ -161,16 +169,19 @@ fun Bonifico(
                     },
                     label = { Text(stringResource(id = R.string.beneficiario)) },
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = if (viewModel.erroreBeneficiario != StatoErrore.NESSUNO) {
-                            Color.Red
-                        } else {
-                            Color.Black
-                        },
-                        unfocusedBorderColor = if (viewModel.erroreBeneficiario != StatoErrore.NESSUNO) {
-                            Color.Red
-                        } else {
-                            Color.Black
-                        }
+                        focusedBorderColor = if (viewModel.erroreBeneficiario != StatoErrore.NESSUNO)
+                                Color.Red
+                            else if (isDark)
+                                Color.White
+                            else
+                                Color.Black,
+                        unfocusedBorderColor = if (viewModel.erroreBeneficiario != StatoErrore.NESSUNO)
+                                Color.Red
+                            else if (isDark)
+                                Color.White
+                            else
+                                Color.Black,
+
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions(
@@ -181,6 +192,23 @@ fun Bonifico(
                         .padding(SmallPadding)
                         .fillMaxWidth(),
                     singleLine = true,
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .padding(SmallPadding)
+                    .fillMaxWidth()
+                    .height(LargePadding),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                Text(
+                    text = when(viewModel.erroreBeneficiario){
+                        StatoErrore.NESSUNO, StatoErrore.CONTENUTO -> ""
+                        StatoErrore.FORMATO -> stringResource(id = R.string.errore_beneficiario)
+                    },
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Red,
                 )
             }
             Row {
@@ -194,16 +222,18 @@ fun Bonifico(
                     },
                     label = { Text(stringResource(id = R.string.iban)) },
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = if (viewModel.erroreIban != StatoErrore.NESSUNO) {
-                            Color.Red
-                        } else {
-                            Color.Black
-                        },
-                        unfocusedBorderColor = if (viewModel.erroreIban != StatoErrore.NESSUNO) {
-                            Color.Red
-                        } else {
-                            Color.Black
-                        }
+                        focusedBorderColor = if (viewModel.erroreIban != StatoErrore.NESSUNO)
+                                Color.Red
+                            else if (isDark)
+                                Color.White
+                            else
+                                Color.Black,
+                        unfocusedBorderColor = if (viewModel.erroreIban != StatoErrore.NESSUNO)
+                                Color.Red
+                            else if (isDark)
+                                Color.White
+                            else
+                                Color.Black,
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions(
@@ -216,22 +246,44 @@ fun Bonifico(
                     singleLine = true,
                 )
             }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(SmallPadding)
+                    .height(LargePadding),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                Text(
+                    text = when(viewModel.erroreIban) {
+                        StatoErrore.NESSUNO, StatoErrore.CONTENUTO -> ""
+                        StatoErrore.FORMATO -> stringResource(id = R.string.errore_iban)
+                    },
+                    textAlign = TextAlign.Center,
+                    color = Color.Red,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
             Row {
                 OutlinedTextField(
-                    value = if(!viewModel.importo.contains(".")) viewModel.importo+".00" else viewModel.importo,
+                    value = if(!viewModel.importo.contains(".") && viewModel.importo.isNotBlank())
+                            viewModel.importo + ".00"
+                        else if (viewModel.importo == ".00") ""
+                        else viewModel.importo,
                     onValueChange = { viewModel.setImportoX(it) },
                     label = { Text(stringResource(id = R.string.importo)) },
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = if (viewModel.erroreImporto != StatoErrore.NESSUNO) {
-                            Color.Red
-                        } else {
-                            Color.Black
-                        },
-                        unfocusedBorderColor = if (viewModel.erroreImporto != StatoErrore.NESSUNO) {
-                            Color.Red
-                        } else {
-                            Color.Black
-                        }
+                        focusedBorderColor = if (viewModel.erroreImporto != StatoErrore.NESSUNO)
+                                                 Color.Red
+                                             else if (isDark)
+                                                 Color.White
+                                             else
+                                                 Color.Black,
+                        unfocusedBorderColor = if (viewModel.erroreImporto != StatoErrore.NESSUNO)
+                                                   Color.Red
+                                               else if (isDark)
+                                                   Color.White
+                                               else
+                                                   Color.Black,
                     ),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
@@ -247,27 +299,44 @@ fun Bonifico(
                     singleLine = true,
                 )
             }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(SmallPadding)
+                    .height(LargePadding),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = when(viewModel.erroreImporto) {
+                        StatoErrore.NESSUNO, StatoErrore.CONTENUTO ->  ""
+                        StatoErrore.FORMATO -> stringResource(id = R.string.errore_importo)
+                    },
+                    color = Color.Red,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
             Row {
                 val maxLength = 300
                 OutlinedTextField(
                     value = viewModel.causale,
                     onValueChange = {
-                        if (it.length <= maxLength) {
-                            viewModel.setCausaleX(it)
-                        }
+                        if (it.length <= maxLength) { viewModel.setCausaleX(it) }
                     },
                     label = { Text(stringResource(id = R.string.causale)) },
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = if (viewModel.erroreCausale != StatoErrore.NESSUNO) {
-                            Color.Red
-                        } else {
-                            Color.Black
-                        },
-                        unfocusedBorderColor = if (viewModel.erroreCausale != StatoErrore.NESSUNO) {
-                            Color.Red
-                        } else {
-                            Color.Black
-                        }
+                        focusedBorderColor = if (viewModel.erroreCausale != StatoErrore.NESSUNO)
+                                Color.Red
+                            else if (isDark)
+                                Color.White
+                            else
+                                Color.Black,
+                        unfocusedBorderColor = if (viewModel.erroreCausale != StatoErrore.NESSUNO)
+                                Color.Red
+                            else if (isDark)
+                                Color.White
+                            else
+                                Color.Black,
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions(
@@ -278,6 +347,23 @@ fun Bonifico(
                         .padding(SmallPadding)
                         .fillMaxWidth(),
                     singleLine = true,
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(SmallPadding)
+                    .height(LargePadding),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                Text(
+                    text = when(viewModel.erroreImporto){
+                        StatoErrore.NESSUNO,StatoErrore.CONTENUTO -> ""
+                        StatoErrore.FORMATO -> stringResource(id = R.string.errore_causale)
+                    },
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Red,
                 )
             }
             Row {
@@ -296,16 +382,18 @@ fun Bonifico(
                         }
                     },
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = if (viewModel.erroreDataAccredito == StatoErrore.NESSUNO) {
-                            Color.Black
-                        } else {
+                        focusedBorderColor = if (viewModel.erroreDataAccredito != StatoErrore.NESSUNO)
                             Color.Red
-                        },
-                        unfocusedBorderColor = if (viewModel.erroreDataAccredito == StatoErrore.NESSUNO) {
-                            Color.Black
-                        } else {
-                            Color.Red
-                        }
+                        else if (isDark)
+                            Color.White
+                        else
+                            Color.Black,
+                        unfocusedBorderColor = if (viewModel.erroreDataAccredito != StatoErrore.NESSUNO)
+                                                   Color.Red
+                                               else if (isDark)
+                                                   Color.White
+                                               else
+                                                   Color.Black
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Send),
                     keyboardActions = KeyboardActions(
@@ -399,10 +487,8 @@ fun Bonifico(
                                 viewModel.importo,
                                 viewModel.causale,
                                 viewModel.dataAccredito.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-
                             )
                         ) {
-
                             val operation = Operation(
                                 clientCode = viewModel.codCliente,
                                 dateO = viewModel.dataAccredito,

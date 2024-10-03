@@ -15,28 +15,30 @@ class Validatore {
      * @return true se data di nascita ha un formato valido
      */
     fun formatoDataNascitaValida(dataNascita: String): Boolean{
-        var ris:Boolean = false
+        var ris = false
         if (dataNascita.isEmpty()) return ris
-        val pattern= "\\d{1,2}-\\d{1,2}-\\d{4}||\\d{1,2}/\\d{1,2}/\\d{4}"
+        val pattern= "\\d{1,2}-\\d{1,2}-\\d{4} || \\d{1,2}/\\d{1,2}/\\d{4}"
         if (Regex(pattern).matches(dataNascita)){
             val campiData: List<String> = dataNascita.replace("-","/").split("/")
             val day = campiData[0].toInt()
             val month = campiData[1].toInt()
             val year = campiData[2].toInt()
-            var dataEsistente = false
-            when(month){
-                1,3,5,7,8,10,12 -> dataEsistente = if(day > 0 && day <= 31) true
+            val dataEsistente: Boolean  = when(month){
+                1,3,5,7,8,10,12 -> if(day in 1..31) true
                 else false
-                4,6,9,11 -> dataEsistente = if(day > 0 && day <= 30) true
+
+                4,6,9,11 -> if(day in 1..30) true
                 else false
+
                 2 -> if( (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)){
-                    dataEsistente = if(day > 0 && day <= 29) true
+                    if(day in 1..29) true
                     else false
                 } else {
-                    dataEsistente = if(day > 0 && day <= 28) true
+                    if(day in 1..28) true
                     else false
                 }
-                else -> dataEsistente = false
+
+                else -> false
             }
 
             if(dataEsistente) {
@@ -50,7 +52,7 @@ class Validatore {
     }
 
     fun formatoCodiceCliente(codCliente: String): Boolean {
-        var ris:Boolean = false
+        var ris = false
         val codClienteL = codCliente.replace(" ", "")
         if( codClienteL.length == 9){
             val regex = Regex("[^a-z0-9]")
@@ -60,16 +62,11 @@ class Validatore {
     }
 
     fun formatoNomeValido(nome: String): Boolean {
-        var ris:Boolean = false
+        var ris = false
         val nome1 = nome.trimEnd().trimStart().replace("  ", " ")
         val regex = Regex("[^a-zA-Z0-9\\s]")
-//Todo: fai in modo che prenda gli spazi se c'è un doppio nome
         val caratteri_speciali = regex.containsMatchIn(nome1)
-        if ( nome.length >= 2 && nome.length <= 20 ){
-            if ( !caratteri_speciali){
-                ris = true
-            }
-        }
+        if (nome.length in 2..20 && !caratteri_speciali){ ris = true }
         return ris
     }
     fun formatoCognomeValido(cognome: String): Boolean {
@@ -97,7 +94,7 @@ class Validatore {
      * @return true se il beneficiario è valido false altrimenti
      */
     fun formatoBeneficiarioValido(beneficiario: String): Boolean {
-        var ris:Boolean = false
+        var ris = false
         //val regex = Regex("[^a-zA-Z]")
         val regex = Regex("[^a-zA-Z\\s]")
 
@@ -159,20 +156,23 @@ class Validatore {
             val day = campiData[0].toInt()
             val month = campiData[1].toInt()
             val year = campiData[2].toInt()
-            var dataEsistente = false
-            when(month){
-                1,3,5,7,8,10,12 -> dataEsistente = if(day > 0 && day <= 31) true
+            val dataEsistente: Boolean
+            dataEsistente = when(month){
+                1,3,5,7,8,10,12 -> if(day > 0 && day <= 31) true
                 else false
-                4,6,9,11 -> dataEsistente = if(day > 0 && day <= 30) true
+
+                4,6,9,11 -> if(day > 0 && day <= 30) true
                 else false
+
                 2 -> if( (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)){
-                    dataEsistente = if(day > 0 && day <= 29) true
+                    if(day > 0 && day <= 29) true
                     else false
                 } else {
-                    dataEsistente = if(day > 0 && day <= 28) true
+                    if(day > 0 && day <= 28) true
                     else false
                 }
-                else -> dataEsistente = false
+
+                else -> false
             }
 
             if(dataEsistente) {

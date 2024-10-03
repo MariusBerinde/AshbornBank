@@ -56,7 +56,7 @@ fun OperazioneConfermata(navController : NavHostController) {
         }
         Row {
             Button(
-                onClick = {navController.navigate(dest)},
+                onClick = {navController.navigate("conti?index=$dest")},
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(text = stringResource(id = R.string.altra_operazione))
@@ -72,10 +72,7 @@ fun OperazioneConfermata(navController : NavHostController) {
 
 @Composable
 fun OperazioneRifiutata(navController: NavHostController) {
-    BackHandler(enabled = true) {
-        // Non fare nulla, in questo modo blocca l'azione "back"
-        // Puoi anche gestire un'azione specifica qui
-    }
+    BackHandler(enabled = true) {}
     Column(
         modifier = Modifier
             .padding(MediumPadding)

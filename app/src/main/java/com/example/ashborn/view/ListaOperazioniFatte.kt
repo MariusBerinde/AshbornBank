@@ -3,6 +3,7 @@ package com.example.ashborn.view
 import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -51,6 +52,7 @@ fun ListaOperazioniFatteConti(
     val ordineInversoDescrizione = remember { mutableStateOf(true) }
     val ordineInversoImporto = remember { mutableStateOf(true) }
     val voci = viewModel.operazioni
+    val isDark:Boolean = isSystemInDarkTheme()
     LazyColumn(
         modifier = Modifier
             .padding(SmallPadding)
@@ -145,7 +147,7 @@ fun ListaOperazioniFatteConti(
             }
         } else {
             for (i in voci) {
-                val rosso = Color(0xFF8B0000)
+                val rosso = if(isDark) Color.Red else Color(0xFF8B0000)
                 val verdeSmeraldo = Color(0xFF50C878)
 
                 item {
@@ -170,10 +172,10 @@ fun ListaOperazioniFatteConti(
                             val width = 92.dp
                             Column(
                                 modifier = Modifier
-                                    .width(width-10.dp)
+                                    .width(width - 10.dp)
                                     .align(Alignment.CenterVertically)
                                     .padding(
-                                        start = SmallPadding-5.dp,
+                                        start = SmallPadding - 5.dp,
                                         top = SmallPadding,
                                         bottom = SmallPadding,
                                     ),
@@ -205,7 +207,7 @@ fun ListaOperazioniFatteConti(
                             }
                             Column(
                                 modifier = Modifier
-                                    .width(width-22.dp)
+                                    .width(width - 22.dp)
                                     .align(Alignment.CenterVertically),
                             ) {
                                 Text(
@@ -238,6 +240,7 @@ fun ListaOperazioniFatteCarte(
     val ordineInversoDescrizione = remember { mutableStateOf(true) }
     val ordineInversoImporto = remember { mutableStateOf(true) }
     val voci = viewModel.operazioni
+    val isDark:Boolean = isSystemInDarkTheme()
     LazyColumn(
         modifier = Modifier
             .padding(SmallPadding)
@@ -338,7 +341,7 @@ fun ListaOperazioniFatteCarte(
                 }
             }
         } else {
-            val rosso = Color(0xFF8B0000)
+            val rosso = if(isDark) Color.Red else Color(0xFF8B0000)
             val verdeSmeraldo = Color(0xFF50C878)
 
             for (i in voci) {

@@ -1,5 +1,6 @@
 package com.example.ashborn.view
 
+import android.graphics.drawable.Icon
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,7 +33,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -128,7 +131,9 @@ fun FronteCarta(carta: Carta?,utente:String) {
                     )
                 } else {
                     Text(
-                        modifier = Modifier.fillMaxWidth().padding(top = SmallPadding),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = SmallPadding),
                         text = stringResource(id = R.string.app_name),
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.Bold,
@@ -186,10 +191,13 @@ fun FronteCarta(carta: Carta?,utente:String) {
                         )
                     }
                 }
-
-                Button(onClick = { isFront = !isFront }) {
-                    Text(text = "Back")
-                }
+            
+               IconButton(onClick = { isFront = !isFront }) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.arrow_u_left_top_bold),
+                        contentDescription = "back"
+                    )   
+               }
             }
         }
     } else {

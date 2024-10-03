@@ -40,17 +40,18 @@ fun Utente(
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(
-                onClick = { navController.navigate(dest) },
+                onClick = { navController.navigate("conti?index=$dest") },
             ) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
-            Spacer(modifier = Modifier.padding(LargePadding))
+            Spacer(modifier = Modifier.padding(LargePadding*2))
             Text(
                 stringResource(id = R.string.utente),
                 fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
+                fontSize = 24.sp
             )
         }
         Spacer(modifier = Modifier.padding(MediumPadding))
@@ -58,7 +59,9 @@ fun Utente(
             modifier = Modifier.fillMaxWidth()
         ) {
             Card(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(LargePadding),
             ) {
 
                 Column(
@@ -89,7 +92,7 @@ fun Utente(
                     Row(modifier = modifier) {
                         Text(
                             fontWeight = FontWeight.Bold,
-                            text = stringResource(id = R.string.data_nascita)
+                            text = stringResource(id = R.string.data_nascita) + ": "
                         )
                         Text(text = viewModel.dataNascita)
                     }
