@@ -2,7 +2,9 @@
 
 package com.example.ashborn.view.operazioni
 
+import android.Manifest
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -33,6 +35,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -101,17 +104,19 @@ fun Mav(navController: NavHostController) {
                 textAlign = TextAlign.Center,
             )
         }
-        Spacer(modifier = Modifier.padding(bottom = 250.dp))
-        Row (
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(LargePadding),
-        ) {
-            Button(
-                onClick = { navController.navigate("scan-qrcode") },
-                modifier = Modifier.fillMaxWidth()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Spacer(modifier = Modifier.padding(bottom = 250.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(LargePadding),
             ) {
-                Text(text = stringResource(id = R.string.scan_qrcode))
+                Button(
+                    onClick = { navController.navigate("scan-qrcode") },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = stringResource(id = R.string.scan_qrcode))
+                }
             }
         }
         Spacer(modifier = Modifier.padding(LargePadding))
