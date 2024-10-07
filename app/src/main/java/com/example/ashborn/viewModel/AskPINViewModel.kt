@@ -26,6 +26,13 @@ import kotlinx.coroutines.runBlocking
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
+/**
+ * Ask pin view model
+ *
+ * @constructor
+ *
+ * @param application
+ */
 class AskPinViewModel( application: Application): AndroidViewModel(application) {
     private val nameClass = AskPinViewModel::class.simpleName
     val dsm = DataStoreManager.getInstance(application)
@@ -42,6 +49,10 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
     var errorePin: StatoErrore by mutableStateOf(StatoErrore.NESSUNO)
         private set
 
+    /**
+     * Start timer
+     *
+     */
     fun startTimer() {
         if(!timerIsRunning && wrongAttempts > 3){
             isBlocked = true
@@ -73,6 +84,11 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
         dsm.writeTimer(0L)
     }
 
+    /**
+     * Calc wait time
+     *
+     * @return
+     */
     private fun calcWaitTime(): Long {
         val timesPerWrongAttempts = arrayListOf(60L, 120L, 240L, 480L, 960L, 1920L)
         return if (wrongAttempts <= 3) 0
@@ -88,16 +104,30 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
     var pin by mutableStateOf("")
         private set
 
+    /**
+     * Set pin x
+     *
+     * @param pin
+     */
     fun setPinX(pin: String) {
         this.pin = pin
     }
 
+    /**
+     * Check pin
+     *
+     * @return
+     */
     private fun checkPin(): Boolean {
         val correct = this.pin.length == 8 && this.pin.isDigitsOnly()
         errorePin = if(!correct) StatoErrore.FORMATO else StatoErrore.NESSUNO
         return correct
     }
 
+    /**
+     * Validate pin
+     *
+     */
     fun validatePin() {
 
         Log.i("ViewModel", "Pin inserito $pin")
@@ -129,10 +159,15 @@ class AskPinViewModel( application: Application): AndroidViewModel(application) 
         }
     }
 
+    /**
+     * Reset wrong attempts
+     *
+     */
     private fun resetWrongAttempts() {
         this.wrongAttempts = 0
         writeWrongAttempts()
     }
+
 
     fun executeTransaction(operation: Operation){
         viewModelScope.launch(Dispatchers.IO) {

@@ -36,7 +36,8 @@ enum class DateUseCase {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomDatePickerDialog(
+fun
+        CustomDatePickerDialog(
     yearRange: IntRange = DatePickerDefaults.YearRange,
     onAccept: (Long?) -> Unit,
     onCancel: () -> Unit,

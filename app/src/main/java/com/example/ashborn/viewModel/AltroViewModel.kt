@@ -15,6 +15,7 @@ import kotlinx.coroutines.runBlocking
 @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
 class AltroViewModel(application: Application): AndroidViewModel(application) {
     private val nameClass = ContiViewModel::class.simpleName
+
     val dsm = DataStoreManager.getInstance(application)
     var userName = runBlocking {
         var ris = ""
