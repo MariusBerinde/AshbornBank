@@ -55,6 +55,8 @@ import com.example.ashborn.viewModel.MavViewModel
 import com.example.ashborn.viewModel.MavViewModelFactory
 import com.example.ashborn.viewModel.OperationViewModel
 import com.example.ashborn.viewModel.OperationViewModelFactory
+import com.example.ashborn.viewModel.RegistrazioneViewModel
+import com.example.ashborn.viewModel.RegistrazioneViewModelFactory
 import com.example.ashborn.viewModel.UtenteViewModel
 import com.example.ashborn.viewModel.UtenteViewModelFactory
 import com.example.ashborn.viewModel.WelcomeViewModel

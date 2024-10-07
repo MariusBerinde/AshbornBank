@@ -22,28 +22,43 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
 
+/**
+ * ViewModel for managing and displaying a list of cards (Carte) and their related operations.
+ *
+ * This ViewModel handles the fetching of user card data, the retrieval of card-specific operations,
+ * and the logic for displaying the next or previous card in the list. It also retrieves user-specific
+ * data like the client code, username, and surname from DataStore.
+ *
+ * @param application The application context, used for initializing the database, repositories,
+ * and [DataStoreManager].
+ */
 @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
 @SuppressLint("MutableCollectionMutableState")
 class CarteViewModel(application: Application): AndroidViewModel(application) {
+    // Logging tag for this ViewModel class
     private val nameClass = CarteViewModel::class.simpleName
+    // DataStoreManager instance for accessing stored user preferences
     val dsm = DataStoreManager.getInstance(application)
+    // DAO and repositories for fetching cards and operations
     val ashbornDao = AshbornDb.getDatabase(application).ashbornDao()
+    // User client code, username, and surname retrieved from DataStore
     val codCliente = runBlocking {
         var ris: String
         runBlocking(Dispatchers.IO) {
             dsm.codClienteFlow.first().also { ris = it }
         }
     }
-
+    // Current index of the displayed card
     private var indiceCartaMostrata by mutableIntStateOf(0)
     private val cardRepository: CardRepository = CardRepository(ashbornDao)
     private val operationRepository: OperationRepository = OperationRepository(ashbornDao)
+    // List of cards and the currently displayed card
     private var _listaCarte = runBlocking{ getCarte() }
     private var listaCarte by mutableStateOf(_listaCarte)
-
     var cartaMostrata by mutableStateOf(
         if(_listaCarte.isEmpty()) null  else _listaCarte[indiceCartaMostrata]
     )
+    // Operations related to the currently displayed card
     private var _operazioniCarta = runBlocking{
         cartaMostrata?.let { getOperationsCarta(cartaMostrata!!) }
     }
@@ -60,7 +75,12 @@ class CarteViewModel(application: Application): AndroidViewModel(application) {
             dsm.cognomeFlow.first().also { ris = it }
         }
     }
-
+    /**
+     * Fetches operations related to a specific card (Carta) from the database.
+     *
+     * @param cm The card (Carta) for which to retrieve the operations.
+     * @return A list of [Operation] objects for the given card.
+     */
     private fun getOperationsCarta(cm: Carta): ArrayList<Operation> {
         val nameFun = nameClass+","+ (object {}.javaClass.enclosingMethod?.name ?: "")
         var dati = arrayListOf<Operation>()
@@ -81,7 +101,11 @@ class CarteViewModel(application: Application): AndroidViewModel(application) {
 
         return dati
     }
-
+    /**
+     * Fetches the list of cards (Carte) associated with the current client from the database.
+     *
+     * @return A list of [Carta] objects for the user.
+     */
     private fun getCarte() : ArrayList<Carta> {
         var dati = arrayListOf<Carta>()
         runBlocking (Dispatchers.IO) {
@@ -94,13 +118,17 @@ class CarteViewModel(application: Application): AndroidViewModel(application) {
         }
         return dati
     }
-
+    /**
+     * Switches to the next card in the list. If the last card is displayed, it loops back to the first one.
+     */
     fun cartaSuccessiva() {
         indiceCartaMostrata = if (indiceCartaMostrata > 0) indiceCartaMostrata - 1 else listaCarte.size - 1
         cartaMostrata = listaCarte[indiceCartaMostrata]
         operazioni = runBlocking{ cartaMostrata?.let {  getOperationsCarta(cartaMostrata!!) } }
     }
-
+    /**
+     * Switches to the previous card in the list. If the first card is displayed, it loops to the last one.
+     */
     fun cartaPrecedente() {
         indiceCartaMostrata = if (indiceCartaMostrata < listaCarte.size - 1) indiceCartaMostrata + 1 else 0
         cartaMostrata = listaCarte[indiceCartaMostrata]
@@ -109,8 +137,22 @@ class CarteViewModel(application: Application): AndroidViewModel(application) {
 
 }
 
+/**
+ * Factory class for creating instances of [CarteViewModel].
+ *
+ * This factory is necessary to provide the [Application] context to the ViewModel.
+ *
+ * @param application The application context.
+ */
 @Suppress("UNCHECKED_CAST")
 class CarteViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
+    /**
+     * Create
+     *
+     * @param modelClass the class of the view model to create
+     * @return an instance of the view model
+     * @throws IllegalArgumentException
+     */
     override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(CarteViewModel::class.java)) {
             return CarteViewModel(application) as T

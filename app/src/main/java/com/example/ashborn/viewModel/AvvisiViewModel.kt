@@ -19,11 +19,23 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
+/**
+ * ViewModel for managing user notifications -used for the composables Avvisi and DettagliAvviso.
+ *
+ * This ViewModel provides functionality to retrieve, delete, and update the status of
+ * notifications for a specific user. It interacts with the [AvvisiRepository] to
+ * access and modify notification data in the database.
+ *
+ * @param application The application context. Used for getting instances of database and datastoremanager
+ */
 @SuppressLint("MutableCollectionMutableState")
 class AvvisiViewModel(application: Application): AndroidViewModel(application) {
     val nameClass = AvvisiViewModel::class.simpleName
     val dsm = DataStoreManager.getInstance(application)
     val ashbornDao = AshbornDb.getDatabase(application).ashbornDao()
+    /**
+     * The client code retrieved from DataStore.
+     */
     val codCliente = runBlocking {
         var ris: String
         runBlocking(Dispatchers.IO) {
@@ -35,6 +47,9 @@ class AvvisiViewModel(application: Application): AndroidViewModel(application) {
     private var _listaAvvisi = runBlocking{
         getAvvisi()
     }
+    /**
+     * List of notifications for the user.
+     */
     var listaAvvisi by mutableStateOf(
        _listaAvvisi
     )
@@ -50,17 +65,40 @@ class AvvisiViewModel(application: Application): AndroidViewModel(application) {
         return dati
     }
 
+    /**
+     * Deletes a notification.
+     *
+     * @param avviso The notification to delete.
+     */
     fun deleteAvviso(avviso: Avviso) {
         viewModelScope.launch { avvisiRepository.rimuoviAvviso(avviso) }
     }
 
+    /**
+     * Updates the status of a notification. mainly used to set the status of the notification to read
+     *
+     * @param id The ID of the notification to update.
+     * @param nuovoStato The new status for the notification.
+     */
     fun aggiornaStatoAvviso(id:Long, nuovoStato:StatoAvviso) {
         viewModelScope.launch(Dispatchers.IO) { avvisiRepository.aggiornaStatoAvviso(id, nuovoStato) }
     }
 }
 
+/**
+ * Factory for creating [AvvisiViewModel] instances.
+ *
+ * @param application The application context.
+ */
 @Suppress("UNCHECKED_CAST")
 class AvvisiViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
+    /**
+     * Create
+     *
+     * @param modelClass the class of the view model to create
+     * @return an instance of the view model
+     * @throws IllegalArgumentException
+     */
     override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(AvvisiViewModel::class.java)) {
             return AvvisiViewModel(application) as T

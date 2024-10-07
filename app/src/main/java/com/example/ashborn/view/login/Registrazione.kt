@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.ashborn.viewModel.NavigationEvent
 import com.example.ashborn.R
-import com.example.ashborn.RegistrazioneViewModel
+import com.example.ashborn.viewModel.RegistrazioneViewModel
 import com.example.ashborn.ui.theme.LargePadding
 import com.example.ashborn.ui.theme.MediumPadding
 import com.example.ashborn.ui.theme.SmallPadding

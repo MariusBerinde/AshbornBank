@@ -1,6 +1,6 @@
 package com.example.ashborn.view.login
 
-import com.example.ashborn.RegistrazioneViewModel
+import com.example.ashborn.viewModel.RegistrazioneViewModel
 import com.example.ashborn.Validatore
 
 enum class StatoErrore{ CONTENUTO, FORMATO, NESSUNO }
