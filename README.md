@@ -152,7 +152,7 @@ Il database Room è composto dalle seguenti tabelle:
 |:---:|:---:|:---:|
 | ![Conti](screenshots/conti.png) | ![Carte](screenshots/carte.png) | ![Dettagli](screenshots/dettagli.png) |
 
-> 💡 Aggiungi la cartella `screenshots/` con i tuoi screenshot per completare questa sezione.
+
 
 ---
 
